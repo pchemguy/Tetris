@@ -18,11 +18,26 @@ to **mandatory automated tests**.
 
 It is a contract: an implementation is considered “correct” only if it satisfies these oracles.
 
+This document applies **only to the pure core simulation** as defined by:
+
+- `GAME_RULES.md`
+- `GAME_STATE.md`
+- `CORE_API.md`
+
+It does **not** define test requirements for:
+
+- rendering,
+- runtime orchestration,
+- CLI behavior,
+- replay loading or execution.
+
+Those concerns are governed by their respective specifications and acceptance gates (Gates 10–13 in `ACCEPTANCE_GATES.md`).
+
 ---
 
 ## 2. Test harness assumptions
 
-Core tests operate on the **pure core** (no UI).
+Core tests operate on the **pure core** as defined in `DECOMPOSITION.md` (no runtime, rendering, CLI, or I/O).
 
 The harness must be able to:
 
@@ -308,4 +323,17 @@ An MVP core is accepted only if at least the following pass:
 - O1
 - X1
 
+Shell-level gates (10–13) require their own tests, defined by their respective specifications, and are intentionally out of scope for this document.
+
 ---
+
+## 16. Out-of-scope test oracles (non-core)
+
+The following are intentionally excluded from this document:
+
+- Rendering snapshot oracles (`RENDERING_SPEC.md`)
+- Runtime execution oracles (`RUNTIME_SPEC.md`)
+- CLI behavior oracles (`CLI_SPEC.md`)
+- Replay determinism oracles (`REPLAY_SPEC.md`)
+
+If formal test oracles are later introduced for these components, they must be defined in separate documents.
