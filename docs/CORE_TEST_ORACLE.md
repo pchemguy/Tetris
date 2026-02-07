@@ -23,6 +23,7 @@ This document applies **only to the pure core simulation** as defined by:
 - `GAME_RULES.md`
 - `GAME_STATE.md`
 - `CORE_API.md`
+- `DECOMPOSITION.md`
 
 It does **not** define test requirements for:
 

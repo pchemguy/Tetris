@@ -73,6 +73,8 @@ Agents are expected to **discover and reason over all of them**, not just one.
 | **18** | Replay Specification         | `REPLAY_SPEC.md`           | Deterministic replay and evaluation format          |
 | **19** | Project Overview (this file) | `PROJECT.md`               | Entry point and documentation map                   |
 
+All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
+
 **Important**:  
 This table is a **synopsis**, not a substitute for reading the documents themselves.
 
@@ -196,7 +198,7 @@ Defines the **only supported public API** for the core.
 
 ---
 
-### 4.7 `TEST_ORACLE.md` — Mandatory tests
+### 4.7 `CORE_TEST_ORACLE.md` — Mandatory tests
 
 **Role**  
 Defines *what must be proven* for correctness.

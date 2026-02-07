@@ -244,7 +244,7 @@ Correctness for Gates 1–6 is governed by:
 
 - `CORE_TEST_ORACLE.md`
 
-Only the oracles explicitly listed in the relevant gate sections (e.g. §15 Minimum required test set) are required for MVP acceptance.
+Only the oracles explicitly listed for MVP are required unless a later gate explicitly expands the required set.
 
 ---
 
