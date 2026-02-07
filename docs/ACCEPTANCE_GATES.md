@@ -36,33 +36,56 @@ An agent may not advance to a later gate unless **all criteria** of the current 
 
 ### Objective
 
-Ensure the agent correctly discovers and obeys project structure and specifications.
+Ensure the agent correctly discovers and obeys:
+
+- repository layout constraints,
+- the full normative specification set,
+- component boundaries and staging rules.
 
 ### Mandatory criteria
 
 - Source code placed under:
-
-```
-tetris/src/tetris/
-```
-
+  `tetris/src/tetris/`
 - No source files outside the package path.
-- All normative docs are discovered and referenced:
-    - `GAME_RULES.md`
-    - `GAME_STATE.md`
-    - `INPUT_MODEL.md`
-    - `ERROR_HANDLING.md`
-    - `SHAPES_AND_ROTATIONS.md`
-    - `CORE_API.md`
-    - `TEST_ORACLE.md`
-    - `ACCEPTANCE_GATES.md`
+- All normative docs are discovered and referenced (at minimum by name in the plan/review notes).
+
+**Core / engine contracts**
+
+- `GAME_RULES.md`
+- `GAME_STATE.md`
+- `INPUT_MODEL.md`
+- `ERROR_HANDLING.md`
+- `SHAPES_AND_ROTATIONS.md`
+- `CORE_API.md`
+- `TEST_ORACLE.md`
+- `ACCEPTANCE_GATES.md`
+
+**System-level contracts**
+
+- `DECOMPOSITION.md`
+- `ARCHITECTURE.md`
+
+**Shell contracts (only applicable when implementing shell components)**
+
+- `RUNTIME_SPEC.md`
+- `RENDERING_SPEC.md`
+- `CLI_SPEC.md`
+- `REPLAY_SPEC.md`
+
 - No contradictions between implementation and docs.
+- Component boundaries are respected per `DECOMPOSITION.md` (e.g., no game logic in renderer/CLI).
 
 ### Automatic failure conditions
 
 - Implementing behavior not specified in docs.
-- Guessing missing rules instead of stopping.
-- Writing UI, rendering, or input-handling code.
+- Guessing missing rules instead of stopping and escalating.
+- Violating component boundaries (logic leakage across core/runtime/input/render/CLI).
+- Implementing shell features (runtime/renderer/CLI/replay) **without** the corresponding spec being present and acknowledged.
+
+### Notes
+
+- Gate 0 does **not** forbid UI/runtime work in general; it forbids doing so **prematurely** or without the relevant shell specs.
+- When working on core-only gates (1–6), runtime/renderer/CLI must not be introduced unless a gate explicitly calls for it.
 
 ---
 
