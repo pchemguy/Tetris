@@ -74,6 +74,7 @@ Ensure the agent correctly discovers and obeys:
 
 - No contradictions between implementation and docs.
 - Component boundaries are respected per `DECOMPOSITION.md` (e.g., no game logic in renderer/CLI).
+- **Agent must explicitly state the current target gate** and confirm scope limitations (core vs shell) before editing code.
 
 ### Automatic failure conditions
 
