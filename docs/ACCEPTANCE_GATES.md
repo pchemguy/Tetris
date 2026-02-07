@@ -18,6 +18,8 @@ Acceptance gates:
 - provide objective “done / not done” criteria,
 - enable automated or human-in-the-loop evaluation of agent behavior.
 
+Each acceptance gate may reference one or more **test oracle documents**. A gate is considered satisfied only if all mandatory criteria for that gate **and** all corresponding test oracles pass.
+
 An agent may not advance to a later gate unless **all criteria** of the current gate are satisfied.
 
 ---
@@ -329,6 +331,14 @@ Implement a minimal, deterministic presentation layer that renders `GameState` f
 - Conditional rendering based on environment.
 - Implementing game logic inside the renderer.
 
+### Test oracle
+
+Gate 10 correctness is governed by:
+
+- `RENDERING_TEST_ORACLE.md`
+
+All mandatory oracles in that document must pass.
+
 ---
 
 ## 14. Gate 11 — Scripted runtime (virtual-time)
@@ -362,6 +372,14 @@ Provide a deterministic runtime capable of executing the game in **virtual time*
 - Calling `step()` multiple times per tick.
 - Modifying `GameState` outside the core.
 
+### Test oracle
+
+Gate 11 correctness is governed by:
+
+- `RUNTIME_TEST_ORACLE.md`
+
+All mandatory oracles in that document must pass.
+
 ---
 
 ## 15. Gate 12 — Command-line interface (CLI)
@@ -392,6 +410,14 @@ Expose a minimal command-line interface that allows humans and evaluation harnes
 - Suppressing or catching core invariant violations.
 - Implementing game logic in argument parsing.
 - Silent fallback behavior on invalid input.
+
+### Test oracle
+
+Gate 12 correctness is governed by:
+
+- `CLI_TEST_ORACLE.md`
+
+All mandatory oracles in that document must pass.
 
 ---
 
@@ -426,6 +452,14 @@ Enable exact reproduction of game runs for auditing, regression testing, and age
 - Ignoring invalid replay inputs.
 - Auto-correcting malformed replay data.
 - Introducing nondeterminism during replay execution.
+
+### Test oracle
+
+Gate 13 correctness is governed by:
+
+- `REPLAY_TEST_ORACLE.md`
+
+All mandatory oracles in that document must pass.
 
 ---
 
