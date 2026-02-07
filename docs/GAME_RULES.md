@@ -2,14 +2,8 @@
 name: GAME_RULES.md
 URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
-Below is a **first, clean, agent-facing version** of `docs/GAME_RULES.md`, written to function as a **normative specification**, not a tutorial.
-It is intentionally explicit, deterministic, and hostile to interpretation drift—suitable for driving agentic implementation and tests.
 
-You can copy this verbatim.
-
----
-
-# GAME_RULES.md
+# GAME RULES
 
 **Classic Tetris – Normative Ruleset (Agent Target Spec)**
 
