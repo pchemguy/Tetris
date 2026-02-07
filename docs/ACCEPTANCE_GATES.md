@@ -60,7 +60,7 @@ Ensure the agent correctly discovers and obeys:
 - `ERROR_HANDLING.md`
 - `SHAPES_AND_ROTATIONS.md`
 - `CORE_API.md`
-- `TEST_ORACLE.md`
+- `CORE_TEST_ORACLE.md`
 - `ACCEPTANCE_GATES.md`
 
 **System-level contracts**
@@ -242,7 +242,7 @@ Ensure correct termination behavior.
 
 Correctness for Gates 1–6 is governed by:
 
-- `TEST_ORACLE.md`
+- `CORE_TEST_ORACLE.md`
 
 Only the oracles explicitly listed in the relevant gate sections (e.g. §15 Minimum required test set) are required for MVP acceptance.
 
@@ -479,7 +479,7 @@ The project is considered **MVP-complete (core-only)** when:
 - Gates **0–6** are fully satisfied, and
 - No prohibited behaviors exist for those gates, and
 - All required tests for Gates 0–6 pass.
-- For MVP acceptance, only `TEST_ORACLE.md` applies; shell-level test oracles (`*_TEST_ORACLE.md`) are explicitly out of scope.
+- For MVP acceptance, only `CORE_TEST_ORACLE.md` applies; shell-level test oracles (`*_TEST_ORACLE.md`) are explicitly out of scope.
 
 ### Notes
 

@@ -180,7 +180,7 @@ MVP target:
 
 **Responsibilities**
 
-- Implement all oracles in `TEST_ORACLE.md`.
+- Implement all oracles in `CORE_TEST_ORACLE.md`.
 - Provide regression tests that enforce:
     - determinism,
     - invariants,

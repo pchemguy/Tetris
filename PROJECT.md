@@ -59,7 +59,7 @@ Agents are expected to **discover and reason over all of them**, not just one.
 | **4**  | Error Handling               | `ERROR_HANDLING.md`        | Rejection vs error policy; invariant enforcement    |
 | **5**  | Shapes & Rotations           | `SHAPES_AND_ROTATIONS.md`  | Exact tetromino geometry and rotations              |
 | **6**  | Core API                     | `CORE_API.md`              | Python-level public API contract                    |
-| **7**  | Core Test Oracle             | `TEST_ORACLE.md`           | Mandatory correctness tests for the pure core       |
+| **7**  | Core Test Oracle             | `CORE_TEST_ORACLE.md`      | Mandatory correctness tests for the pure core       |
 | **8**  | Rendering Test Oracle        | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
 | **9**  | Runtime Test Oracle          | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
 | **10** | CLI Test Oracle              | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
@@ -212,7 +212,7 @@ Defines *what must be proven* for correctness.
 - Agents should generate tests directly traceable to this document.
 
 ---
-
+ 
 ### 4.8 `RENDERING_TEST_ORACLE.md` — Renderer correctness
 
 **Role**

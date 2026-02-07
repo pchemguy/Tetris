@@ -18,7 +18,7 @@ The core must be:
 - test-friendly,
 - strict about invariant violations.
 
-This API is binding for agentic implementation and for the test suite described in `docs/TEST_ORACLE.md`.
+This API is binding for agentic implementation and for the test suite described in `docs/CORE_TEST_ORACLE.md`.
 
 If behavior is not defined here, it must not be invented.
 
