@@ -49,6 +49,7 @@ Ensure the agent correctly discovers and obeys:
 - Source code placed under:
   `tetris/src/tetris/`
 - No source files outside the package path.
+- Agent must identify which test oracle(s) apply to the current target gate.
 - All normative docs are discovered and referenced (at minimum by name in the plan/review notes).
 
 **Core / engine contracts**
@@ -236,6 +237,14 @@ Ensure correct termination behavior.
 - Spawn-blocked game over tests.
 - Top-row occupation game over tests.
 - No-state-change-after-game-over tests.
+
+### Core test oracle
+
+Correctness for Gates 1–6 is governed by:
+
+- `TEST_ORACLE.md`
+
+Only the oracles explicitly listed in the relevant gate sections (e.g. §15 Minimum required test set) are required for MVP acceptance.
 
 ---
 
@@ -470,6 +479,7 @@ The project is considered **MVP-complete (core-only)** when:
 - Gates **0–6** are fully satisfied, and
 - No prohibited behaviors exist for those gates, and
 - All required tests for Gates 0–6 pass.
+- For MVP acceptance, only `TEST_ORACLE.md` applies; shell-level test oracles (`*_TEST_ORACLE.md`) are explicitly out of scope.
 
 ### Notes
 
