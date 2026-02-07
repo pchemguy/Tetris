@@ -229,10 +229,9 @@ The game ends when **any** of the following occurs:
 
 * Hold is **optional for MVP**
 * If implemented:
-
-  * Hold can be used **once per piece**
-  * Holding swaps the active piece with the hold slot
-  * First hold stores the piece and spawns the next piece
+    * Hold can be used **once per piece**
+    * Holding swaps the active piece with the hold slot
+    * First hold stores the piece and spawns the next piece
 
 ---
 
