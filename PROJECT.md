@@ -51,23 +51,27 @@ The following table provides a **synoptic index** of all normative development d
 These documents reside under `/docs/`, with the exception of `PROJECT.md` (this file) placed in the root.  
 Agents are expected to **discover and reason over all of them**, not just one.  
 
-|        | Title                        | Filename                  | Function / Role                                     |
-| ------ | ---------------------------- | ------------------------- | --------------------------------------------------- |
-| **1**  | Game Rules                   | `GAME_RULES.md`           | Behavioral specification (what the game does)       |
-| **2**  | Game State Model             | `GAME_STATE.md`           | Deterministic state machine and step semantics      |
-| **3**  | Input Model                  | `INPUT_MODEL.md`          | Input representation and tick ordering              |
-| **4**  | Error Handling               | `ERROR_HANDLING.md`       | Rejection vs error policy; invariant enforcement    |
-| **5**  | Shapes & Rotations           | `SHAPES_AND_ROTATIONS.md` | Exact tetromino geometry and rotations              |
-| **6**  | Core API                     | `CORE_API.md`             | Python-level public API contract                    |
-| **7**  | Test Oracle                  | `TEST_ORACLE.md`          | Mandatory behavioral test requirements              |
-| **8**  | Acceptance Gates             | `ACCEPTANCE_GATES.md`     | Milestone-based acceptance criteria                 |
-| **9**  | System Architecture          | `ARCHITECTURE.md`         | High-level system architecture and design choices   |
-| **10** | System Decomposition         | `DECOMPOSITION.md`        | Explicit component decomposition and boundaries     |
-| **11** | Runtime Specification        | `RUNTIME_SPEC.md`         | Tick loop, execution modes, and orchestration rules |
-| **12** | Rendering Specification      | `RENDERING_SPEC.md`       | ASCII renderer contract and output format           |
-| **13** | CLI Specification            | `CLI_SPEC.md`             | Command-line interface and entrypoint behavior      |
-| **14** | Replay Specification         | `REPLAY_SPEC.md`          | Deterministic replay and evaluation format          |
-| **15** | Project Overview (this file) | `PROJECT.md`              | Entry point and documentation map                   |
+|        | Title                        | Filename                   | Function / Role                                     |
+| ------ | ---------------------------- | -------------------------- | --------------------------------------------------- |
+| **1**  | Game Rules                   | `GAME_RULES.md`            | Behavioral specification (what the game does)       |
+| **2**  | Game State Model             | `GAME_STATE.md`            | Deterministic state machine and step semantics      |
+| **3**  | Input Model                  | `INPUT_MODEL.md`           | Input representation and tick ordering              |
+| **4**  | Error Handling               | `ERROR_HANDLING.md`        | Rejection vs error policy; invariant enforcement    |
+| **5**  | Shapes & Rotations           | `SHAPES_AND_ROTATIONS.md`  | Exact tetromino geometry and rotations              |
+| **6**  | Core API                     | `CORE_API.md`              | Python-level public API contract                    |
+| **7**  | Core Test Oracle             | `TEST_ORACLE.md`           | Mandatory correctness tests for the pure core       |
+| **8**  | Rendering Test Oracle        | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
+| **9**  | Runtime Test Oracle          | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
+| **10** | CLI Test Oracle              | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
+| **11** | Replay Test Oracle           | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
+| **12** | Acceptance Gates             | `ACCEPTANCE_GATES.md`      | Milestone-based acceptance criteria                 |
+| **13** | System Architecture          | `ARCHITECTURE.md`          | High-level system architecture and design choices   |
+| **14** | System Decomposition         | `DECOMPOSITION.md`         | Explicit component decomposition and boundaries     |
+| **15** | Runtime Specification        | `RUNTIME_SPEC.md`          | Tick loop, execution modes, and orchestration rules |
+| **16** | Rendering Specification      | `RENDERING_SPEC.md`        | ASCII renderer contract and output format           |
+| **17** | CLI Specification            | `CLI_SPEC.md`              | Command-line interface and entrypoint behavior      |
+| **18** | Replay Specification         | `REPLAY_SPEC.md`           | Deterministic replay and evaluation format          |
+| **19** | Project Overview (this file) | `PROJECT.md`               | Entry point and documentation map                   |
 
 **Important**:  
 This table is a **synopsis**, not a substitute for reading the documents themselves.
@@ -209,7 +213,91 @@ Defines *what must be proven* for correctness.
 
 ---
 
-### 4.8 `ACCEPTANCE_GATES.md` — Milestone control
+### 4.8 `RENDERING_TEST_ORACLE.md` — Renderer correctness
+
+**Role**
+Defines the **mandatory automated tests** that the ASCII renderer must satisfy.
+
+**Contents**
+
+* Deterministic output requirements
+* Exact board layout and border rules
+* Cell symbol constraints
+* Metadata line presence and ordering
+* Game-over rendering behavior
+* Snapshot (golden) test requirements
+
+**Usage**
+
+* Enforces strict compliance with `RENDERING_SPEC.md`.
+* Enables byte-for-byte snapshot testing.
+* Prevents rendering logic from drifting or becoming environment-dependent.
+* Applies exclusively to **Acceptance Gate 10**.
+
+---
+
+### 4.9 `RUNTIME_TEST_ORACLE.md` — Scripted runtime correctness
+
+**Role**
+Defines the **mandatory tests** for the scripted (virtual-time) runtime.
+
+**Contents**
+
+* One-tick-per-step execution guarantees
+* Deterministic input application
+* Rendering cadence requirements
+* Early termination on game over
+* Error propagation rules
+
+**Usage**
+
+* Ensures the runtime is suitable for deterministic evaluation and CI.
+* Prevents re-implementation of core logic in the runtime layer.
+* Applies exclusively to **Acceptance Gate 11**.
+
+---
+
+### 4.10 `CLI_TEST_ORACLE.md` — CLI behavior and robustness
+
+**Role**
+Defines **mandatory behavioral tests** for the command-line interface.
+
+**Contents**
+
+* Command availability (`run`, `script`, `replay`)
+* Exit code semantics
+* Error propagation requirements
+* Prohibitions on silent failure or logic leakage
+
+**Usage**
+
+* Keeps the CLI thin, declarative, and auditable.
+* Ensures consistent behavior for humans and automation.
+* Applies exclusively to **Acceptance Gate 12**.
+
+---
+
+### 4.11 `REPLAY_TEST_ORACLE.md` — Deterministic replay correctness
+
+**Role**
+Defines **mandatory tests** for replay loading, validation, and execution.
+
+**Contents**
+
+* Replay file schema validation
+* Strict input validation
+* Deterministic tick-by-tick execution
+* Final state determinism guarantees
+
+**Usage**
+
+* Enables exact reproduction of runs for debugging and agent evaluation.
+* Prevents permissive or auto-correcting replay behavior.
+* Applies exclusively to **Acceptance Gate 13**.
+
+---
+
+### 4.12 `ACCEPTANCE_GATES.md` — Milestone control
 
 **Role**  
 Controls **when the agent is allowed to advance**.
@@ -227,7 +315,7 @@ Controls **when the agent is allowed to advance**.
 
 ---
 
-### 4.9 `ARCHITECTURE.md` — System-level architecture
+### 4.13 `ARCHITECTURE.md` — System-level architecture
 
 **Role**
 Defines the **big-picture architecture** of the application and records key architectural
@@ -249,7 +337,7 @@ decisions.
 
 ---
 
-### 4.10 `DECOMPOSITION.md` — Explicit system decomposition (what exists)
+### 4.14 `DECOMPOSITION.md` — Explicit system decomposition (what exists)
 
 **Role**
 Defines the **authoritative functional decomposition** of the system into components.
@@ -271,7 +359,7 @@ Defines the **authoritative functional decomposition** of the system into compon
 
 ---
 
-### 4.11 `RUNTIME_SPEC.md` — Execution model and orchestration
+### 4.15 `RUNTIME_SPEC.md` — Execution model and orchestration
 
 **Role**
 Defines **how the system runs over time** outside the core.
@@ -293,7 +381,7 @@ Defines **how the system runs over time** outside the core.
 
 ---
 
-### 4.12 `RENDERING_SPEC.md` — Presentation contract
+### 4.16 `RENDERING_SPEC.md` — Presentation contract
 
 **Role**
 Defines the **ASCII rendering contract** for the application.
@@ -315,7 +403,7 @@ Defines the **ASCII rendering contract** for the application.
 
 ---
 
-### 4.13 `CLI_SPEC.md` — Command-line interface
+### 4.17 `CLI_SPEC.md` — Command-line interface
 
 **Role**
 Defines the **command-line surface** of the application.
@@ -336,7 +424,7 @@ Defines the **command-line surface** of the application.
 
 ---
 
-### 4.14 `REPLAY_SPEC.md` — Deterministic replay and evaluation
+### 4.18 `REPLAY_SPEC.md` — Deterministic replay and evaluation
 
 **Role**
 Defines a **deterministic replay format** for evaluation, debugging, and regression testing.
