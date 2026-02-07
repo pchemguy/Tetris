@@ -82,6 +82,7 @@ Ensure the agent correctly discovers and obeys:
 - Guessing missing rules instead of stopping and escalating.
 - Violating component boundaries (logic leakage across core/runtime/input/render/CLI).
 - Implementing shell features (runtime/renderer/CLI/replay) **without** the corresponding spec being present and acknowledged.
+- Creating/modifying shell modules (`tetris.rendering`, `tetris.runtime`, `tetris.cli`, replay/persistence) while working on core-only gates (1–6) fails unless explicitly required by the current gate.
 
 ### Notes
 
@@ -294,19 +295,167 @@ Ensure the system is testable, auditable, and reproducible.
 
 ---
 
-## 13. Final acceptance (MVP complete)
+## 13. Gate 10 — ASCII renderer
 
-The project is considered **MVP-complete** when:
+### Objective
 
-- Gates 0–6 are fully satisfied, and
-- No prohibited behaviors exist, and
-- All required tests pass.
+Implement a minimal, deterministic presentation layer that renders `GameState` for inspection, debugging, and evaluation, without contaminating core logic.
 
-Gates 7–9 are strongly recommended but not required for MVP unless explicitly requested.
+### Mandatory criteria
+
+- An ASCII renderer is implemented with the interface:
+  `render(state: GameState) -> str`
+- Rendering behavior matches `RENDERING_SPEC.md` **exactly**, including:
+- board dimensions and borders,
+- cell symbols,
+- metadata lines (score, level, lines, next, hold),
+- game-over rendering.
+- Renderer is a pure function:
+- no mutation of `GameState`,
+- no I/O,
+- no timing logic.
+
+### Required tests
+
+- Snapshot (golden) tests for at least the following states:
+- empty initial state,
+- representative mid-game state with an active piece,
+- game-over state.
+- Snapshot comparisons must be byte-for-byte deterministic.
+
+### Prohibited behavior
+
+- Animations or timing-dependent output.
+- Conditional rendering based on environment.
+- Implementing game logic inside the renderer.
 
 ---
 
-## 14. Agent evaluation rubric (meta)
+## 14. Gate 11 — Scripted runtime (virtual-time)
+
+### Objective
+
+Provide a deterministic runtime capable of executing the game in **virtual time**, suitable for tests, evaluation, and replay.
+
+### Mandatory criteria
+
+- A scripted runtime exists that:
+- advances the game by discrete ticks,
+- does not call `sleep` or depend on wall-clock time.
+- Inputs are supplied as explicit per-tick input lists.
+- For each tick:
+- inputs are collected,
+- `step(state, inputs, config)` is called exactly once,
+- the resulting state is rendered.
+- Runtime terminates immediately when `state.is_game_over` becomes true.
+
+### Required tests
+
+- A test that runs a fixed number of ticks with scripted inputs and asserts:
+- deterministic final state,
+- correct tick count progression.
+- A test that confirms early termination on game over.
+
+### Prohibited behavior
+
+- Re-implementing game rules or gravity logic in the runtime.
+- Calling `step()` multiple times per tick.
+- Modifying `GameState` outside the core.
+
+---
+
+## 15. Gate 12 — Command-line interface (CLI)
+
+### Objective
+
+Expose a minimal command-line interface that allows humans and evaluation harnesses to run the application without embedding logic in the CLI layer.
+
+### Mandatory criteria
+
+- CLI supports the following commands exactly as specified in `CLI_SPEC.md`:
+- `run`
+- `script`
+- `replay`
+- CLI flags and options match the specification.
+- Exit codes match the specification.
+- CLI delegates execution to runtime and core without altering behavior.
+
+### Required tests
+
+- CLI invocation tests for each command that assert:
+- correct exit code on normal termination,
+- correct exit code on invalid usage,
+- propagation of core/runtime errors.
+
+### Prohibited behavior
+
+- Suppressing or catching core invariant violations.
+- Implementing game logic in argument parsing.
+- Silent fallback behavior on invalid input.
+
+---
+
+## 16. Gate 13 — Replay and deterministic evaluation
+
+### Objective
+
+Enable exact reproduction of game runs for auditing, regression testing, and agent evaluation.
+
+### Mandatory criteria
+
+- Replay files are loaded and validated per `REPLAY_SPEC.md`.
+- Replay execution:
+- initializes the core with the replay seed,
+- applies exactly one input list per tick,
+- uses the scripted runtime (virtual-time).
+- Replay validation is strict:
+- unknown input events are errors,
+- malformed structure is rejected.
+- Given identical replay files and implementation:
+- final `GameState` is deterministic and identical.
+
+### Required tests
+
+- A test that replays a valid replay file and asserts final state.
+- A test that rejects malformed replay files.
+- A determinism test:
+- same replay run twice yields identical final state.
+
+### Prohibited behavior
+
+- Ignoring invalid replay inputs.
+- Auto-correcting malformed replay data.
+- Introducing nondeterminism during replay execution.
+
+---
+
+## 17. Final acceptance (MVP complete)
+
+The project is considered **MVP-complete (core-only)** when:
+
+- Gates **0–6** are fully satisfied, and
+- No prohibited behaviors exist for those gates, and
+- All required tests for Gates 0–6 pass.
+
+### Notes
+
+- Gates **7–9** (hold mechanics, strictness hardening, auditability) are **core extensions**:
+    - strongly recommended,
+    - not required for MVP unless explicitly requested.
+- Gates **10–13** (renderer, runtime, CLI, replay) define **system/shell completeness**:
+    - explicitly **out of scope for MVP**,
+    - required only when progressing beyond a core-only benchmark.
+- Passing MVP does **not** imply the presence of:
+    - rendering,
+    - runtime loop,
+    - CLI,
+    - replay capability.
+
+MVP acceptance certifies the correctness, determinism, and testability of the **pure core simulation**, independent of presentation or execution environment.
+
+---
+
+## 18. Agent evaluation rubric (meta)
 
 Agent performance is evaluated on:
 
@@ -316,8 +465,7 @@ Agent performance is evaluated on:
 - **Test completeness**
 - **Absence of speculative behavior**
 
-Passing all gates with minimal supervision is considered a successful demonstration of agentic
-software development prompting.
+Passing all gates with minimal supervision is considered a successful demonstration of agentic software development prompting.
 
 ---
 
