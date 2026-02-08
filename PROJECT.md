@@ -110,7 +110,7 @@ The following table provides a **synoptic index** of all normative development d
 
 ---
 
-### How to read this index (for human readers)
+### How to read this index
 
 This index is organized by **conceptual responsibility**, not by implementation order. It shows *what kinds of documents exist* and *what role each plays* in the overall system, not a step-by-step development checklist. To understand **when** a document applies during development, refer to the **Gate applicability rules** below and to `ACCEPTANCE_GATES.md`.
 
