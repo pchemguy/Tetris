@@ -69,9 +69,11 @@ This mode must be:
 - isolated,
 - non-essential for correctness.
 
+Interactive mode MUST NOT be used as a source of truth for correctness or acceptance.
+
 ---
 
-## 4. Tick lifecycle (normative)
+## 4. Render state (exactly once per tick)
 
 For each tick:
 
@@ -83,14 +85,75 @@ For each tick:
 
 ---
 
-## 5. Determinism guarantees
+## 5. Renderer selection
+
+The runtime MAY support selecting a renderer at startup.
+
+### Rules
+
+- Renderer selection affects **only which renderer implementation is called**.
+- Renderer selection MUST NOT:
+    - alter rendering semantics,
+    - alter output of a renderer,
+    - provide fallback or auto-detection behavior.
+
+### Selection mechanism
+
+Renderer selection MUST be:
+
+- explicit (e.g., configuration or CLI flag),
+- resolved once at runtime initialization.
+
+Example (non-normative):
+
+- `--renderer ascii`
+- `--renderer debug`
+
+---
+
+### Default renderer
+
+- If no renderer is specified:
+    - the default renderer MUST be the ASCII renderer defined in `RENDERING_SPEC.md`.
+
+This guarantees Gate 10 remains the baseline.
+
+---
+
+### Renderer contract enforcement
+
+The runtime MUST:
+
+- call exactly one renderer per render step,
+- pass the unmodified `GameState`,
+- treat renderer output as opaque.
+
+The runtime MUST NOT:
+
+- interpret renderer output,
+- branch behavior based on renderer type,
+- compensate for renderer limitations.
+
+---
+
+### Gate interaction
+
+- Gate 10 validates the ASCII renderer only.
+- Support for additional renderers:
+  - is out of scope for Gate 10,
+  - MUST NOT weaken ASCII rendering requirements,
+  - MUST be covered by additional gates if mandated.
+
+---
+
+## 6. Determinism guarantees
 
 - Scripted mode must be fully deterministic.
 - Interactive mode may be nondeterministic in wall-clock timing, but must not affect core logic.
 
 ---
 
-## 6. Error handling
+## 7. Error handling
 
 - If `step()` raises an exception:
     - runtime must stop execution,
@@ -99,11 +162,12 @@ For each tick:
 
 ---
 
-## 7. Prohibitions
+## 8. Prohibitions
 
 Runtime must not:
 
 - call `step()` more than once per tick,
+- skip rendering for any tick in which `step()` was called.
 - modify `GameState` directly,
 - inspect or modify board internals beyond rendering,
 - bypass input or core validation.
