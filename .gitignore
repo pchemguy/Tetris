@@ -209,6 +209,5 @@ __marimo__/
 .obsidian
 .trash
 *.jpg
-*.jpeg
 *.png
 *generated.yml
