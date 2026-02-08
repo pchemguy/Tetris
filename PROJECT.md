@@ -163,7 +163,7 @@ Adding a new component requires adding:
 
 * A specification document
 * An index row in the appropriate subsection above
-* An extended description in **Section 4**
+* An extended description in `Extended development documentation overview` below
 * A test oracle document (optional)
 * An acceptance gate (optional in `ACCEPTANCE_GATES.md`)
 
