@@ -50,12 +50,14 @@ Code exists to satisfy the docs — not the other way around.
 The workflow below assumes full understanding of the documentation authority model described in the next section.
 
 1. **Read all normative documents** (mandatory).
-2. Determine the current repository **phase** (`docs/PHASES.md`).
-3. Start at **Acceptance Gate 0** (`docs/ACCEPTANCE_GATES.md`).
-4. Implement incrementally, gate by gate.
-5. Write tests mapped to the applicable `docs/*_TEST_ORACLE.md` document(s).
-6. Stop and escalate on ambiguity.
-7. Extend behavior **only by updating documentation first**.
+2. **Read `IMPLEMENTATION_LOG.md`** to determine current state.
+3. Determine the current repository **phase** (`docs/PHASES.md`).
+4. Confirm the current **acceptance gate** (`docs/ACCEPTANCE_GATES.md`).
+5. Implement incrementally, gate by gate.
+6. Write tests mapped to the applicable `docs/*_TEST_ORACLE.md` document(s).
+7. Append results to `IMPLEMENTATION_LOG.md`.
+8. Stop and escalate on ambiguity.
+9. Extend behavior **only by updating documentation first**.
 
 ---
 
@@ -242,7 +244,45 @@ This distinction is enforced by:
 
 ---
 
-## 5. Development documentation index (synopsis) and integration
+## 5. Normative Documentation System
+
+### Execution record (what has actually happened)
+
+This document records the **actual execution history** of agentic development.
+
+#### Implementation log (`IMPLEMENTATION_LOG.md`) — *Authoritative execution state*
+
+The implementation log is an **append-only record** of:
+
+- which phases and gates have been attempted,
+- what actions were taken,
+- what artifacts were modified,
+- what passed, failed, or was blocked,
+- what the next intended step is.
+
+It answers questions such as:
+
+- *Where did development stop last time?*
+- *Which gate was last attempted, and with what outcome?*
+- *What assumptions or blockers were discovered?*
+
+This document is:
+
+- **state**, not policy,
+- **authoritative** for “current progress”,
+- required reading for any agent resuming work.
+
+Unlike specifications or gates, the implementation log does **not** define what is allowed or correct; it records **what actually occurred**.
+
+All agents must:
+
+- read it before acting,
+- append to it after acting,
+- never rewrite or delete history.
+
+---
+
+## 6. Development documentation index (synopsis) and integration
 
 The following table provides a **synoptic index** of all normative documents grouped by **conceptual responsibility**; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one. Partial discovery or selective reading constitutes non-compliance.
 
@@ -256,15 +296,15 @@ To determine:
 * *what behavior is allowed* → consult **component specifications**,
 * *what must be tested* → consult **test oracles**.
 
-
 ### Project-wide
 
-| Title                        | Filename                | Function / Role                                                                             |
-| ---------------------------- | ----------------------- | ------------------------------------------------------------------------------------------- |
-| Project Overview (this file) | `PROJECT.md`            | Primary entry point; explains the documentation system and **governed development process** |
-| Documentation Authority Map  | `DOCS_AUTHORITY_MAP.md` | Authoritative hierarchy and conflict-resolution rules among docs                            |
-| Repository Evolution Phases  | `PHASES.md`             | Allowed scope of work at each stage of repository evolution                                 |
-| Acceptance Gates             | `ACCEPTANCE_GATES.md`   | Milestone-based acceptance criteria and progression rules                                   |
+| Title                        | Filename                  | Function / Role                                                                 |
+| ---------------------------- | ------------------------- | ------------------------------------------------------------------------------- |
+| Project Overview (this file) | `PROJECT.md`              | Primary entry point; explains the documentation system and workflow              |
+| Documentation Authority Map  | `DOCS_AUTHORITY_MAP.md`   | Authoritative hierarchy and conflict-resolution rules among docs                 |
+| Repository Evolution Phases  | `PHASES.md`               | Allowed scope of work at each stage of repository evolution                      |
+| Acceptance Gates             | `ACCEPTANCE_GATES.md`     | Milestone-based acceptance criteria and progression rules                        |
+| Implementation Log           | `IMPLEMENTATION_LOG.md`   | Append-only execution record of phase/gate progress and agent actions            |
 
 ---
 
@@ -379,7 +419,7 @@ Adding a new component requires adding:
 
 ---
 
-## 6. Extended development documentation overview
+## 7. Extended development documentation overview
 
 This section explains **how each document is intended to be used**, both by AI agents and by human developers supervising or reviewing agent output.
 
@@ -796,7 +836,7 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 
 ---
 
-## 7. Audience note
+## 8. Audience note
 
 * **AI agents**: This document defines your operating environment. Partial reading is failure.
 * **Human developers**: This document is intended to remain readable, editable, and authoritative even as AI assistance evolves.
