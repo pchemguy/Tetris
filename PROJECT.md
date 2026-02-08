@@ -2,6 +2,7 @@
 name: PROJECT.md
 URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
+
 # PROJECT.md
 
 ## 1. Project overview
@@ -33,7 +34,7 @@ Human developers remain ultimately responsible for correctness and maintenance, 
 ```
 .
 ├── docs/                  # Normative development specifications (this project’s core)
-├── tetris/src/tetris/     # Pure Python implementation package
+├── tetris/src/tetris/     # Python core + shell implementation package
 ├── .agent/skills/         # Agent skills (plan / implement / review units)
 ├── PROJECT.md             # This document (primary entry point)
 └── README.md              # Optional human-facing wrapper (may delegate to PROJECT.md)
@@ -51,47 +52,52 @@ The following table provides a **synoptic index** of all normative development d
 
 ### Project-wide
 
-|       | Title                        | Filename              | Function / Role                     |
-| ----: | ---------------------------- | --------------------- | ----------------------------------- |
-| **0** | Project Overview (this file) | `PROJECT.md`          | Entry point and documentation map   |
-| **1** | Acceptance Gates             | `ACCEPTANCE_GATES.md` | Milestone-based acceptance criteria |
+| Title                        | Filename              | Function / Role                     |
+| ---------------------------- | --------------------- | ----------------------------------- |
+| Project Overview (this file) | `PROJECT.md`          | Entry point and documentation map   |
+| Acceptance Gates             | `ACCEPTANCE_GATES.md` | Milestone-based acceptance criteria |
 
 ### System-level contracts
 
-|       | Title                | Filename           | Function / Role                                   |
-| ----: | -------------------- | ------------------ | ------------------------------------------------- |
-| **1** | System Architecture  | `ARCHITECTURE.md`  | High-level system architecture and design choices |
-| **2** | System Decomposition | `DECOMPOSITION.md` | Explicit component decomposition and boundaries   |
+| Title                | Filename           | Function / Role                                   |
+| -------------------- | ------------------ | ------------------------------------------------- |
+| System Architecture  | `ARCHITECTURE.md`  | High-level system architecture and design choices |
+| System Decomposition | `DECOMPOSITION.md` | Explicit component decomposition and boundaries   |
 
 ### Core / engine contracts
 
-|       | Title              | Filename                  | Function / Role                                  |
-| ----: | ------------------ | ------------------------- | ------------------------------------------------ |
-| **1** | Game Rules         | `GAME_RULES.md`           | Behavioral specification (what the game does)    |
-| **2** | Game State Model   | `GAME_STATE.md`           | Deterministic state machine and step semantics   |
-| **3** | Input Model        | `INPUT_MODEL.md`          | Input representation and tick ordering           |
-| **4** | Error Handling     | `ERROR_HANDLING.md`       | Rejection vs error policy; invariant enforcement |
-| **5** | Shapes & Rotations | `SHAPES_AND_ROTATIONS.md` | Exact tetromino geometry and rotations           |
-| **6** | Core API           | `CORE_API.md`             | Python-level public API contract                 |
+| Title              | Filename                  | Function / Role                                  |
+| ------------------ | ------------------------- | ------------------------------------------------ |
+| Game Rules         | `GAME_RULES.md`           | Behavioral specification (what the game does)    |
+| Game State Model   | `GAME_STATE.md`           | Deterministic state machine and step semantics   |
+| Input Model        | `INPUT_MODEL.md`          | Input representation and tick ordering           |
+| Error Handling     | `ERROR_HANDLING.md`       | Rejection vs error policy; invariant enforcement |
+| Shapes & Rotations | `SHAPES_AND_ROTATIONS.md` | Exact tetromino geometry and rotations           |
+| Core API           | `CORE_API.md`             | Python-level public API contract                 |
+
+### Core Test Oracle
+
+| Title              | Filename                  | Function / Role                                  |
+| ------------------ | ------------------------- | ------------------------------------------------ |
+| Core Test Oracle   | `CORE_TEST_ORACLE.md`     | Mandatory correctness tests for the pure core    |
 
 ### Shell contracts
 
-|       | Title                   | Filename            | Function / Role                                     |
-| ----: | ----------------------- | ------------------- | --------------------------------------------------- |
-| **1** | Runtime Specification   | `RUNTIME_SPEC.md`   | Tick loop, execution modes, and orchestration rules |
-| **2** | Rendering Specification | `RENDERING_SPEC.md` | ASCII renderer contract and output format           |
-| **3** | CLI Specification       | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior      |
-| **4** | Replay Specification    | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format          |
+| Title                   | Filename                   | Function / Role                                     |
+| ----------------------- | -------------------------- | --------------------------------------------------- |
+| Runtime Specification   | `RUNTIME_SPEC.md`          | Tick loop, execution modes, and orchestration rules |
+| Rendering Specification | `RENDERING_SPEC.md`        | ASCII renderer contract and output format           |
+| CLI Specification       | `CLI_SPEC.md`              | Command-line interface and entrypoint behavior      |
+| Replay Specification    | `REPLAY_SPEC.md`           | Deterministic replay and evaluation format          |
 
-### Test Oracles
+### Shell Test Oracles
 
-|       | Title                 | Filename                   | Function / Role                                     |
-| ----: | --------------------- | -------------------------- | --------------------------------------------------- |
-| **1** | Core Test Oracle      | `CORE_TEST_ORACLE.md`      | Mandatory correctness tests for the pure core       |
-| **2** | Rendering Test Oracle | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
-| **3** | Runtime Test Oracle   | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
-| **4** | CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
-| **5** | Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
+| Title                   | Filename                   | Function / Role                                     |
+| ----------------------- | -------------------------- | --------------------------------------------------- |
+| Rendering Test Oracle   | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
+| Runtime Test Oracle     | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
+| CLI Test Oracle         | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
+| Replay Test Oracle      | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
 
 ### Further development
 
@@ -109,6 +115,7 @@ Adding a new component requires adding:
 - These documents reside under `/docs/`, with the exception of `PROJECT.md` (this file), which is located at the repository root.
 - All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
 - All documents listed above are **normative** unless explicitly stated otherwise. Non-normative docs (guides, notes, examples) may be added later.
+- If a conflict arises between code and docs, the implementation is considered incorrect.
 
 ---
 
@@ -124,12 +131,14 @@ This section explains **how each document is intended to be used**, both by AI a
 Controls **when the agent is allowed to advance**.
 
 **Contents**
+
 - Ordered development gates
 - Mandatory criteria per gate
 - Prohibited behaviors
 - MVP definition
 
 **Usage**
+
 - Prevents “all-at-once” implementations.
 - Enables human-in-the-loop approval per stage.
 - Ideal for automated evaluation harnesses.
@@ -138,11 +147,10 @@ Controls **when the agent is allowed to advance**.
 
 ### System-level contracts
 
-#### 1. `ARCHITECTURE.md` — System-level architecture
+#### `ARCHITECTURE.md` — System-level architecture
 
-**Role**
-Defines the **big-picture architecture** of the application and records key architectural
-decisions.
+**Role**  
+Defines the **big-picture architecture** of the application and records key architectural decisions.
 
 **Contents**
 
@@ -160,9 +168,9 @@ decisions.
 
 ---
 
-#### 2. `DECOMPOSITION.md` — Explicit system decomposition (what exists)
+#### `DECOMPOSITION.md` — Explicit system decomposition (what exists)
 
-**Role**
+**Role**  
 Defines the **authoritative functional decomposition** of the system into components.
 
 **Contents**
@@ -184,12 +192,13 @@ Defines the **authoritative functional decomposition** of the system into compon
 
 ### Core / engine contracts
 
-#### 1. `GAME_RULES.md` — Behavioral specification
+#### `GAME_RULES.md` — Behavioral specification
 
 **Role**  
 Defines *what* the game does, independent of implementation.
 
 **Contents**
+
 - Playfield dimensions
 - Tetromino set
 - Rotation rules and wall kicks
@@ -200,18 +209,20 @@ Defines *what* the game does, independent of implementation.
 - Explicit out-of-scope features
 
 **Usage**
+
 - Agents must treat this as binding behavioral law.
 - If a behavior is not specified here, it must not be implemented.
 - Humans should modify this document first when changing gameplay semantics.
 
 ---
 
-#### 2. `GAME_STATE.md` — State machine and step semantics
+#### `GAME_STATE.md` — State machine and step semantics
 
 **Role**  
 Defines *how* the game evolves over time in a deterministic, testable way.
 
 **Contents**
+
 - Exact state fields
 - Tick model and gravity counters
 - Step function ordering
@@ -219,18 +230,20 @@ Defines *how* the game evolves over time in a deterministic, testable way.
 - Invariants that must always hold
 
 **Usage**
+
 - This is the primary reference for implementing `step()`.
 - Tests should assert transitions defined here, not inferred behavior.
 - Agents must not invent alternative time models or implicit clocks.
 
 ---
 
-#### 3. `INPUT_MODEL.md` — Input semantics
+#### `INPUT_MODEL.md` — Input semantics
 
 **Role**  
 Removes ambiguity around how inputs are applied.
 
 **Contents**
+
 - Discrete input events
 - Per-tick ordered input lists
 - No implicit key repeat
@@ -238,53 +251,59 @@ Removes ambiguity around how inputs are applied.
 - Hold constraints
 
 **Usage**
+
 - Prevents UI assumptions leaking into the core.
 - Ensures input ordering is explicit and testable.
 - Agents must not batch or normalize inputs unless explicitly stated.
 
 ---
 
-#### 4. `ERROR_HANDLING.md` — Errors vs rejections
+#### `ERROR_HANDLING.md` — Errors vs rejections
 
 **Role**  
 Defines when the system should **reject** an action versus **fail fast**.
 
 **Contents**
+
 - Definition of rejected actions
 - Definition of errors
 - Strict vs permissive modes
 - Invariant enforcement rules
 
 **Usage**
+
 - Essential for evaluating agent discipline.
 - Prevents silent corruption and “best-effort” guessing.
 - Humans may relax strictness deliberately, but only via config.
 
 ---
 
-#### 5. `SHAPES_AND_ROTATIONS.md` — Geometry truth table
+#### `SHAPES_AND_ROTATIONS.md` — Geometry truth table
 
 **Role**  
 Defines **exact tetromino geometry** and rotation states.
 
 **Contents**
+
 - Explicit block coordinates for every piece and rotation
 - No procedural rotation allowed
 - Mandatory invariants
 
 **Usage**
+
 - Eliminates all geometric interpretation freedom.
 - Agents must implement shapes verbatim.
 - Geometry tests should reference this document directly.
 
 ---
 
-#### 6. `CORE_API.md` — Python API contract
+#### `CORE_API.md` — Python API contract
 
 **Role**  
 Defines the **only supported public API** for the core.
 
 **Contents**
+
 - Module path and layout
 - Enums and dataclasses
 - `new_game()` and `step()` contracts
@@ -292,17 +311,40 @@ Defines the **only supported public API** for the core.
 - RNG and serialization expectations
 
 **Usage**
+
 - Agents must not invent alternative APIs.
 - Humans reviewing code should compare signatures against this doc first.
 - Tests should assume this API and no other.
 
 ---
 
+### Core Test Oracle
+
+#### `CORE_TEST_ORACLE.md` — Mandatory tests
+
+**Role**  
+Defines *what must be proven* for correctness.
+
+**Contents**
+
+- Explicit test oracles mapped to rules
+- Required vs optional tests
+- Minimum acceptable test set for MVP
+
+**Usage**
+
+- This document is the arbiter of correctness.
+- Passing ad-hoc tests is insufficient if oracles are missing.
+- Agents should generate tests directly traceable to this document.
+- Applies exclusively to Acceptance Gates 1–6.
+
+---
+ 
 ### Shell contracts
 
-#### 1. `RUNTIME_SPEC.md` — Execution model and orchestration
+#### `RUNTIME_SPEC.md` — Execution model and orchestration
 
-**Role**
+**Role**  
 Defines **how the system runs over time** outside the core.
 
 **Contents**
@@ -322,9 +364,9 @@ Defines **how the system runs over time** outside the core.
 
 ---
 
-#### 2. `RENDERING_SPEC.md` — Presentation contract
+#### `RENDERING_SPEC.md` — Presentation contract
 
-**Role**
+**Role**  
 Defines the **ASCII rendering contract** for the application.
 
 **Contents**
@@ -344,9 +386,9 @@ Defines the **ASCII rendering contract** for the application.
 
 ---
 
-#### 3. `CLI_SPEC.md` — Command-line interface
+#### `CLI_SPEC.md` — Command-line interface
 
-**Role**
+**Role**  
 Defines the **command-line surface** of the application.
 
 **Contents**
@@ -365,9 +407,9 @@ Defines the **command-line surface** of the application.
 
 ---
 
-#### 4. `REPLAY_SPEC.md` — Deterministic replay and evaluation
+#### `REPLAY_SPEC.md` — Deterministic replay and evaluation
 
-**Role**
+**Role**  
 Defines a **deterministic replay format** for evaluation, debugging, and regression testing.
 
 **Contents**
@@ -386,28 +428,11 @@ Defines a **deterministic replay format** for evaluation, debugging, and regress
 
 ---
 
-### Test Oracles
+### Shell Test Oracles
 
-#### 1. `CORE_TEST_ORACLE.md` — Mandatory tests
+#### `RENDERING_TEST_ORACLE.md` — Renderer correctness
 
 **Role**  
-Defines *what must be proven* for correctness.
-
-**Contents**
-- Explicit test oracles mapped to rules
-- Required vs optional tests
-- Minimum acceptable test set for MVP
-
-**Usage**
-- This document is the arbiter of correctness.
-- Passing ad-hoc tests is insufficient if oracles are missing.
-- Agents should generate tests directly traceable to this document.
-
----
- 
-#### 2. `RENDERING_TEST_ORACLE.md` — Renderer correctness
-
-**Role**
 Defines the **mandatory automated tests** that the ASCII renderer must satisfy.
 
 **Contents**
@@ -428,9 +453,9 @@ Defines the **mandatory automated tests** that the ASCII renderer must satisfy.
 
 ---
 
-#### 3. `RUNTIME_TEST_ORACLE.md` — Scripted runtime correctness
+#### `RUNTIME_TEST_ORACLE.md` — Scripted runtime correctness
 
-**Role**
+**Role**  
 Defines the **mandatory tests** for the scripted (virtual-time) runtime.
 
 **Contents**
@@ -449,9 +474,9 @@ Defines the **mandatory tests** for the scripted (virtual-time) runtime.
 
 ---
 
-#### 4. `CLI_TEST_ORACLE.md` — CLI behavior and robustness
+#### `CLI_TEST_ORACLE.md` — CLI behavior and robustness
 
-**Role**
+**Role**  
 Defines **mandatory behavioral tests** for the command-line interface.
 
 **Contents**
@@ -469,9 +494,9 @@ Defines **mandatory behavioral tests** for the command-line interface.
 
 ---
 
-#### 5. `REPLAY_TEST_ORACLE.md` — Deterministic replay correctness
+#### `REPLAY_TEST_ORACLE.md` — Deterministic replay correctness
 
-**Role**
+**Role**  
 Defines **mandatory tests** for replay loading, validation, and execution.
 
 **Contents**
@@ -494,7 +519,7 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 1. **Read all docs** (mandatory for agents).
 2. Start at **Acceptance Gate 0**.
 3. Implement incrementally, gate by gate.
-4. Write tests mapped to `TEST_ORACLE.md`.
+4. Write tests mapped to `CORE_TEST_ORACLE.md` (core gates) or the relevant shell-level `*_TEST_ORACLE.md` for the current gate.
 5. Stop and escalate on ambiguity.
 6. Only extend behavior by modifying docs first.
 
@@ -504,8 +529,6 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 
 - **AI agents**: This document defines your operating environment. Partial reading is failure.
 - **Human developers**: This document is meant to remain readable, editable, and authoritative even as AI assistance evolves.
-
-If a conflict arises between code and docs, **the docs win**.
 
 ---
 
