@@ -45,9 +45,128 @@ Code exists to satisfy the docs — not the other way around.
 
 ---
 
+## Normative Documentation System
+
+
+This repository is governed by a **layered documentation system**. Each document belongs to a **class** serving a distinct purpose in constraining, guiding, or evaluating development process. The intent is to make **expectations explicit**, documented assumptions, and allow both humans and AI agents to reason correctly about *what exists*, *what is allowed*, and *what is correct*.
+
+---
+
+### System architecture and decomposition (what exists, how it is structured)
+
+These documents define the **shape of the system** at a conceptual level. They answer questions such as:
+
+* What components exist?
+* What responsibilities do they have?
+* How are responsibilities divided?
+* What is explicitly *not* part of a component’s role?
+
+This layer establishes **structural boundaries** and prevents responsibility leakage.
+
+Typical documents in this class:
+
+* system architecture
+* system decomposition
+
+These documents are **global constraints**: all implementation must conform to them.
+
+---
+
+### Component specifications (what behavior is defined)
+
+These documents define **what the system does**, component by component. They are **normative behavioral contracts**, not implementation guides. They answer questions such as:
+
+* What is the exact behavior?
+* What inputs are valid?
+* What outputs or state transitions are permitted?
+* What is explicitly out of scope?
+
+This includes:
+
+* core/engine behavior specifications,
+* shell-level behavior specifications (runtime, rendering, CLI, replay).
+
+If a behavior is not defined in a specification, it **must not be implemented**.
+
+---
+
+### Test oracles (how correctness is proven)
+
+Test oracle documents define **what must be proven** for an implementation to be considered correct.
+
+They answer questions such as:
+
+* Which behaviors must be tested?
+* What scenarios are mandatory?
+* What level of determinism is required?
+* What constitutes sufficient coverage for acceptance?
+
+Test oracles are **normative**: passing ad-hoc or convenience tests is insufficient if oracle-mandated tests are missing.
+
+Each test oracle applies to:
+
+* a specific component, and
+* a specific acceptance gate (or small range of gates).
+
+---
+
+### Core vs shell distinction (what is inside vs outside the simulation)
+
+The system is intentionally split into:
+
+* a **pure deterministic core** (the simulation), and
+* **shell components** around it (runtime, rendering, CLI, replay).
+
+This separation is fundamental:
+
+* The **core** defines game state evolution and must remain deterministic, side-effect-free, and testable in isolation.
+* The **shell** exists to execute, observe, and interact with the core without re-implementing its logic.
+
+This distinction is enforced by:
+
+* architecture and decomposition documents,
+* acceptance gates,
+* component-specific test oracles.
+
+---
+
+### Development control documents (when work is allowed and evaluated)
+
+Documents in this class control **process**, not behavior:
+
+* **Phases** define *what kinds of work are allowed* at a given stage of repository evolution.
+* **Acceptance gates** define *what must be implemented and proven* before progressing.
+
+They answer questions such as:
+
+* Is this kind of change allowed right now?
+* Which components may be introduced?
+* What constitutes “done” at this stage?
+
+These documents prevent:
+
+* premature generalization,
+* scope creep,
+* skipping validation steps.
+
+---
+
+### How to read the documentation index
+
+
+The documentation index that follows lists **all normative documents** and groups them by **conceptual responsibility**, not by implementation order. It shows *what kinds of documents exist* and *what role each plays* in the overall system, not a step-by-step development checklist. To understand **when** a document applies during development, refer to the **Gate applicability rules** below and to `ACCEPTANCE_GATES.md`.
+
+To determine:
+
+* *what applies now* → consult **phases** and **acceptance gates**,
+* *what behavior is allowed* → consult **component specifications**,
+* *what must be tested* → consult **test oracles**.
+
+---
+
 ## Development documentation index (synopsis) and integration
 
-The following table provides a **synoptic index** of all normative development documents. Agents are expected to **discover and reason over all of them**, not just one.
+The following table provides a **synoptic index** all normative documents; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one.
 
 ### Project-wide
 
@@ -108,14 +227,6 @@ The following table provides a **synoptic index** of all normative development d
 | Runtime Test Oracle   | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
 | CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
 | Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
-
----
-
-### How to read this index
-
-This index is organized by **conceptual responsibility**, not by implementation order. It shows *what kinds of documents exist* and *what role each plays* in the overall system, not a step-by-step development checklist. To understand **when** a document applies during development, refer to the **Gate applicability rules** below and to `ACCEPTANCE_GATES.md`.
-
-**For agents:** This index enumerates all normative documents; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order.
 
 ---
 
