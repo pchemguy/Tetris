@@ -60,35 +60,117 @@ This repository is governed by a **layered documentation system**. Each document
 
 ### Development control documents (when work is allowed and evaluated)
 
-Documents in this class control **process**, not behavior.
+Documents in this class control the **development process itself**, not system behavior. They define **when certain kinds of work are permitted**, and **under what conditions progress is considered acceptable**. This class consists of two distinct, complementary documents with **non-overlapping authority**:
 
-* **Phases** define *what kinds of work are allowed* at a given stage of repository evolution.
-* **Acceptance gates** define *what must be implemented and proven* before progressing.
+#### Phases (`PHASES.md`) — *Scope control*
 
-They answer questions such as:
+Phases define the **allowed scope of change** at a given point in the repository’s evolution. They answer questions such as:
 
-* Is this kind of change allowed right now?
-* Which components may be introduced?
-* What constitutes “done” at this stage?
+* *What kinds of changes are permitted right now?*
+* *Which subsystems may exist at all at this stage?*
+* *Is this work premature, even if it could be implemented correctly?*
 
-These documents prevent:
+Phases constrain:
+
+* **what may be attempted**,
+* **which components may be introduced**,
+* **what kinds of refactors or extensions are in-bounds**.
+
+A phase violation is a **scope failure**, even if all acceptance criteria would otherwise pass.
+
+---
+
+#### Acceptance gates (`ACCEPTANCE_GATES.md`) — *Correctness and progression control*
+
+Acceptance gates define **what must be implemented and proven** to advance development. They answer questions such as:
+
+* *What concrete functionality is required at this stage?*
+* *What correctness properties must hold?*
+* *Which tests and oracles must pass?*
+
+Acceptance gates constrain:
+
+* **what constitutes “done”**,
+* **what evidence of correctness is required**,
+* **when progression is allowed**.
+
+A gate failure is a **correctness failure**, even if the work is in-scope for the current phase.
+
+---
+
+#### Relationship between phases and gates
+
+* **Phases** decide *whether work is allowed to be attempted*.
+* **Acceptance gates** decide *whether attempted work is correct and complete*.
+
+Both must be satisfied:
+
+* correct work in the wrong phase **fails**,
+* in-phase work that fails gate criteria **fails**.
+
+Together, these documents prevent:
 
 * premature generalization,
-* scope creep,
-* skipping validation steps.
+* scope creep disguised as “cleanup”,
+* skipping validation steps,
+* implementing features “because they’re easy”.
 
 ---
 
 ### System architecture and decomposition (what exists, how it is structured)
 
-These documents define the **shape of the system** at a conceptual level. They answer questions such as:
+Documents in this class define the **structural reality of the system**. They constrain *what the system is*, independent of behavior, tests, or development order. This class also consists of two distinct documents with **different levels of abstraction and authority**:
 
-* What components exist?
-* What responsibilities do they have?
-* How are responsibilities divided?
-* What is explicitly *not* part of a component’s role?
+#### Architecture (`ARCHITECTURE.md`) — *Conceptual design intent*
 
-This layer establishes **structural boundaries** and prevents responsibility leakage. Documents in this class are **global constraints**: all implementation must conform to them.
+The architecture document defines the **high-level design model** of the system. It answers questions such as:
+
+* *What architectural pattern is used?*
+* *Why is the system structured this way?*
+* *What design principles are non-negotiable?*
+* *What alternatives were considered and rejected?*
+
+Architecture constrains:
+
+* **design intent**,
+* **allowed architectural styles**,
+* **non-goals and explicit exclusions**.
+
+It provides *rationale* and *direction*, not a module map.
+
+---
+
+#### Decomposition (`DECOMPOSITION.md`) — *Concrete component boundaries*
+
+The decomposition document defines the **authoritative breakdown of the system into components**. It answers questions such as:
+
+* *What components exist concretely?*
+* *What is each component responsible for?*
+* *What must a component not do?*
+* *What interfaces are allowed between components?*
+
+Decomposition constrains:
+
+* **component responsibilities**,
+* **module boundaries**,
+* **allowed dependencies**.
+
+It is the **operational boundary document** used to evaluate responsibility leakage.
+
+---
+
+### Relationship between architecture and decomposition
+
+* **Architecture** defines *why the system is shaped the way it is*.
+* **Decomposition** defines *how that shape is realized in components*.
+
+Architecture without decomposition is aspirational. Decomposition without architecture is arbitrary. Together, these documents ensure that:
+
+* structural decisions are intentional,
+* responsibility boundaries are explicit,
+* implementation cannot silently drift.
+
+All implementation must conform to **both**.
 
 ---
 
