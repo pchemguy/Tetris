@@ -45,6 +45,18 @@ Code exists to satisfy the docs — not the other way around.
 
 ---
 
+## Intended development workflow (summary)
+
+1. **Read all normative documents** (mandatory).
+2. Determine the current repository **phase** (`docs/PHASES.md`).
+3. Start at **Acceptance Gate 0** (`docs/ACCEPTANCE_GATES.md`).
+4. Implement incrementally, gate by gate.
+5. Write tests mapped to the applicable `docs/*_TEST_ORACLE.md` document(s).
+6. Stop and escalate on ambiguity.
+7. Extend behavior **only by updating documentation first**.
+
+---
+
 ## Normative Documentation System
 
 This repository is governed by a **layered documentation system**. Each document belongs to a **defined class** serving a distinct purpose in constraining, guiding, or evaluating the development process. The intent of this system is to:
@@ -159,7 +171,7 @@ It is the **operational boundary document** used to evaluate responsibility leak
 
 ---
 
-### Relationship between architecture and decomposition
+#### Relationship between architecture and decomposition
 
 * **Architecture** defines *why the system is shaped the way it is*.
 * **Decomposition** defines *how that shape is realized in components*.
@@ -228,9 +240,9 @@ This distinction is enforced by:
 
 ---
 
-### How to read the documentation index
+## Development documentation index (synopsis) and integration
 
-The documentation index that follows lists **all normative documents** and groups them by **conceptual responsibility**, not by implementation order. It is:
+The following table provides a **synoptic index** of all normative documents grouped by **conceptual responsibility**; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one.
 
 * not a development checklist,
 * not an implementation sequence,
@@ -242,11 +254,6 @@ To determine:
 * *what behavior is allowed* → consult **component specifications**,
 * *what must be tested* → consult **test oracles**.
 
----
-
-## Development documentation index (synopsis) and integration
-
-The following table provides a **synoptic index** all normative documents; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one.
 
 ### Project-wide
 
@@ -783,18 +790,6 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 * Enables exact reproduction of runs for debugging and agent evaluation.
 * Prevents permissive or auto-correcting replay behavior.
 * Applies exclusively to **Acceptance Gate 13**.
-
----
-
-## Intended development workflow (summary)
-
-1. **Read all normative documents** (mandatory).
-2. Determine the current repository **phase** (`docs/PHASES.md`).
-3. Start at **Acceptance Gate 0**.
-4. Implement incrementally, gate by gate.
-5. Write tests mapped to the applicable `docs/*_TEST_ORACLE.md` document(s).
-6. Stop and escalate on ambiguity.
-7. Extend behavior **only by updating documentation first**.
 
 ---
 
