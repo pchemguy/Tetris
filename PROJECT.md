@@ -120,7 +120,7 @@ This index is organized by **conceptual responsibility**, not by implementation 
 
 ### Gate applicability rules (normative)
 
-The applicability of documents to acceptance gates is governed by the following rules:
+The applicability of documents to acceptance gates defined in `ACCEPTANCE_GATES.md` is governed by the following rules:
 
 - **System-level contracts** apply to **all gates**. They constrain the system globally and must be obeyed at all stages.
 - **Core / engine contracts** apply to **core gates (0–9)**. They define the pure simulation and must not be violated during core development or extension.
