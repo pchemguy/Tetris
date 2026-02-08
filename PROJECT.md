@@ -52,6 +52,27 @@ This repository is governed by a **layered documentation system**. Each document
 
 ---
 
+### Development control documents (when work is allowed and evaluated)
+
+Documents in this class control **process**, not behavior:
+
+* **Phases** define *what kinds of work are allowed* at a given stage of repository evolution.
+* **Acceptance gates** define *what must be implemented and proven* before progressing.
+
+They answer questions such as:
+
+* Is this kind of change allowed right now?
+* Which components may be introduced?
+* What constitutes “done” at this stage?
+
+These documents prevent:
+
+* premature generalization,
+* scope creep,
+* skipping validation steps.
+
+---
+
 ### System architecture and decomposition (what exists, how it is structured)
 
 These documents define the **shape of the system** at a conceptual level. They answer questions such as:
@@ -127,27 +148,6 @@ This distinction is enforced by:
 * architecture and decomposition documents,
 * acceptance gates,
 * component-specific test oracles.
-
----
-
-### Development control documents (when work is allowed and evaluated)
-
-Documents in this class control **process**, not behavior:
-
-* **Phases** define *what kinds of work are allowed* at a given stage of repository evolution.
-* **Acceptance gates** define *what must be implemented and proven* before progressing.
-
-They answer questions such as:
-
-* Is this kind of change allowed right now?
-* Which components may be introduced?
-* What constitutes “done” at this stage?
-
-These documents prevent:
-
-* premature generalization,
-* scope creep,
-* skipping validation steps.
 
 ---
 
