@@ -47,14 +47,20 @@ Code exists to satisfy the docs — not the other way around.
 
 ## Normative Documentation System
 
+This repository is governed by a **layered documentation system**. Each document belongs to a **defined class** serving a distinct purpose in constraining, guiding, or evaluating the development process. The intent of this system is to:
 
-This repository is governed by a **layered documentation system**. Each document belongs to a **class** serving a distinct purpose in constraining, guiding, or evaluating development process. The intent is to make **expectations explicit**, documented assumptions, and allow both humans and AI agents to reason correctly about *what exists*, *what is allowed*, and *what is correct*.
+* make **expectations explicit**,
+* surface and document all assumptions,
+* allow both humans and AI agents to reason correctly about:
+    * *what exists*,
+    * *what is allowed*,
+    * *what is correct*.
 
 ---
 
 ### Development control documents (when work is allowed and evaluated)
 
-Documents in this class control **process**, not behavior:
+Documents in this class control **process**, not behavior.
 
 * **Phases** define *what kinds of work are allowed* at a given stage of repository evolution.
 * **Acceptance gates** define *what must be implemented and proven* before progressing.
@@ -82,14 +88,7 @@ These documents define the **shape of the system** at a conceptual level. They a
 * How are responsibilities divided?
 * What is explicitly *not* part of a component’s role?
 
-This layer establishes **structural boundaries** and prevents responsibility leakage.
-
-Typical documents in this class:
-
-* system architecture
-* system decomposition
-
-These documents are **global constraints**: all implementation must conform to them.
+This layer establishes **structural boundaries** and prevents responsibility leakage. Documents in this class are **global constraints**: all implementation must conform to them.
 
 ---
 
@@ -102,9 +101,9 @@ These documents define **what the system does**, component by component. They ar
 * What outputs or state transitions are permitted?
 * What is explicitly out of scope?
 
-This includes:
+This class includes:
 
-* core/engine behavior specifications,
+* core / engine behavior specifications,
 * shell-level behavior specifications (runtime, rendering, CLI, replay).
 
 If a behavior is not defined in a specification, it **must not be implemented**.
@@ -113,18 +112,14 @@ If a behavior is not defined in a specification, it **must not be implemented**.
 
 ### Test oracles (how correctness is proven)
 
-Test oracle documents define **what must be proven** for an implementation to be considered correct.
-
-They answer questions such as:
+Test oracle documents define **what must be proven** for an implementation to be considered correct. They answer questions such as:
 
 * Which behaviors must be tested?
 * What scenarios are mandatory?
 * What level of determinism is required?
 * What constitutes sufficient coverage for acceptance?
 
-Test oracles are **normative**: passing ad-hoc or convenience tests is insufficient if oracle-mandated tests are missing.
-
-Each test oracle applies to:
+Test oracles are **normative**: passing ad-hoc or convenience tests is insufficient if oracle-mandated tests are missing. Each test oracle applies to:
 
 * a specific component, and
 * a specific acceptance gate (or small range of gates).
@@ -153,8 +148,11 @@ This distinction is enforced by:
 
 ### How to read the documentation index
 
+The documentation index that follows lists **all normative documents** and groups them by **conceptual responsibility**, not by implementation order. It is:
 
-The documentation index that follows lists **all normative documents** and groups them by **conceptual responsibility**, not by implementation order. It shows *what kinds of documents exist* and *what role each plays* in the overall system, not a step-by-step development checklist. To understand **when** a document applies during development, refer to the **Gate applicability rules** below and to `ACCEPTANCE_GATES.md`.
+* not a development checklist,
+* not an implementation sequence,
+* not a tutorial.
 
 To determine:
 
