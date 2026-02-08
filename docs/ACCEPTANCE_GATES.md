@@ -68,7 +68,7 @@ Ensure the agent correctly discovers and obeys:
 - `DECOMPOSITION.md`
 - `ARCHITECTURE.md`
 
-**Shell contracts (only applicable when implementing shell components)**
+**Shell contracts**
 
 - `RUNTIME_SPEC.md`
 - `RENDERING_SPEC.md`
