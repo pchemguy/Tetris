@@ -7,18 +7,22 @@ URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 
 **System Decomposition and Component Responsibilities (Normative)**
 
+---
+
 ## 1. Purpose
 
-This document defines the authoritative decomposition of the Tetris application into components.
+This document defines the **authoritative decomposition** of the Tetris application into components and assigns **explicit responsibility boundaries** to each.
 
 It exists to:
 
 - make responsibilities and boundaries explicit,
-- prevent core/engine contamination with UI or platform concerns,
+- prevent core/engine contamination with UI, timing, or platform concerns,
 - enable role-based agent skills aligned to components,
 - support incremental delivery beyond the pure core.
 
 If a behavior or responsibility is not assigned here, it must not be implemented ad hoc.
+
+This document is **normative** and applies to all acceptance gates.
 
 ---
 
@@ -27,13 +31,20 @@ If a behavior or responsibility is not assigned here, it must not be implemented
 The system is decomposed into the following components:
 
 1. **Core (Engine)**
-2. **Presentation (Renderer)**
-3. **Input (Controller)**
-4. **Runtime (Game Loop / Orchestrator)**
-5. **App Shell (CLI / Entrypoints)**
-6. **Persistence (Optional)**
-7. **Test & Evaluation Harness**
-8. **Telemetry / Observability (Optional)**
+2. **Renderer (pure)**
+3. **Terminal Presenter (I/O)**
+4. **Input Driver (I/O)**
+5. **Input Controller (mapping / policy)**
+6. **Runtime (Game Loop / Orchestrator)**
+7. **App Shell (CLI / Entrypoints)**
+8. **Persistence (Optional)**
+9. **Test & Evaluation Harness**
+10. **Telemetry / Observability (Optional)**
+
+Notes:
+
+- The **core** is a pure deterministic simulation; all I/O and timing live outside it.
+- The **renderer** produces a representation of state; the **presenter** performs output.
 
 Each component has a strict responsibility boundary (see §3).
 
@@ -59,193 +70,250 @@ Each component has a strict responsibility boundary (see §3).
 
 **Explicit non-responsibilities**
 
-- No rendering
-- No real-time scheduling
-- No keyboard polling
-- No OS/window integration
-- No file IO by default
+- No rendering or formatting
+- No real-time scheduling or sleeping
+- No keyboard polling or OS integration
+- No file or network I/O by default
 
 ---
 
-### 3.2 Presentation (Renderer)
+### 3.2 Renderer (pure)
 
 **Location:** `tetris/src/tetris/rendering/` (module namespace reserved)
 
 **Responsibilities**
 
-- Convert a `GameState` into a presentable representation.
-- Support at least one "view":
-    - **ASCII renderer** for terminal display (MVP-friendly, dependency-light)
-
-Optional later:
-
-- a graphical renderer (separate module / optional dependency)
+- Convert a `GameState` into a deterministic representation.
+- Expose a renderer function with the interface (or equivalent):
+    - `render(state: GameState) -> str`
+- Implement the ASCII renderer behavior exactly as specified in `RENDERING_SPEC.md`.
 
 **Explicit non-responsibilities**
 
-- Must not modify game state.
-- Must not implement game rules.
-- Must not perform time stepping.
+- Must not perform output (stdout/stderr), screen clearing, cursor movement, or flushing.
+- Must not depend on environment, terminal capabilities, locale, or timing.
+- Must not mutate `GameState`.
+- Must not implement game rules or time stepping.
 
 ---
 
-### 3.3 Input (Controller)
+### 3.3 Terminal Presenter (I/O)
 
-**Location:** `tetris/src/tetris/input/` (module namespace reserved)
+**Location:** `tetris/src/tetris/presentation/` (module namespace reserved)
 
 **Responsibilities**
 
-- Map platform/user interactions into `InputEvent` sequences per tick.
-- Implement key repeat (if desired) *outside* the core.
-
-MVP target:
-
-- terminal input mapping sufficient for manual play OR scripted input.
+- Perform terminal output for rendered frames, including (if supported):
+    - clearing the screen and/or positioning the cursor,
+    - writing the rendered frame to an output stream,
+    - flushing output.
+- Remain independent of game rules and core state evolution.
 
 **Explicit non-responsibilities**
 
-- Must not implement collision/movement/rotation logic.
-- Must not mutate game state directly.
+- Must not compute rendering semantics (formatting rules belong to the renderer spec).
+- Must not interpret `GameState` or call core helpers beyond what runtime passes in.
+- Must not implement timing policy (tick scheduling belongs to runtime).
+
+**Notes**
+
+- Terminal sizing quirks or dynamic resizing are out of scope unless explicitly specified.
+  If unsupported, the presenter must not attempt implicit “best effort” adaptation.
 
 ---
 
-### 3.4 Runtime (Game Loop / Orchestrator)
+### 3.4 Input Driver (I/O)
+
+**Location:** `tetris/src/tetris/input/driver/` (module namespace reserved)
+
+**Responsibilities**
+
+- Acquire raw input signals from the environment (e.g. keyboard).
+- Support non-blocking polling when required by interactive runtime.
+- Provide raw or minimally normalized input signals to the input controller.
+
+**Explicit non-responsibilities**
+
+- Must not map inputs to `InputEvent` semantics (belongs to input controller).
+- Must not implement repeats, debouncing policy, or per-tick semantics.
+- Must not mutate `GameState` or call `step()`.
+
+---
+
+### 3.5 Input Controller (mapping / policy)
+
+**Location:** `tetris/src/tetris/input/controller.py` (module namespace reserved)
+
+**Responsibilities**
+
+- Map raw input signals to `InputEvent` values defined by `INPUT_MODEL.md`.
+- Enforce per-tick input semantics:
+    - ordering,
+    - no implicit key repeat unless explicitly specified,
+    - any policy required for interactive mode (if supported).
+
+**Explicit non-responsibilities**
+
+- Must not implement core game rules (movement/rotation/collision).
+- Must not mutate game state directly.
+- Must not perform OS I/O (belongs to input driver).
+
+---
+
+### 3.6 Runtime (Game Loop / Orchestrator)
 
 **Location:** `tetris/src/tetris/runtime/` (module namespace reserved)
 
 **Responsibilities**
 
-- Own the "tick clock":
-    - choose tick rate (e.g., 60 ticks/sec) for interactive play
-    - call `step(state, inputs, config)` once per tick
-- Coordinate:
-    - input acquisition
-    - rendering
-    - state progression
-    - termination conditions
-
-MVP target:
-
-- deterministic loop where tick rate can be:
-    - real-time (sleep-based), or
-    - virtual time (step-by-step), or
-    - scripted (no sleeps).
+- Own tick scheduling and loop control as specified in `RUNTIME_SPEC.md`.
+- Maintain the current `GameState`.
+- Coordinate one tick as:
+    1. collect inputs via input driver/controller,
+    2. call `step(state, inputs, config)` exactly once,
+    3. replace state with the returned state,
+    4. call renderer,
+    5. delegate output to presenter,
+    6. terminate on `state.is_game_over`.
+- Support scripted (virtual-time) mode as mandatory; interactive mode is optional.
 
 **Explicit non-responsibilities**
 
-- Must not re-implement gravity rules (core already does).
-- Must not contain game logic beyond orchestration.
+- Must not re-implement any game rule logic (gravity, locking, scoring, etc.).
+- Must not compute rendering semantics (belongs to renderer).
+- Must not directly read OS input (belongs to input driver).
 
 ---
 
-### 3.5 App Shell (CLI / Entrypoints)
+### 3.7 App Shell (CLI / Entrypoints)
 
 **Location:** `tetris/src/tetris/__main__.py` and/or `tetris/src/tetris/cli.py`
 
 **Responsibilities**
 
-- Parse args and choose mode:
-    - run interactive terminal game
-    - run scripted simulation
-    - dump state snapshots
-    - run quick sanity checks
+- Parse arguments and select execution mode per `CLI_SPEC.md`.
+- Wire together components:
+    - runtime,
+    - renderer,
+    - presenter,
+    - input driver/controller (if interactive),
+    - replay loader (if replay).
+- Configure runtime and renderer selection explicitly when supported.
 
 **Explicit non-responsibilities**
 
-- No implementation of core rules.
-- No tests (tests live in `tetris/tests/`).
+- Must not implement core rules.
+- Must not implement rendering semantics.
+- Must not contain test logic (tests live under `tetris/tests/`).
 
 ---
 
-### 3.6 Persistence (Optional)
+### 3.8 Persistence (Optional)
 
 **Location:** `tetris/src/tetris/persistence/` (reserved)
 
 **Responsibilities**
 
-- Save/load:
+- Save/load auxiliary data such as:
     - high scores (if enabled),
     - configuration,
-    - optionally deterministic replay traces (inputs + seed).
+    - deterministic replay traces (inputs + seed), as specified by `REPLAY_SPEC.md`.
 
-**Constraint**
+**Constraints**
 
-- Persistence must not affect determinism of the core.
+- Persistence must not affect core determinism.
+- Replay loading must be strict; no auto-correction of invalid data.
 
 ---
 
-### 3.7 Test & Evaluation Harness
+### 3.9 Test & Evaluation Harness
 
 **Location:** `tetris/tests/` plus optional `eval/` (reserved)
 
 **Responsibilities**
 
-- Implement all oracles in `CORE_TEST_ORACLE.md`.
-- Provide regression tests that enforce:
+- Implement all mandatory oracles in:
+    - `CORE_TEST_ORACLE.md`,
+    - relevant shell-level `*_TEST_ORACLE.md` documents when applicable.
+- Enforce:
     - determinism,
     - invariants,
-    - API compatibility.
+    - API compatibility,
+    - regression protection.
 
-Optional:
+**Explicit non-responsibilities**
 
-- scenario-based "agent evaluation" tasks and reports.
+- Must not weaken oracles to accommodate implementation.
+- Must not add speculative tests for unspecified behavior.
 
 ---
 
-### 3.8 Telemetry / Observability (Optional)
+### 3.10 Telemetry / Observability (Optional)
 
 **Location:** `tetris/src/tetris/telemetry/` (reserved)
 
 **Responsibilities**
 
-- Collect:
+- Collect diagnostics such as:
     - step events,
-    - performance counters,
-    - debug traces,
-      without mutating logic.
+    - counters,
+    - traces,
+      without mutating core logic.
+
+**Constraints**
+
+- Must not affect core determinism or game semantics.
+- Must not become a dependency for core correctness.
 
 ---
 
 ## 4. Interfaces between components
 
-The only allowed cross-component interfaces:
+The only allowed cross-component interfaces are:
 
-- Runtime -> Core:
+- **Runtime → Core**
     - `new_game(config)`
     - `step(state, inputs, config)`
-- Runtime -> Input:
-    - `poll_inputs(...) -> tuple[InputEvent, ...]`
-- Runtime -> Renderer:
-    - `render(state) -> str` (ASCII MVP)
-- CLI -> Runtime:
+- **Runtime → Input Driver / Controller**
+    - `poll_raw_inputs(...) -> <raw input representation>` (driver)
+    - `poll_inputs(...) -> tuple[InputEvent, ...]` (controller or combined adapter)
+- **Runtime → Renderer**
+    - `render(state) -> str`
+- **Runtime → Presenter**
+    - `present(frame: str) -> None`
+- **CLI → Runtime**
     - `run(...)` entrypoints
 
-No component may "reach across" boundaries by importing internal helpers from another component unless explicitly designated as public API.
+No component may “reach across” boundaries by importing internal helpers from another component unless explicitly designated as public API.
 
 ---
 
 ## 5. Delivery staging
 
-The recommended staged expansion beyond core:
+The recommended staged expansion beyond the pure core:
 
-1. **Core + tests** (Gates 0-6)
-2. **ASCII renderer** (view only)
-3. **Scripted runtime** (no real-time) to support reproducible replays
-4. **Interactive runtime + input mapping**
-5. Optional: persistence (high scores / replay traces)
-6. Optional: graphical renderer
+1. **Core + tests** (Gates 0–6)
+2. Optional: **core extensions** (Gates 7–9)
+3. **ASCII renderer** (Gate 10)
+4. **Scripted runtime** (Gate 11)
+5. **CLI** (Gate 12)
+6. **Replay** (Gate 13)
+7. Optional: **interactive runtime + terminal input/presentation** (additional gate if required)
+8. Optional: persistence (high scores, replay logs)
+9. Optional: telemetry/observability
 
 ---
 
 ## 6. Skill mapping note (non-normative)
 
-Agent skills should map to roles that primarily "own" one component:
+Agent skills should map to roles that primarily “own” one component:
 
 - core logic
 - test generation
 - runtime/orchestration
 - renderer
-- input/controller
+- terminal presenter
+- input driver/controller
 - CLI integration
 - refactoring and bugfixing
 
