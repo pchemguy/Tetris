@@ -11,19 +11,19 @@ This project develops and evaluates a **prompting system for agentic software de
 
 The reference implementation target is **classic Tetris**, chosen not as a game project per se, but as a compact, well-understood system that stresses:
 
-- deterministic state machines,
-- strict rule adherence,
-- geometry and collision logic,
-- time-stepped simulation,
-- incremental feature integration,
-- comprehensive test oracles.
+* deterministic state machines,
+* strict rule adherence,
+* geometry and collision logic,
+* time-stepped simulation,
+* incremental feature integration,
+* comprehensive test oracles.
 
 The primary deliverable of this repository is **not** “a Tetris game”, but a **set of development contracts, specifications, and acceptance gates** that allow rigorous evaluation of whether an AI agent can:
 
-- discover and obey documentation,
-- implement incrementally without guessing,
-- stop and escalate when blocked,
-- produce auditable, deterministic software artifacts.
+* discover and obey documentation,
+* implement incrementally without guessing,
+* stop and escalate when blocked,
+* produce auditable, deterministic software artifacts.
 
 Human developers remain ultimately responsible for correctness and maintenance, but the project is explicitly designed to be **AI-readable, AI-actionable, and AI-auditable**.
 
@@ -33,22 +33,21 @@ Human developers remain ultimately responsible for correctness and maintenance, 
 
 ```
 .
-├── docs/                  # Normative development specifications (this project’s core)
+├── docs/                  # Normative development specifications (authoritative)
 ├── tetris/src/tetris/     # Python core + shell implementation package
 ├── .agent/skills/         # Agent skills (plan / implement / review units)
 ├── PROJECT.md             # This document (primary entry point)
-└── README.md              # Optional human-facing wrapper (may delegate to PROJECT.md)
-
+└── README.md              # Optional human-facing wrapper
 ```
 
-The **docs/** directory is authoritative.  
+The **docs/** directory is authoritative.
 Code exists to satisfy the docs — not the other way around.
 
 ---
 
 ## 3. Development documentation index (synopsis)
 
-The following table provides a **synoptic index** of all normative development documents. Agents are expected to **discover and reason over all of them**, not just one.  
+The following table provides a **synoptic index** of all normative development documents. Agents are expected to **discover and reason over all of them**, not just one.
 
 ### Project-wide
 
@@ -57,12 +56,16 @@ The following table provides a **synoptic index** of all normative development d
 | Project Overview (this file) | `PROJECT.md`          | Entry point and documentation map   |
 | Acceptance Gates             | `ACCEPTANCE_GATES.md` | Milestone-based acceptance criteria |
 
+---
+
 ### System-level contracts
 
 | Title                | Filename           | Function / Role                                   |
 | -------------------- | ------------------ | ------------------------------------------------- |
 | System Architecture  | `ARCHITECTURE.md`  | High-level system architecture and design choices |
 | System Decomposition | `DECOMPOSITION.md` | Explicit component decomposition and boundaries   |
+
+---
 
 ### Core / engine contracts
 
@@ -75,46 +78,55 @@ The following table provides a **synoptic index** of all normative development d
 | Shapes & Rotations | `SHAPES_AND_ROTATIONS.md` | Exact tetromino geometry and rotations           |
 | Core API           | `CORE_API.md`             | Python-level public API contract                 |
 
-### Core Test Oracle
+---
 
-| Title              | Filename                  | Function / Role                                  |
-| ------------------ | ------------------------- | ------------------------------------------------ |
-| Core Test Oracle   | `CORE_TEST_ORACLE.md`     | Mandatory correctness tests for the pure core    |
+### Core test oracle
+
+| Title            | Filename              | Function / Role                               |
+| ---------------- | --------------------- | --------------------------------------------- |
+| Core Test Oracle | `CORE_TEST_ORACLE.md` | Mandatory correctness tests for the pure core |
+
+---
 
 ### Shell contracts
 
-| Title                   | Filename                   | Function / Role                                     |
-| ----------------------- | -------------------------- | --------------------------------------------------- |
-| Runtime Specification   | `RUNTIME_SPEC.md`          | Tick loop, execution modes, and orchestration rules |
-| Rendering Specification | `RENDERING_SPEC.md`        | ASCII renderer contract and output format           |
-| CLI Specification       | `CLI_SPEC.md`              | Command-line interface and entrypoint behavior      |
-| Replay Specification    | `REPLAY_SPEC.md`           | Deterministic replay and evaluation format          |
+| Title                   | Filename            | Function / Role                                     |
+| ----------------------- | ------------------- | --------------------------------------------------- |
+| Runtime Specification   | `RUNTIME_SPEC.md`   | Tick loop, execution modes, and orchestration rules |
+| Rendering Specification | `RENDERING_SPEC.md` | ASCII renderer contract and output format           |
+| CLI Specification       | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior      |
+| Replay Specification    | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format          |
 
-### Shell Test Oracles
+---
 
-| Title                   | Filename                   | Function / Role                                     |
-| ----------------------- | -------------------------- | --------------------------------------------------- |
-| Rendering Test Oracle   | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
-| Runtime Test Oracle     | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
-| CLI Test Oracle         | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
-| Replay Test Oracle      | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
+### Shell-level test oracles
+
+| Title                 | Filename                   | Function / Role                                     |
+| --------------------- | -------------------------- | --------------------------------------------------- |
+| Rendering Test Oracle | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
+| Runtime Test Oracle   | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
+| CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
+| Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
+
+---
 
 ### Further development
 
 Adding a new component requires adding:
 
-- Specification document.
-- Index row in appropriate subsection of this (synopsis) section.
-- Extended description in the following section.
-- Test oracle document (optional)
-- Acceptance gate (optional, `ACCEPTANCE_GATES.md`)
+* A specification document
+* An index row in the appropriate subsection above
+* An extended description in Section 4
+* A test oracle document (optional)
+* An acceptance gate (optional in `ACCEPTANCE_GATES.md`)
 
 ### Notes
 
-- This table is a **synopsis**, not a substitute for reading the documents themselves.
-- These documents reside under `/docs/`, with the exception of `PROJECT.md` (this file), which is located at the repository root.
-- All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
-- All documents listed above are **normative** unless explicitly stated otherwise. Non-normative docs (guides, notes, examples) may be added later.
+* This table is a **synopsis**, not a substitute for reading the documents themselves.
+* All documents listed above
+    * reside under `/docs/`, with the exception of `PROJECT.md`, which is located at the repository root.
+    * are **normative** unless explicitly stated otherwise. Non-normative documents (guides, notes, examples) may be added later.
+* All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
 - If a conflict arises between code and docs, the implementation is considered incorrect.
 
 ---
