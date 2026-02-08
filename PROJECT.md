@@ -5,7 +5,7 @@ URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 
 # PROJECT.md
 
-## Project overview
+## 1. Project overview
 
 This project develops and evaluates a **prompting system for agentic software development**. Repository evolution is organized into explicit **phases** (defined in `docs/PHASES.md`), which constrain *what kind of work is allowed* at each stage. 
 
@@ -29,7 +29,7 @@ Human developers remain ultimately responsible for correctness and maintenance, 
 
 ---
 
-## Repository layout (high level)
+## 2. Repository layout (high level)
 
 ```
 .
@@ -45,7 +45,9 @@ Code exists to satisfy the docs — not the other way around.
 
 ---
 
-## Intended development workflow (summary)
+## 3. Intended development workflow (summary)
+
+The workflow below assumes full understanding of the documentation authority model described in the next section.
 
 1. **Read all normative documents** (mandatory).
 2. Determine the current repository **phase** (`docs/PHASES.md`).
@@ -57,7 +59,7 @@ Code exists to satisfy the docs — not the other way around.
 
 ---
 
-## Normative Documentation System
+## 4. Normative Documentation System
 
 This repository is governed by a **layered documentation system**. Each document belongs to a **defined class** serving a distinct purpose in constraining, guiding, or evaluating the development process. The intent of this system is to:
 
@@ -200,7 +202,7 @@ This class includes:
 * core / engine behavior specifications,
 * shell-level behavior specifications (runtime, rendering, CLI, replay).
 
-If a behavior is not defined in a specification, it **must not be implemented**.
+Behavior must not be inferred from tests, examples, or implementation patterns; only explicit specification text is authoritative. If a behavior is not defined in a specification, it **must not be implemented**.
 
 ---
 
@@ -240,9 +242,9 @@ This distinction is enforced by:
 
 ---
 
-## Development documentation index (synopsis) and integration
+## 5. Development documentation index (synopsis) and integration
 
-The following table provides a **synoptic index** of all normative documents grouped by **conceptual responsibility**; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one.
+The following table provides a **synoptic index** of all normative documents grouped by **conceptual responsibility**; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one. Partial discovery or selective reading constitutes non-compliance.
 
 * not a development checklist,
 * not an implementation sequence,
@@ -257,11 +259,12 @@ To determine:
 
 ### Project-wide
 
-| Title                        | Filename              | Function / Role                                                     |
-| ---------------------------- | --------------------- | ------------------------------------------------------------------- |
-| Project Overview (this file) | `PROJECT.md`          | Entry point and documentation map                                   |
-| Repository Evolution Phases  | `PHASES.md`           | Defines allowed scope of work at each stage of repository evolution |
-| Acceptance Gates             | `ACCEPTANCE_GATES.md` | Milestone-based acceptance criteria                                 |
+| Title                        | Filename                | Function / Role                                                                             |
+| ---------------------------- | ----------------------- | ------------------------------------------------------------------------------------------- |
+| Project Overview (this file) | `PROJECT.md`            | Primary entry point; explains the documentation system and **governed development process** |
+| Documentation Authority Map  | `DOCS_AUTHORITY_MAP.md` | Authoritative hierarchy and conflict-resolution rules among docs                            |
+| Repository Evolution Phases  | `PHASES.md`             | Allowed scope of work at each stage of repository evolution                                 |
+| Acceptance Gates             | `ACCEPTANCE_GATES.md`   | Milestone-based acceptance criteria and progression rules                                   |
 
 ---
 
@@ -376,7 +379,7 @@ Adding a new component requires adding:
 
 ---
 
-## Extended development documentation overview
+## 6. Extended development documentation overview
 
 This section explains **how each document is intended to be used**, both by AI agents and by human developers supervising or reviewing agent output.
 
@@ -793,7 +796,7 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 
 ---
 
-## Audience note
+## 7. Audience note
 
 * **AI agents**: This document defines your operating environment. Partial reading is failure.
 * **Human developers**: This document is intended to remain readable, editable, and authoritative even as AI assistance evolves.

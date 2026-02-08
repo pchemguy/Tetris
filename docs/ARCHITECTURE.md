@@ -2,6 +2,7 @@
 name: ARCHITECTURE.md
 URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
+
 # ARCHITECTURE
 
 **System Architecture, Options, and Chosen Defaults (Normative)**
@@ -24,7 +25,7 @@ It exists to:
 A modular system with a strict separation between:
 
 - **Pure deterministic core** (simulation)
-- **Impure shell** (I/O, rendering, input polling, timing)
+- **Impure shell** (input acquisition, input policy, presentation, I/O, timing)
 
 This ensures:
 
@@ -48,27 +49,45 @@ This ensures:
 
 This is the chosen pattern.
 
+Within the imperative shell, responsibilities are further separated into:
+
+- pure transformation components (e.g. rendering),
+- I/O adapters (input drivers, presenters),
+- coordination logic (runtime).
+
+These separations are architectural requirements, not implementation details.
+
 ---
 
 ## 4. Component diagram (conceptual)
 
 ```
-+-------------------+        inputs        +-------------------+
-|    Input Layer    |--------------------->|                   |
-| (poll / mapping)  |                      |                   |
-+-------------------+                      |                   |
-|     Runtime       |                      |                   |
-+-------------------+       state          | (tick loop)       |
-|     Renderer      |<---------------------|                   |
-|   (ASCII MVP)     |                      |                   |
-+-------------------+                      +---------+---------+
-|
-| step()
-v
-+-------------------+
-|       Core        |
-| (pure simulation) |
-+-------------------+
++----------------------+        raw input       +----------------------+
+|   Input Driver (I/O) |----------------------->|                      |
++----------------------+                        |                      |
+        |                                       |                      |
+        v                                       |                      |
++----------------------+     InputEvent(s)      |                      |
+| Input Controller     |----------------------->|        Runtime       |
+| (mapping / policy)   |                        |    (orchestrator)    |
++----------------------+                        |          |           | 
+                                                |          v           | 
+                                                |      render()        | 
+                                                |          |           | 
+                                                |          v           | 
+                                                |     Renderer (pure)  | 
+                                                |          |           | 
+                                                |          v           | 
+                                                |   Presenter (I/O)    | 
+                                                +----------+-----------+ 
+                                                           |
+                                                           | step()
+                                                           v 
+                                                +----------------------+
+                                                |        Core          |
+                                                |  (pure simulation)   | 
+                                                +----------------------+
+                                                
 ```
 
 ---
@@ -156,15 +175,16 @@ Shell may depend on:
 
 ## 7. Extension docs required for non-core components
 
-The existing spec set is core-heavy. To expand cleanly, the following docs are introduced (or reserved) as architecture-level contracts:
+The following architecture-level contracts govern non-core components:
 
-- `DECOMPOSITION.md` (component boundaries) ✅
-- `RENDERING_SPEC.md` (ASCII view conventions) (planned)
-- `RUNTIME_SPEC.md` (tick rate, modes, loop semantics) (planned)
-- `CLI_SPEC.md` (commands, flags, modes) (planned)
-- `REPLAY_SPEC.md` (seed + inputs trace format) (optional, planned)
+- `DECOMPOSITION.md` — component boundaries (authoritative)
+- `RENDERING_SPEC.md` — ASCII rendering semantics
+- `RUNTIME_SPEC.md` — execution modes and tick semantics
+- `CLI_SPEC.md` — entrypoints and command behavior
+- `REPLAY_SPEC.md` — deterministic replay format
 
-Agents must not implement shell behavior until the corresponding spec exists.
+Agents must not implement or extend shell behavior without the corresponding
+specification being present and acknowledged.
 
 ---
 
@@ -175,6 +195,7 @@ Agents must not implement shell behavior until the corresponding spec exists.
 - Runtime is the only component that calls `step()` in interactive mode.
 - Tests must be able to run without any interactive UI.
 - Deterministic scripted runs must be supported for evaluation.
+- Rendering semantics and output side effects are strictly separated.
 
 ---
 
