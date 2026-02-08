@@ -110,6 +110,29 @@ The following table provides a **synoptic index** of all normative development d
 
 ---
 
+### How to read this index (for human readers)
+
+This index is organized by **conceptual responsibility**, not by implementation order. It shows *what kinds of documents exist* and *what role each plays* in the overall system, not a step-by-step development checklist. To understand **when** a document applies during development, refer to the **Gate applicability rules** below and to `ACCEPTANCE_GATES.md`.
+
+**For agents:** This index enumerates all normative documents; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order.
+
+---
+
+### Gate applicability rules (normative)
+
+The applicability of documents to acceptance gates is governed by the following rules:
+
+- **System-level contracts** apply to **all gates**. They constrain the system globally and must be obeyed at all stages.
+- **Core / engine contracts** apply to **core gates (0–9)**. They define the pure simulation and must not be violated during core development or extension.
+- **Core test oracle** (`CORE_TEST_ORACLE.md`) applies to **Gates 1–6**, and additionally to **Gates 7–9** if those optional core extensions are enabled.
+- **Shell contracts** apply to their respective **shell gates (10–13)** when implementation is permitted.
+- **Shell-level test oracles** apply to **exactly one gate each**, corresponding to the shell component they validate.
+- **Gate 0** applies universally as a discovery and compliance gate and therefore requires awareness of all normative documents, even if they are not yet implemented.
+
+These rules are authoritative and supersede any informal interpretation of document scope.
+
+---
+
 ### Further development
 
 Adding a new component requires adding:
