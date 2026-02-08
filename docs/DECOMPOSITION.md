@@ -103,16 +103,17 @@ Each component has a strict responsibility boundary (see §3).
 
 **Responsibilities**
 
-- Perform terminal output for rendered frames, including (if supported):
+- Perform terminal output for rendered frames (`str`) including (if supported):
     - clearing the screen and/or positioning the cursor,
     - writing the rendered frame to an output stream,
     - flushing output.
-- Remain independent of game rules and core state evolution.
+- Provide presentation *mechanics* only; the presenter treats the frame as opaque text.
 
 **Explicit non-responsibilities**
 
-- Must not compute rendering semantics (formatting rules belong to the renderer spec).
-- Must not interpret `GameState` or call core helpers beyond what runtime passes in.
+- Must not compute or alter rendering semantics (formatting rules belong to `RENDERING_SPEC.md`).
+- Must not interpret `GameState` (the presenter should not receive `GameState` at all).
+- Must not branch behavior based on frame content (no “parsing” rendered output).
 - Must not implement timing policy (tick scheduling belongs to runtime).
 
 **Notes**
@@ -130,13 +131,14 @@ Each component has a strict responsibility boundary (see §3).
 
 - Acquire raw input signals from the environment (e.g. keyboard).
 - Support non-blocking polling when required by interactive runtime.
-- Provide raw or minimally normalized input signals to the input controller.
+- Provide raw (or minimally normalized) input signals to the input controller.
 
 **Explicit non-responsibilities**
 
-- Must not map inputs to `InputEvent` semantics (belongs to input controller).
-- Must not implement repeats, debouncing policy, or per-tick semantics.
+- Must not map inputs to `InputEvent` semantics (belongs to the input controller).
+- Must not implement repeats, debouncing policy, or per-tick semantics (belongs to controller/runtime policy).
 - Must not mutate `GameState` or call `step()`.
+- Must not implement “default keybindings” (belongs to controller configuration).
 
 ---
 
@@ -215,9 +217,9 @@ Each component has a strict responsibility boundary (see §3).
 **Responsibilities**
 
 - Save/load auxiliary data such as:
-    - high scores (if enabled),
-    - configuration,
-    - deterministic replay traces (inputs + seed), as specified by `REPLAY_SPEC.md`.
+  - high scores (if enabled),
+  - configuration,
+  - deterministic replay traces (inputs + seed), as specified by `REPLAY_SPEC.md`.
 
 **Constraints**
 
@@ -258,7 +260,7 @@ Each component has a strict responsibility boundary (see §3).
     - step events,
     - counters,
     - traces,
-      without mutating core logic.
+  without mutating core logic.
 
 **Constraints**
 
@@ -274,9 +276,10 @@ The only allowed cross-component interfaces are:
 - **Runtime → Core**
     - `new_game(config)`
     - `step(state, inputs, config)`
-- **Runtime → Input Driver / Controller**
-    - `poll_raw_inputs(...) -> <raw input representation>` (driver)
-    - `poll_inputs(...) -> tuple[InputEvent, ...]` (controller or combined adapter)
+- **Runtime → Input Driver**
+    - `poll_raw_inputs(...) -> <raw input representation>`
+- **Runtime → Input Controller**
+    - `poll_inputs(...) -> tuple[InputEvent, ...]`
 - **Runtime → Renderer**
     - `render(state) -> str`
 - **Runtime → Presenter**
@@ -284,7 +287,15 @@ The only allowed cross-component interfaces are:
 - **CLI → Runtime**
     - `run(...)` entrypoints
 
-No component may “reach across” boundaries by importing internal helpers from another component unless explicitly designated as public API.
+Constraints:
+
+- Presenter must not receive `GameState`; it receives only the rendered `frame: str`.
+- Renderer must not perform I/O; it returns only a `str`.
+- Input driver must not return `InputEvent`; it returns only raw input signals.
+- Input controller must not perform OS I/O; it maps raw inputs to `InputEvent`s.
+
+No component may “reach across” boundaries by importing internal helpers from another
+component unless explicitly designated as public API.
 
 ---
 
@@ -298,9 +309,7 @@ The recommended staged expansion beyond the pure core:
 4. **Scripted runtime** (Gate 11)
 5. **CLI** (Gate 12)
 6. **Replay** (Gate 13)
-7. Optional: **interactive runtime + terminal input/presentation** (additional gate if required)
-8. Optional: persistence (high scores, replay logs)
-9. Optional: telemetry/observability
+7. Optional: **interactive runtime + terminal I/O adapters** (input driver + presenter)
 
 ---
 
