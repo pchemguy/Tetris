@@ -47,9 +47,7 @@ Code exists to satisfy the docs — not the other way around.
 
 ## 3. Development documentation index (synopsis)
 
-The following table provides a **synoptic index** of all normative development documents.
-These documents reside under `/docs/`, with the exception of `PROJECT.md` (this file) placed in the root.  
-Agents are expected to **discover and reason over all of them**, not just one.  
+The following table provides a **synoptic index** of all normative development documents. Agents are expected to **discover and reason over all of them**, not just one.  
 
 ### Project-wide
 
@@ -62,43 +60,45 @@ Agents are expected to **discover and reason over all of them**, not just one.
 
 |       | Title              | Filename                  | Function / Role                                  |
 | ----: | ------------------ | ------------------------- | ------------------------------------------------ |
-| **2** | Game Rules         | `GAME_RULES.md`           | Behavioral specification (what the game does)    |
-| **3** | Game State Model   | `GAME_STATE.md`           | Deterministic state machine and step semantics   |
-| **4** | Input Model        | `INPUT_MODEL.md`          | Input representation and tick ordering           |
-| **5** | Error Handling     | `ERROR_HANDLING.md`       | Rejection vs error policy; invariant enforcement |
-| **6** | Shapes & Rotations | `SHAPES_AND_ROTATIONS.md` | Exact tetromino geometry and rotations           |
-| **7** | Core API           | `CORE_API.md`             | Python-level public API contract                 |
+| **1** | Game Rules         | `GAME_RULES.md`           | Behavioral specification (what the game does)    |
+| **2** | Game State Model   | `GAME_STATE.md`           | Deterministic state machine and step semantics   |
+| **3** | Input Model        | `INPUT_MODEL.md`          | Input representation and tick ordering           |
+| **4** | Error Handling     | `ERROR_HANDLING.md`       | Rejection vs error policy; invariant enforcement |
+| **5** | Shapes & Rotations | `SHAPES_AND_ROTATIONS.md` | Exact tetromino geometry and rotations           |
+| **6** | Core API           | `CORE_API.md`             | Python-level public API contract                 |
 
 ### Test Oracles
 
-|        | Title                 | Filename                   | Function / Role                                     |
-| -----: | --------------------- | -------------------------- | --------------------------------------------------- |
-|  **8** | Core Test Oracle      | `CORE_TEST_ORACLE.md`      | Mandatory correctness tests for the pure core       |
-|  **9** | Rendering Test Oracle | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
-| **10** | Runtime Test Oracle   | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
-| **11** | CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
-| **12** | Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
+|       | Title                 | Filename                   | Function / Role                                     |
+| ----: | --------------------- | -------------------------- | --------------------------------------------------- |
+| **1** | Core Test Oracle      | `CORE_TEST_ORACLE.md`      | Mandatory correctness tests for the pure core       |
+| **2** | Rendering Test Oracle | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
+| **3** | Runtime Test Oracle   | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
+| **4** | CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
+| **5** | Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
 
 ### System-level contracts
 
-|        | Title                | Filename           | Function / Role                                   |
-| -----: | -------------------- | ------------------ | ------------------------------------------------- |
-| **13** | System Architecture  | `ARCHITECTURE.md`  | High-level system architecture and design choices |
-| **14** | System Decomposition | `DECOMPOSITION.md` | Explicit component decomposition and boundaries   |
+|       | Title                | Filename           | Function / Role                                   |
+| ----: | -------------------- | ------------------ | ------------------------------------------------- |
+| **1** | System Architecture  | `ARCHITECTURE.md`  | High-level system architecture and design choices |
+| **2** | System Decomposition | `DECOMPOSITION.md` | Explicit component decomposition and boundaries   |
 
 ### Shell contracts
 
-|        | Title                   | Filename            | Function / Role                                     |
-| -----: | ----------------------- | ------------------- | --------------------------------------------------- |
-| **15** | Runtime Specification   | `RUNTIME_SPEC.md`   | Tick loop, execution modes, and orchestration rules |
-| **16** | Rendering Specification | `RENDERING_SPEC.md` | ASCII renderer contract and output format           |
-| **17** | CLI Specification       | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior      |
-| **18** | Replay Specification    | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format          |
+|       | Title                   | Filename            | Function / Role                                     |
+| ----: | ----------------------- | ------------------- | --------------------------------------------------- |
+| **1** | Runtime Specification   | `RUNTIME_SPEC.md`   | Tick loop, execution modes, and orchestration rules |
+| **2** | Rendering Specification | `RENDERING_SPEC.md` | ASCII renderer contract and output format           |
+| **3** | CLI Specification       | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior      |
+| **4** | Replay Specification    | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format          |
 
-All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
+### Notes
 
-**Important**:  
-This table is a **synopsis**, not a substitute for reading the documents themselves.
+- This table is a **synopsis**, not a substitute for reading the documents themselves.
+- These documents reside under `/docs/`, with the exception of `PROJECT.md` (this file), which is located at the repository root.
+- All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
+- All documents listed above are **normative** unless explicitly stated otherwise. Non-normative docs (guides, notes, examples) may be added later.
 
 ---
 
@@ -106,7 +106,9 @@ This table is a **synopsis**, not a substitute for reading the documents themsel
 
 This section explains **how each document is intended to be used**, both by AI agents and by human developers supervising or reviewing agent output.
 
-### 4.1 `ACCEPTANCE_GATES.md` — Milestone control
+### Project-wide
+
+#### `ACCEPTANCE_GATES.md` — Milestone control
 
 **Role**  
 Controls **when the agent is allowed to advance**.
@@ -124,7 +126,9 @@ Controls **when the agent is allowed to advance**.
 
 ---
 
-### 4.2 `GAME_RULES.md` — Behavioral specification
+### Core / engine contracts
+
+#### 1. `GAME_RULES.md` — Behavioral specification
 
 **Role**  
 Defines *what* the game does, independent of implementation.
@@ -146,7 +150,7 @@ Defines *what* the game does, independent of implementation.
 
 ---
 
-### 4.3 `GAME_STATE.md` — State machine and step semantics
+#### 2. `GAME_STATE.md` — State machine and step semantics
 
 **Role**  
 Defines *how* the game evolves over time in a deterministic, testable way.
@@ -165,7 +169,7 @@ Defines *how* the game evolves over time in a deterministic, testable way.
 
 ---
 
-### 4.4 `INPUT_MODEL.md` — Input semantics
+#### 3. `INPUT_MODEL.md` — Input semantics
 
 **Role**  
 Removes ambiguity around how inputs are applied.
@@ -184,7 +188,7 @@ Removes ambiguity around how inputs are applied.
 
 ---
 
-### 4.5 `ERROR_HANDLING.md` — Errors vs rejections
+#### 4. `ERROR_HANDLING.md` — Errors vs rejections
 
 **Role**  
 Defines when the system should **reject** an action versus **fail fast**.
@@ -202,7 +206,7 @@ Defines when the system should **reject** an action versus **fail fast**.
 
 ---
 
-### 4.6 `SHAPES_AND_ROTATIONS.md` — Geometry truth table
+#### 5. `SHAPES_AND_ROTATIONS.md` — Geometry truth table
 
 **Role**  
 Defines **exact tetromino geometry** and rotation states.
@@ -219,7 +223,7 @@ Defines **exact tetromino geometry** and rotation states.
 
 ---
 
-### 4.7 `CORE_API.md` — Python API contract
+#### 6. `CORE_API.md` — Python API contract
 
 **Role**  
 Defines the **only supported public API** for the core.
@@ -238,7 +242,9 @@ Defines the **only supported public API** for the core.
 
 ---
 
-### 4.8 `CORE_TEST_ORACLE.md` — Mandatory tests
+### Test Oracles
+
+#### 1. `CORE_TEST_ORACLE.md` — Mandatory tests
 
 **Role**  
 Defines *what must be proven* for correctness.
@@ -255,7 +261,7 @@ Defines *what must be proven* for correctness.
 
 ---
  
-### 4.9 `RENDERING_TEST_ORACLE.md` — Renderer correctness
+#### 2. `RENDERING_TEST_ORACLE.md` — Renderer correctness
 
 **Role**
 Defines the **mandatory automated tests** that the ASCII renderer must satisfy.
@@ -278,7 +284,7 @@ Defines the **mandatory automated tests** that the ASCII renderer must satisfy.
 
 ---
 
-### 4.10 `RUNTIME_TEST_ORACLE.md` — Scripted runtime correctness
+#### 3. `RUNTIME_TEST_ORACLE.md` — Scripted runtime correctness
 
 **Role**
 Defines the **mandatory tests** for the scripted (virtual-time) runtime.
@@ -299,7 +305,7 @@ Defines the **mandatory tests** for the scripted (virtual-time) runtime.
 
 ---
 
-### 4.11 `CLI_TEST_ORACLE.md` — CLI behavior and robustness
+#### 4. `CLI_TEST_ORACLE.md` — CLI behavior and robustness
 
 **Role**
 Defines **mandatory behavioral tests** for the command-line interface.
@@ -319,7 +325,7 @@ Defines **mandatory behavioral tests** for the command-line interface.
 
 ---
 
-### 4.12 `REPLAY_TEST_ORACLE.md` — Deterministic replay correctness
+#### 5. `REPLAY_TEST_ORACLE.md` — Deterministic replay correctness
 
 **Role**
 Defines **mandatory tests** for replay loading, validation, and execution.
@@ -339,7 +345,9 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 
 ---
 
-### 4.13 `ARCHITECTURE.md` — System-level architecture
+### System-level contracts
+
+#### 1. `ARCHITECTURE.md` — System-level architecture
 
 **Role**
 Defines the **big-picture architecture** of the application and records key architectural
@@ -361,7 +369,7 @@ decisions.
 
 ---
 
-### 4.14 `DECOMPOSITION.md` — Explicit system decomposition (what exists)
+#### 2. `DECOMPOSITION.md` — Explicit system decomposition (what exists)
 
 **Role**
 Defines the **authoritative functional decomposition** of the system into components.
@@ -383,7 +391,9 @@ Defines the **authoritative functional decomposition** of the system into compon
 
 ---
 
-### 4.15 `RUNTIME_SPEC.md` — Execution model and orchestration
+### Shell contracts
+
+#### 1. `RUNTIME_SPEC.md` — Execution model and orchestration
 
 **Role**
 Defines **how the system runs over time** outside the core.
@@ -405,7 +415,7 @@ Defines **how the system runs over time** outside the core.
 
 ---
 
-### 4.16 `RENDERING_SPEC.md` — Presentation contract
+#### 2. `RENDERING_SPEC.md` — Presentation contract
 
 **Role**
 Defines the **ASCII rendering contract** for the application.
@@ -427,7 +437,7 @@ Defines the **ASCII rendering contract** for the application.
 
 ---
 
-### 4.17 `CLI_SPEC.md` — Command-line interface
+#### 3. `CLI_SPEC.md` — Command-line interface
 
 **Role**
 Defines the **command-line surface** of the application.
@@ -448,7 +458,7 @@ Defines the **command-line surface** of the application.
 
 ---
 
-### 4.18 `REPLAY_SPEC.md` — Deterministic replay and evaluation
+#### 4. `REPLAY_SPEC.md` — Deterministic replay and evaluation
 
 **Role**
 Defines a **deterministic replay format** for evaluation, debugging, and regression testing.
