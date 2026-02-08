@@ -140,7 +140,7 @@ This section explains **how each document is intended to be used**, both by AI a
 #### `ACCEPTANCE_GATES.md` — Milestone control
 
 **Role**  
-Controls **when the agent is allowed to advance**.
+Defines **when the agent is allowed to advance**.
 
 **Contents**
 
@@ -162,7 +162,7 @@ Controls **when the agent is allowed to advance**.
 #### `ARCHITECTURE.md` — System-level architecture
 
 **Role**  
-Defines the **big-picture architecture** of the application and records key architectural decisions.
+Defines the **big-picture architecture** of the application.
 
 **Contents**
 
@@ -183,7 +183,7 @@ Defines the **big-picture architecture** of the application and records key arch
 #### `DECOMPOSITION.md` — Explicit system decomposition (what exists)
 
 **Role**  
-Defines the **authoritative functional decomposition** of the system into components.
+Defines the **authoritative component breakdown** of the system.
 
 **Contents**
 
@@ -207,7 +207,7 @@ Defines the **authoritative functional decomposition** of the system into compon
 #### `GAME_RULES.md` — Behavioral specification
 
 **Role**  
-Defines *what* the game does, independent of implementation.
+Defines **what** the game does.
 
 **Contents**
 
@@ -231,7 +231,7 @@ Defines *what* the game does, independent of implementation.
 #### `GAME_STATE.md` — State machine and step semantics
 
 **Role**  
-Defines *how* the game evolves over time in a deterministic, testable way.
+Defines **how** the game evolves deterministically.
 
 **Contents**
 
@@ -252,7 +252,7 @@ Defines *how* the game evolves over time in a deterministic, testable way.
 #### `INPUT_MODEL.md` — Input semantics
 
 **Role**  
-Removes ambiguity around how inputs are applied.
+Defines **how inputs are applied** per tick.
 
 **Contents**
 
@@ -273,7 +273,7 @@ Removes ambiguity around how inputs are applied.
 #### `ERROR_HANDLING.md` — Errors vs rejections
 
 **Role**  
-Defines when the system should **reject** an action versus **fail fast**.
+Defines **failure vs rejection semantics**.
 
 **Contents**
 
@@ -312,7 +312,7 @@ Defines **exact tetromino geometry** and rotation states.
 #### `CORE_API.md` — Python API contract
 
 **Role**  
-Defines the **only supported public API** for the core.
+    Defines the **only supported public core API** for the core.
 
 **Contents**
 
@@ -335,7 +335,7 @@ Defines the **only supported public API** for the core.
 #### `CORE_TEST_ORACLE.md` — Mandatory tests
 
 **Role**  
-Defines *what must be proven* for correctness.
+Defines **what must be proven** for correctness.
 
 **Contents**
 
@@ -528,19 +528,19 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 
 ## 5. Intended development workflow (summary)
 
-1. **Read all docs** (mandatory for agents).
+1. **Read all normative documents** (mandatory).
 2. Start at **Acceptance Gate 0**.
 3. Implement incrementally, gate by gate.
-4. Write tests mapped to `CORE_TEST_ORACLE.md` (core gates) or the relevant shell-level `*_TEST_ORACLE.md` for the current gate.
+4. Write tests mapped to the applicable `*_TEST_ORACLE.md` document(s).
 5. Stop and escalate on ambiguity.
-6. Only extend behavior by modifying docs first.
+6. Extend behavior **only by updating documentation first**.
 
 ---
 
 ## 6. Audience note
 
-- **AI agents**: This document defines your operating environment. Partial reading is failure.
-- **Human developers**: This document is meant to remain readable, editable, and authoritative even as AI assistance evolves.
+* **AI agents**: This document defines your operating environment. Partial reading is failure.
+* **Human developers**: This document is intended to remain readable, editable, and authoritative even as AI assistance evolves.
 
 ---
 
