@@ -5,7 +5,7 @@ URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 
 # PROJECT.md
 
-## 1. Project overview
+## Project overview
 
 This project develops and evaluates a **prompting system for agentic software development**. Repository evolution is organized into explicit **phases** (defined in `docs/PHASES.md`), which constrain *what kind of work is allowed* at each stage. 
 
@@ -29,7 +29,7 @@ Human developers remain ultimately responsible for correctness and maintenance, 
 
 ---
 
-## 2. Repository layout (high level)
+## Repository layout (high level)
 
 ```
 .
@@ -45,7 +45,7 @@ Code exists to satisfy the docs — not the other way around.
 
 ---
 
-## 3. Development documentation index (synopsis) and integration
+## Development documentation index (synopsis) and integration
 
 The following table provides a **synoptic index** of all normative development documents. Agents are expected to **discover and reason over all of them**, not just one.
 
@@ -178,7 +178,7 @@ Adding a new component requires adding:
 
 ---
 
-## 4. Extended development documentation overview
+## Extended development documentation overview
 
 This section explains **how each document is intended to be used**, both by AI agents and by human developers supervising or reviewing agent output.
 
@@ -595,7 +595,7 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 
 ---
 
-## 5. Intended development workflow (summary)
+## Intended development workflow (summary)
 
 1. **Read all normative documents** (mandatory).
 2. Determine the current repository **phase** (`docs/PHASES.md`).
@@ -607,7 +607,7 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 
 ---
 
-## 6. Audience note
+## Audience note
 
 * **AI agents**: This document defines your operating environment. Partial reading is failure.
 * **Human developers**: This document is intended to remain readable, editable, and authoritative even as AI assistance evolves.
