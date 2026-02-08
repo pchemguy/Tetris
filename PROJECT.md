@@ -7,7 +7,7 @@ URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 
 ## 1. Project overview
 
-This project develops and evaluates a **prompting system for agentic software development**.
+This project develops and evaluates a **prompting system for agentic software development**. Repository evolution is organized into explicit **phases** (defined in `docs/PHASES.md`), which constrain *what kind of work is allowed* at each stage. 
 
 The reference implementation target is **classic Tetris**, chosen not as a game project per se, but as a compact, well-understood system that stresses:
 
@@ -45,16 +45,17 @@ Code exists to satisfy the docs — not the other way around.
 
 ---
 
-## 3. Development documentation index (synopsis)
+## 3. Development documentation index (synopsis) and integration
 
 The following table provides a **synoptic index** of all normative development documents. Agents are expected to **discover and reason over all of them**, not just one.
 
 ### Project-wide
 
-| Title                        | Filename              | Function / Role                     |
-| ---------------------------- | --------------------- | ----------------------------------- |
-| Project Overview (this file) | `PROJECT.md`          | Entry point and documentation map   |
-| Acceptance Gates             | `ACCEPTANCE_GATES.md` | Milestone-based acceptance criteria |
+| Title                        | Filename              | Function / Role                                                     |
+| ---------------------------- | --------------------- | ------------------------------------------------------------------- |
+| Project Overview (this file) | `PROJECT.md`          | Entry point and documentation map                                   |
+| Repository Evolution Phases  | `PHASES.md`           | Defines allowed scope of work at each stage of repository evolution |
+| Acceptance Gates             | `ACCEPTANCE_GATES.md` | Milestone-based acceptance criteria                                 |
 
 ---
 
@@ -125,11 +126,34 @@ The applicability of documents to acceptance gates defined in `ACCEPTANCE_GATES.
 - **System-level contracts** apply to **all gates**. They constrain the system globally and must be obeyed at all stages.
 - **Core / engine contracts** apply to **core gates (0–9)**. They define the pure simulation and must not be violated during core development or extension.
 - **Core test oracle** (`CORE_TEST_ORACLE.md`) applies to **Gates 1–6**, and additionally to **Gates 7–9** if those optional core extensions are enabled.
-- **Shell contracts** apply to their respective **shell gates (10–13)** when implementation is permitted.
+- **Shell contracts** apply to **Gate 0** (discovery and scope awareness) and to their respective **shell gates (10–13)** when implementation is permitted.
 - **Shell-level test oracles** apply to **exactly one gate each**, corresponding to the shell component they validate.
 - **Gate 0** applies universally as a discovery and compliance gate and therefore requires awareness of all normative documents, even if they are not yet implemented.
 
 These rules are authoritative and supersede any informal interpretation of document scope.
+
+---
+
+### Phase ↔ Gate matrix
+
+The following table defines which acceptance gates are expected to be exercised within each repository evolution phase. This matrix is **normative** and constrains scope. It does not replace the detailed gate definitions in `docs/ACCEPTANCE_GATES.md`.
+
+| Phase | Phase name                                 | Applicable gates |
+| ----- | ------------------------------------------ | ---------------- |
+| 0     | Contract spine & evaluation framework      | 0                |
+| 1     | Core-only MVP benchmark                    | 0–6              |
+| 2     | System / shell completeness (baseline app) | 0, 10–13         |
+| 3     | Optional extensions & hardening            | 0, 7–9           |
+| 4     | Variant shells & alternative interfaces    | 0, 10–13 (+ext.) |
+| 5     | Benchmark scaling & agent evaluation       | 0–13             |
+
+#### Notes
+
+- **Gate 0** applies in *all phases* as a discovery and compliance gate.
+- Gates **1–6** define the **mandatory core MVP**.
+- Gates **7–9** are optional core extensions and may be completed in Phase 1 or Phase 3.
+- Gates **10–13** define shell/system completeness and must not be attempted before Phase 2.
+- “(+ext.)” indicates that additional gates may be introduced for new shell variants.
 
 ---
 
@@ -139,7 +163,7 @@ Adding a new component requires adding:
 
 * A specification document
 * An index row in the appropriate subsection above
-* An extended description in Section 4
+* An extended description in **Section 4**
 * A test oracle document (optional)
 * An acceptance gate (optional in `ACCEPTANCE_GATES.md`)
 
@@ -150,7 +174,7 @@ Adding a new component requires adding:
     * reside under `/docs/`, with the exception of `PROJECT.md`, which is located at the repository root.
     * are **normative** unless explicitly stated otherwise. Non-normative documents (guides, notes, examples) may be added later.
 * All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
-- If a conflict arises between code and docs, the implementation is considered incorrect.
+* If a conflict arises between code and docs, the implementation is considered incorrect.
 
 ---
 
@@ -177,6 +201,28 @@ Defines **when the agent is allowed to advance**.
 - Prevents “all-at-once” implementations.
 - Enables human-in-the-loop approval per stage.
 - Ideal for automated evaluation harnesses.
+
+---
+
+#### `PHASES.md` — Repository evolution phases
+
+**Role**   
+Defines the **allowed scope of work** at each stage of the repository’s evolution.
+
+**Contents**
+
+- Named repository evolution phases
+- Scope boundaries per phase
+- Relationship between phases and acceptance gates
+- Phase ↔ Gate matrix
+
+**Usage**
+
+- Prevents premature refactors, extensions, or generalization.
+- Constrains *what kinds of changes are allowed*, independent of correctness.
+- Works in tandem with `ACCEPTANCE_GATES.md`, which governs *whether an implementation is correct*.
+- Agents must determine the current phase before selecting a target gate.
+- Humans should advance phases deliberately and explicitly, not implicitly.
 
 ---
 
@@ -335,7 +381,7 @@ Defines **exact tetromino geometry** and rotation states.
 #### `CORE_API.md` — Python API contract
 
 **Role**  
-    Defines the **only supported public core API** for the core.
+Defines the **only supported public core API** for the core.
 
 **Contents**
 
@@ -417,7 +463,7 @@ Defines the **ASCII rendering contract** for the application.
 * Enables snapshot-based rendering tests.
 * Ensures rendering remains a pure function of state.
 * Prevents UI logic from contaminating core or runtime.
-* Humans may extend this spec for additional renderers (graphical, web), but only additively.
+* Humans may extend this specification for additional renderers (e.g., graphical, web) only by adding separate specification documents.
 
 ---
 
@@ -552,11 +598,12 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 ## 5. Intended development workflow (summary)
 
 1. **Read all normative documents** (mandatory).
-2. Start at **Acceptance Gate 0**.
-3. Implement incrementally, gate by gate.
-4. Write tests mapped to the applicable `*_TEST_ORACLE.md` document(s).
-5. Stop and escalate on ambiguity.
-6. Extend behavior **only by updating documentation first**.
+2. Determine the current repository **phase** (`docs/PHASES.md`).
+3. Start at **Acceptance Gate 0**.
+4. Implement incrementally, gate by gate.
+5. Write tests mapped to the applicable `docs/*_TEST_ORACLE.md` document(s).
+6. Stop and escalate on ambiguity.
+7. Extend behavior **only by updating documentation first**.
 
 ---
 

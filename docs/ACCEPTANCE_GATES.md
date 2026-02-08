@@ -50,6 +50,7 @@ Ensure the agent correctly discovers and obeys:
   `tetris/src/tetris/`
 - No source files outside the package path.
 - Agent must identify which test oracle(s) apply to the current target gate.
+- Agent must identify the current repository phase and confirm that the target gate is permitted in that phase.
 - All normative docs are discovered and referenced (at minimum by name in the plan/review notes).
 
 **Core / engine contracts**
