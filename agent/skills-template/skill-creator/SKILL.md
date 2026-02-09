@@ -1,5 +1,6 @@
 ---
 name: skill-name
+note: Extracted and adapted from skill-creator/scripts/init_skill.py.
 description: TODO - Complete and informative explanation of what the skill does and when to use it. Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.
 URLs:
   - https://github.com/openai/skills/tree/main/skills/.system/skill-creator
