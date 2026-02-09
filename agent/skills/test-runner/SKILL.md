@@ -219,3 +219,5 @@ It only diagnoses and reports.
 ## References
 
 - `references/test_failure_triage_python.md` (loaded only if tests fail; may be repo-local)
+
+---
