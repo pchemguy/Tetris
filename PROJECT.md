@@ -290,17 +290,21 @@ All agents must:
 
 ## 6. Development documentation index (synopsis) and integration
 
-The following table provides a **synoptic index** of all normative documents grouped by **conceptual responsibility**; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one. Partial discovery or selective reading constitutes non-compliance.
+This section provides a **synoptic index** of all normative documents grouped by **conceptual responsibility**; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one. Partial discovery or selective reading constitutes non-compliance.
 
-* not a development checklist,
-* not an implementation sequence,
-* not a tutorial.
+This section is not a/an
+
+* development checklist,
+* implementation sequence,
+* tutorial.
 
 To determine:
 
 * *what applies now* → consult **phases** and **acceptance gates**,
 * *what behavior is allowed* → consult **component specifications**,
 * *what must be tested* → consult **test oracles**.
+
+**IMPORTANT**: For each group, relative path (with respect to project directory / repo root) of the containing directory is provided. In other documents, these files will be conventionally referred to by name only. You must use appropriate relative prefix from this section to locate individual files.
 
 ### System architecture
 
@@ -370,11 +374,11 @@ To determine:
 | ---------------------- | --------------------------- | --------------------------------------------------------------------- |
 | Implementation Reports | `IMPLEMENTATION_REPORTS.md` | Append-only execution record of phase/gate progress and agent actions |
 
-### Core / engine contracts
-
 ---
 
 ### Core test oracle
+
+**Directory**: `docs/oracles/core/`
 
 | Title            | Filename              | Function / Role                               |
 | ---------------- | --------------------- | --------------------------------------------- |
@@ -383,6 +387,8 @@ To determine:
 ---
 
 ### Shell-level test oracles
+
+**Directory**: `docs/oracles/shell/`
 
 | Title                 | Filename                   | Function / Role                                     |
 | --------------------- | -------------------------- | --------------------------------------------------- |
@@ -443,10 +449,8 @@ Adding a new component requires adding:
 
 ### Notes
 
-* This table is a **synopsis**, not a substitute for reading the documents themselves.
-* All documents listed above
-    * reside under `/docs/`, with the exception of `PROJECT.md`, which is located at the repository root.
-    * are **normative** unless explicitly stated otherwise. Non-normative documents (guides, notes, examples) may be added later.
+* This section is a **synopsis**, not a substitute for reading the documents themselves.
+* All documents listed above are **normative** unless explicitly stated otherwise. Non-normative documents (guides, notes, examples) may be added later.
 * All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
 * If a conflict arises between code and docs, the implementation is considered incorrect.
 
