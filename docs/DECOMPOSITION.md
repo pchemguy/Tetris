@@ -345,7 +345,24 @@ Persistence is a service, not a controller.
 
 ---
 
-## 4. Interfaces between components
+## 4. Practical “baseline console app” minimal set
+
+If you want the smallest complete ASCII console game that still respects boundaries:
+
+* Core ✅
+* Renderer ✅ (pure)
+* Presenter ✅ (stdout)
+* Runtime ✅ (scripted required; interactive optional)
+* CLI ✅
+* Input Controller ✅ (maps keys to InputEvent)
+* Input Driver ✅ (only if interactive mode is implemented)
+* Persistence ❓ optional (replay implies it; config file implies it)
+
+For Phase 2 baseline app (shell completeness 10–13), you can still keep **interactive input/presenter** out unless you add a dedicated gate for it (you already hinted at that in staging).
+
+---
+
+## 5. Interfaces between components
 
 The only allowed cross-component interfaces are:
 
@@ -378,8 +395,62 @@ component unless explicitly designated as public API.
 
 ---
 
+## 6. Recommended baseline console flow (who calls whom)
 
-## 6. Delivery staging
+### 6.1 `run` (interactive)
+
+1. **CLI**
+    * parse args
+    * choose mode `run`
+    * call `persistence.load_config(path)` (optional)
+    * select renderer + presenter + input driver/controller
+    * instantiate runtime with explicit dependencies
+    * call `runtime.run_interactive(...)`
+2. **Runtime**
+    * tick loop
+    * poll input driver → controller → `InputEvent`s
+    * call `core.step()` once/tick
+    * call `renderer.render(state) -> str`
+    * call `presenter.present(frame)`
+    * terminate on game over / user exit condition
+3. **Persistence (optional)**
+    * maybe save high score / config (but only if spec says)
+
+**Why CLI loads config here:** because config affects *composition* (renderer choice, interactive tick rate, input mapping), which are shell decisions.
+
+---
+
+### 6.2 `script` (virtual time)
+
+1. **CLI**
+    * parse args
+    * choose mode `script`
+    * load config (optional)
+    * load script inputs (could be from file) via persistence or simple file read helper
+    * instantiate runtime in scripted mode
+2. **Runtime**
+    * apply per-tick input lists
+    * step/render/present per spec cadence (maybe presenter optional; could print each frame)
+3. **Persistence**
+    * optional: save transcript/log/output
+
+---
+
+### 6.3 `replay`
+
+1. **CLI**
+    * parse args
+    * choose mode `replay`
+    * `persistence.load_replay(path)` **must happen before runtime** (strict validation belongs here or in replay loader)
+    * instantiate runtime with replay adapter / scripted input provider
+2. **Runtime**
+    * executes replay tick-by-tick deterministically
+
+**Why not runtime loads replay:** because replay loading is *I/O + validation policy*. Runtime should receive already-validated replay data (or a “tick input provider” object that guarantees validity).
+
+---
+
+## 7. Delivery staging
 
 The recommended staged expansion beyond the pure core:
 
@@ -393,7 +464,7 @@ The recommended staged expansion beyond the pure core:
 
 ---
 
-## 7. Skill mapping note (non-normative)
+## 8. Skill mapping note (non-normative)
 
 Agent skills should map to roles that primarily “own” one component:
 
