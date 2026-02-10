@@ -18,7 +18,7 @@ Before writing, modifying, or deleting **any** files, the agent must:
         - identify and report ambiguities or inconsistencies,
         - abort execution on critical errors (e.g. malformed skills, missing required references).
 
-**IMPORTANT**: Ignore `docs/ideas/` directory contents by default, unless specifically instructed otherwise.
+**IMPORTANT**: Ideas are non-normative and inert; agents must not implement, infer intent from, or act on anything in `docs/ideas/`.
 
 If any required files are missing or inaccessible, the agent must immediately stop and output:
 
@@ -67,5 +67,98 @@ Before performing **any non-trivial action**, the agent must:
     - create multiple entries for the same unit of work unless explicitly instructed.
 
 Failure to read or correctly append to `IMPLEMENTATION_REPORTS.md` is a **protocol violation**.
+
+---
+
+Below is a **drop-in clause** you can paste directly into **`AGENTS.md`**.
+It is written to be **unambiguous, enforceable, and agent-safe**, and it fits cleanly with your existing discovery + implementation-log protocol.
+
+---
+
+## Treatment of Non-Normative “Ideas” Documents
+
+### Scope
+
+The directory:
+
+```
+docs/ideas/
+```
+
+contains **non-normative, speculative documents**.
+
+These documents exist solely to record **future possibilities, rejected options, or exploratory thoughts**.
+They do **not** define requirements, constraints, or permissions.
+
+---
+
+### Mandatory agent rules
+
+Agents **must** obey the following rules when encountering `docs/ideas/`:
+
+1. **No authority**
+    * Documents under `docs/ideas/` have **zero normative authority**.
+    * They do not override, amend, or supplement any specification, gate, or phase.
+2. **No action**
+    * Agents must **not implement**, partially implement, or prepare code for anything described solely in `docs/ideas/`.
+    * Agents must **not treat ideas as backlog, TODOs, or implied future work**.
+3. **No inference**
+    * Agents must **not infer intent, roadmap, or priorities** from the presence of an idea.
+    * The existence of an idea does **not** imply that it will ever be implemented.
+4. **No scope expansion**
+    * Ideas must **never** be used to justify:
+         * expanding scope,
+         * adding features,
+         * refactoring existing components,
+         * introducing new components,
+         * modifying tests or acceptance criteria.
+5. **Logging requirement**
+    * If an agent reads or references a document in `docs/ideas/`, it must:
+         * explicitly list it under `artifacts.read` in `IMPLEMENTATION_REPORTS.md`,
+         * state that no action was taken based on it.
+
+---
+
+### Allowed uses (strictly limited)
+
+Agents **may**:
+
+* Read ideas for **context only**, when explicitly instructed.
+* Cite ideas in discussion or analysis **without acting on them**.
+* Assist a human in **rewriting or promoting** an idea into a normative document *only when explicitly requested*.
+
+---
+
+### Disallowed phrasing (hard rule)
+
+Agents must **never** use phrases such as:
+
+* “planned feature”
+* “future requirement”
+* “will be implemented later”
+* “next step according to ideas”
+
+Unless a **normative document explicitly says so**.
+
+---
+
+### Violation severity
+
+Any of the following constitutes a **protocol violation**:
+
+* Implementing behavior described only in `docs/ideas/`
+* Treating an idea as a requirement or TODO
+* Using ideas to justify scope expansion
+* Failing to log idea access when relevant
+
+Protocol violations must result in **immediate halt** and a `BLOCKED` status.
+
+---
+
+### Summary (agent-facing)
+
+> **Ideas are inert.
+> They inform humans, not agents.
+> Nothing happens unless a spec changes.**
 
 ---

@@ -349,14 +349,15 @@ To determine:
 
 **Directory**: `docs/specs/shell/`
 
-| Title                            | Filename            | Function / Role                                             |
-| -------------------------------- | ------------------- | ----------------------------------------------------------- |
-| Runtime Specification            | `RUNTIME_SPEC.md`   | Tick loop, execution modes, and orchestration rules         |
-| Rendering Specification          | `RENDERING_SPEC.md` | ASCII renderer contract and output format                   |
-| CLI Specification                | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior              |
-| Replay Specification             | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format                  |
-| Renderer interface specification | `RENDERER_API.md`   | Renderer API and its strict purity guarantees               |
-| Runtime interface specification  | `RUNTIME_API.md`    | Runtime API and its role as the execution-time orchestrator |
+| Title                            | Filename            | Function / Role                                                 |
+| -------------------------------- | ------------------- | --------------------------------------------------------------- |
+| Runtime Specification            | `RUNTIME_SPEC.md`   | Tick loop, execution modes, and orchestration rules             |
+| Rendering Specification          | `RENDERING_SPEC.md` | ASCII renderer contract and output format                       |
+| CLI Specification                | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior                  |
+| Replay Specification             | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format                      |
+| Renderer interface specification | `RENDERER_API.md`   | Renderer API and its strict purity guarantees                   |
+| Runtime interface specification  | `RUNTIME_API.md`    | Runtime API and its role as the execution-time orchestrator     |
+| Configuration API                | `CONFIG_API.md`     | Typed configuration model used to parameterize the application. |
 
 ---
 
@@ -399,6 +400,7 @@ To determine:
 | Runtime Test Oracle   | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
 | CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
 | Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
+| Config Test Oracle    | `CONFIG_TEST_ORACLE.md`    | *(TODO)*                                            |
 
 ---
 

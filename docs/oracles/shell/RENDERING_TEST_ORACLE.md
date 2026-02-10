@@ -2,6 +2,7 @@
 name: RENDERING_TEST_ORACLE.md
 URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
+
 # RENDERING TEST ORACLE
 
 **ASCII Rendering – Mandatory Test Oracles (Normative)**
