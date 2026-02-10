@@ -376,20 +376,129 @@ The only allowed cross-component interfaces are:
 No component may “reach across” boundaries by importing internal helpers from another
 component unless explicitly designated as public API.
 
+Here’s a **normative “Forbidden imports” table** you can drop into `docs/DECOMPOSITION.md` (best placed at the end of **§4 Interfaces between components** or as a new **§4.1 Import rules**).
+
+It’s written to be **auditable** (reviewers can grep imports) and **agent-friendly** (simple rules, no loopholes).
+
+---
+
+## 4.1 Forbidden imports (normative)
+
+### 4.1.1 Component-to-component import constraints
+
+**Rule**: A component must not import modules that belong to another component **except** via explicitly listed allowed interfaces. Violations are **responsibility leakage** and fail Gate 0.
+
+> Notation: “A → B = forbidden” means “modules in A must not import modules in B”.
+
+| Importer (component)                             | Forbidden imports (component)                                                                                                       | Rationale                                                                          |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Core (`tetris.core`)**                         | `tetris.runtime`, `tetris.cli`, `tetris.rendering`, `tetris.presentation`, `tetris.input`, `tetris.persistence`, `tetris.telemetry` | Core must remain pure and environment-independent.                                 |
+| **Renderer (`tetris.rendering`)**                | `tetris.runtime`, `tetris.cli`, `tetris.presentation`, `tetris.input`, `tetris.persistence`, `tetris.telemetry`                     | Renderer is pure; must not perform I/O or depend on execution mode.                |
+| **Presenter (`tetris.presentation`)**            | `tetris.core`, `tetris.runtime`, `tetris.cli`, `tetris.input`, `tetris.persistence`, `tetris.telemetry`                             | Presenter emits bytes; it must not interpret game semantics or control flow.       |
+| **Input Driver (`tetris.input.driver`)**         | `tetris.core`, `tetris.runtime`, `tetris.cli`, `tetris.rendering`, `tetris.presentation`, `tetris.persistence`, `tetris.telemetry`  | Driver is raw I/O only; must not know game rules or orchestration.                 |
+| **Input Controller (`tetris.input.controller`)** | `tetris.runtime`, `tetris.cli`, `tetris.rendering`, `tetris.presentation`, `tetris.persistence`, `tetris.telemetry`                 | Controller is mapping/policy; must not become the orchestrator.                    |
+| **Runtime (`tetris.runtime`)**                   | `tetris.cli`                                                                                                                        | Runtime is not the composition root; CLI wires dependencies.                       |
+| **CLI (`tetris.__main__` / `tetris.cli`)**       | *(none, except core internal/private modules)*                                                                                      | CLI is the composition root; it may import public entrypoints of other components. |
+| **Persistence (`tetris.persistence`)**           | `tetris.runtime`, `tetris.cli`                                                                                                      | Persistence is a service; must not own control flow.                               |
+| **Telemetry (`tetris.telemetry`)**               | `tetris.runtime`, `tetris.cli`                                                                                                      | Telemetry is passive instrumentation; must not become controller.                  |
+
+> Any violation of §4.1 import constraints is a Gate 0 failure (component boundary violation), regardless of functional correctness.
+
+---
+
+### 4.1.2 Allowed imports (positive list, minimal)
+
+To avoid ambiguity, the following cross-component imports are explicitly allowed:
+
+* `tetris.runtime` may import:
+    * `tetris.core` (public API only)
+    * `tetris.rendering` (renderer interface / implementation selected by CLI)
+    * `tetris.presentation` (presenter interface / implementation selected by CLI)
+    * `tetris.input.controller` and/or `tetris.input.driver` (only when interactive mode is enabled)
+* `tetris.cli` may import:
+    * `tetris.runtime`
+    * `tetris.core` (for config defaults/types if needed)
+    * `tetris.persistence` (to load config/replays)
+    * `tetris.rendering`, `tetris.presentation`, `tetris.input.*` (to select implementations)
+* `tetris.rendering` may import:
+    * `tetris.core` **types only** (e.g., `GameState`, enums).
+      It must not import core logic helpers beyond what is required to interpret state fields defined by `CORE_API.md`.
+
+Any import not covered above is forbidden unless this document is updated first.
+
+---
+
+### 4.1.3 Internal vs public API boundary (normative)
+
+When importing across components:
+
+* Only **public API modules** may be imported.
+* Importing “internal helpers” across components is forbidden.
+
+**Enforcement guidance (non-normative):**
+
+* Prefer importing from a component’s package root (e.g., `from tetris.core import step`) rather than deep module paths.
+* Optionally define explicit re-exports in each component’s `__init__.py` to clarify what is public.
+
 ---
 
 ## 5. Practical “baseline console app” minimal set
 
-If you want the smallest complete ASCII console game that still respects boundaries:
+Minimalistic complete ASCII console game that still respects boundaries:
 
-* Core ✅
-* Renderer ✅ (pure)
-* Presenter ✅ (stdout)
-* Runtime ✅ (scripted required; interactive optional)
-* CLI ✅
-* Input Controller ✅ (maps keys to InputEvent)
-* Input Driver ✅ (only if interactive mode is implemented)
-* Persistence ❓ optional (replay implies it; config file implies it)
+| Component        | Comment                                                | Source package             |
+| ---------------- | :----------------------------------------------------- | -------------------------- |
+| Core             | ✅                                                      | `core/`                    |
+| Renderer         | ✅ (pure)                                               | `rendering/`               |
+| Presenter        | ✅ (stdout)                                             | `presentation/`            |
+| Runtime          | ✅ (scripted required; interactive optional)            | `runtime/`                 |
+| CLI              | ✅                                                      | `cli.py`, `__main__.py`    |
+| Input Controller | ✅ (maps keys to InputEvent)                            | `input/controller.py`      |
+| Input Driver     | ✅ (only if interactive mode is implemented)            | `input/driver/terminal.py` |
+| Persistence      | ❓ optional (replay implies it; config file implies it) | `persistence/`             |
+
+**Source layout**
+
+```
+tetris/src/tetris/
+├── core/                # Pure deterministic simulation
+│   ├── __init__.py
+│   ├── state.py
+│   ├── rules.py
+│   ├── shapes.py
+│   └── api.py
+│
+├── rendering/           # Pure renderers (no I/O)
+│   ├── __init__.py
+│   └── ascii.py
+│
+├── presentation/        # Output adapters (I/O)
+│   ├── __init__.py
+│   └── terminal.py
+│
+├── input/               # Input subsystem (split by responsibility)
+│   ├── __init__.py
+│   ├── controller.py    # Mapping / policy (pure-ish)
+│   └── driver/          # I/O boundary
+│       ├── __init__.py
+│       └── terminal.py
+│
+├── runtime/             # Game loop / orchestrator
+│   ├── __init__.py
+│   └── loop.py
+│
+├── cli.py               # CLI wiring & entry logic
+├── __main__.py          # python -m tetris
+│
+├── persistence/         # Optional, explicit
+│   ├── __init__.py
+│   ├── replay.py
+│   └── config.py
+│
+└── telemetry/           # Optional, explicit
+    ├── __init__.py
+    └── trace.py
+```
 
 For Phase 2 baseline app (shell completeness 10–13), you can still keep **interactive input/presenter** out unless you add a dedicated gate for it (you already hinted at that in staging).
 
@@ -401,7 +510,7 @@ For Phase 2 baseline app (shell completeness 10–13), you can still keep **inte
 
 There are **two different “control centers”**, operating at different times:
 
-#### 1. Composition-time: App Shell (CLI)
+#### 6.0.1. Composition-time: App Shell (CLI)
 
 *(runs once, before execution starts)*
 
@@ -430,7 +539,7 @@ After this point, the CLI is done.
 
 ---
 
-#### 2. Execution-time: Runtime
+#### 6.0.2. Execution-time: Runtime
 
 *(runs the entire program lifetime)*
 

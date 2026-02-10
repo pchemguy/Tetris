@@ -34,8 +34,11 @@ Human developers remain ultimately responsible for correctness and maintenance, 
 ```
 .
 ├── docs/                  # Normative development specifications (authoritative)
-├── tetris/src/tetris/     # Python core + shell implementation package
+├── tetris/
+│     ├── src/tetris/      # Python core + shell implementation package
+│     └── tests/           # Tests
 ├── .agent/skills/         # Agent skills (plan / implement / review units)
+├── AGENTS.md              # General agent instructions
 ├── PROJECT.md             # This document (primary entry point)
 └── README.md              # Optional human-facing wrapper
 ```
