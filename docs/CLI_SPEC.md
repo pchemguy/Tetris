@@ -19,7 +19,32 @@ The CLI is a thin shell over:
 
 ---
 
-## 2. Entry point
+## 2. Composition root responsibility (normative)
+
+The CLI is the **composition root** of the application.
+
+It is responsible for:
+
+- parsing command-line arguments,
+- selecting execution mode (`run`, `script`, `replay`),
+- loading configuration and external data via persistence,
+- instantiating and wiring together:
+    - runtime,
+    - renderer,
+    - presenter,
+    - input driver and controller (if applicable),
+- passing fully constructed dependencies and configuration into the runtime.
+
+The CLI must not:
+
+- implement game rules,
+- implement rendering semantics,
+- perform tick scheduling,
+- call `step()` directly.
+
+---
+
+## 3. Entry point
 
 The application must be invokable via:
 
@@ -31,9 +56,9 @@ or an equivalent console script.
 
 ---
 
-## 3. Commands
+## 4. Commands
 
-### 3.1 `run`
+### 4.1 `run`
 
 ```
 
@@ -51,7 +76,7 @@ Options:
 
 ---
 
-### 3.2 `script`
+### 4.2 `script`
 
 ```
 tetris script <script_file>
@@ -67,7 +92,7 @@ Options:
 
 ---
 
-### 3.3 `replay`
+### 4.3 `replay`
 
 ```
 tetris replay <replay_file>
@@ -77,7 +102,7 @@ Runs a deterministic replay (see `REPLAY_SPEC.md`).
 
 ---
 
-## 4. Exit codes
+## 5. Exit codes
 
 | Code | Meaning                  |
 | ---: | ------------------------ |
@@ -88,7 +113,7 @@ Runs a deterministic replay (see `REPLAY_SPEC.md`).
 
 ---
 
-## 5. CLI constraints
+## 6. CLI constraints
 
 - CLI must not implement game logic.
 - CLI must not catch and suppress core errors.

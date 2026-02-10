@@ -238,6 +238,15 @@ Each component has a strict responsibility boundary (see §3).
 - Must not compute rendering semantics (belongs to renderer).
 - Must not directly read OS input (belongs to input driver).
 
+**Configuration boundary**
+
+- The runtime consumes an already-resolved configuration.
+- The runtime must not:
+    - locate configuration files,
+    - parse command-line arguments,
+    - load configuration or replay data from disk.
+- All configuration discovery and loading is performed by the App Shell (CLI), which passes the resulting configuration objects into the runtime explicitly.
+
 ---
 
 ### 3.7 App Shell (CLI / Entrypoints)
@@ -269,15 +278,29 @@ Each component has a strict responsibility boundary (see §3).
 
 **Responsibilities**
 
-- Save/load auxiliary data such as:
-  - high scores (if enabled),
-  - configuration,
-  - deterministic replay traces (inputs + seed), as specified by `REPLAY_SPEC.md`.
+Persistence provides durable I/O services for the application, such as:
+
+- loading configuration files,
+- loading deterministic replay traces,
+- saving replay traces or run artifacts (if enabled),
+- saving auxiliary data such as high scores.
+
+Persistence is a service, not a controller.
 
 **Constraints**
 
 - Persistence must not affect core determinism.
 - Replay loading must be strict; no auto-correction of invalid data.
+
+**Invocation rules**
+
+- Persistence is invoked by the App Shell (CLI) when:
+    - loading configuration,
+    - loading scripts or replay files,
+    - performing upfront validation of external data.
+- Persistence may be invoked by the runtime only for:
+    - explicitly specified run outputs (e.g. saving a replay trace),
+    - and preferably via injected sink interfaces rather than direct imports.
 
 ---
 
@@ -339,8 +362,11 @@ The only allowed cross-component interfaces are:
     - `present(frame: str) -> None`
 - **CLI → Runtime**
     - `run(...)` entrypoints
+- **CLI → Persistence**
+    - `load_config(...)`
+    - `load_replay(...)`
 
-Constraints:
+**Constraints**:
 
 - Presenter must not receive `GameState`; it receives only the rendered `frame: str`.
 - Renderer must not perform I/O; it returns only a `str`.
@@ -351,6 +377,7 @@ No component may “reach across” boundaries by importing internal helpers fro
 component unless explicitly designated as public API.
 
 ---
+
 
 ## 6. Delivery staging
 
