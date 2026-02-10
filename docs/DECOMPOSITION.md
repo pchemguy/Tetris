@@ -446,39 +446,6 @@ It owns:
 * delegating output to presenter,
 * termination conditions.
 
-During execution:
-
-**Data Flow**
-
-```
-Input Driver  →  
-                \
-Input Controller → Runtime → Core → Renderer → Presenter
-```
-
-**Control Flow**
-
-```
-                +------------------+
-                |   Input Driver   |
-                +------------------+
-                         |
-                         v
-                +------------------+
-                | Input Controller |
-                +------------------+
-                         |
-                         v
-+--------+      +------------------+      +----------+
-|  Core  | <--- |     Runtime      | ---> | Renderer |
-+--------+      +------------------+      +----------+
-                         |
-                         v
-                +------------------+
-                |    Presenter     |
-                +------------------+
-```
-
 Runtime is the sole execution coordinator; all other components are dependencies invoked by runtime and must not invoke each other’s internal logic.
 
 ---

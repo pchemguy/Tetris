@@ -90,6 +90,37 @@ These separations are architectural requirements, not implementation details.
                                                 
 ```
 
+### 4.1 Data flow
+
+```
+Input Driver  →  
+                \
+Input Controller → Runtime → Core → Renderer → Presenter
+```
+
+### 4.2 Control flow
+
+```
+                +------------------+
+                |   Input Driver   |
+                +------------------+
+                         |
+                         v
+                +------------------+
+                | Input Controller |
+                +------------------+
+                         |
+                         v
++--------+      +------------------+      +----------+
+|  Core  | <--- |     Runtime      | ---> | Renderer |
++--------+      +------------------+      +----------+
+                         |
+                         v
+                +------------------+
+                |    Presenter     |
+                +------------------+
+```
+
 ---
 
 ## 5. Technology options and decisions
