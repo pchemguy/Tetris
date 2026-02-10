@@ -398,7 +398,7 @@ It’s written to be **auditable** (reviewers can grep imports) and **agent-frie
 | **Input Driver (`tetris.input.driver`)**         | `tetris.core`, `tetris.runtime`, `tetris.cli`, `tetris.rendering`, `tetris.presentation`, `tetris.persistence`, `tetris.telemetry`  | Driver is raw I/O only; must not know game rules or orchestration.                 |
 | **Input Controller (`tetris.input.controller`)** | `tetris.runtime`, `tetris.cli`, `tetris.rendering`, `tetris.presentation`, `tetris.persistence`, `tetris.telemetry`                 | Controller is mapping/policy; must not become the orchestrator.                    |
 | **Runtime (`tetris.runtime`)**                   | `tetris.cli`                                                                                                                        | Runtime is not the composition root; CLI wires dependencies.                       |
-| **CLI (`tetris.__main__` / `tetris.cli`)**       | *(none, except core internal/private modules)*                                                                                      | CLI is the composition root; it may import public entrypoints of other components. |
+| **CLI (`tetris.__main__` / `tetris.cli`)**       | *(none, except public APIs of other components as defined by their `__init__.py` re-exports)*                                       | CLI is the composition root; it may import public entrypoints of other components. |
 | **Persistence (`tetris.persistence`)**           | `tetris.runtime`, `tetris.cli`                                                                                                      | Persistence is a service; must not own control flow.                               |
 | **Telemetry (`tetris.telemetry`)**               | `tetris.runtime`, `tetris.cli`                                                                                                      | Telemetry is passive instrumentation; must not become controller.                  |
 
@@ -422,7 +422,7 @@ To avoid ambiguity, the following cross-component imports are explicitly allowed
     * `tetris.rendering`, `tetris.presentation`, `tetris.input.*` (to select implementations)
 * `tetris.rendering` may import:
     * `tetris.core` **types only** (e.g., `GameState`, enums).
-      It must not import core logic helpers beyond what is required to interpret state fields defined by `CORE_API.md`.
+      Renderer must import **only immutable data structures** defined by `CORE_API.md`; it must not import rule helpers or mutation logic.
 
 Any import not covered above is forbidden unless this document is updated first.
 
@@ -445,6 +445,21 @@ When importing across components:
 ## 5. Practical “baseline console app” minimal set
 
 Minimalistic complete ASCII console game that still respects boundaries:
+
+```
+tetris/src/tetris/
+├── core/                # Pure deterministic simulation
+├── rendering/           # Pure renderers (no I/O)
+├── presentation/        # Output adapters (I/O)
+├── input/               # Input subsystem
+│   ├── controller.py
+│   └── driver/
+├── runtime/             # Game loop / orchestrator
+├── cli.py               # Composition root
+├── __main__.py
+├── persistence/         # Optional
+└── telemetry/           # Optional
+```
 
 | Component        | Comment                                                | Source package             |
 | ---------------- | :----------------------------------------------------- | -------------------------- |
