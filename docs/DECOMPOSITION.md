@@ -83,8 +83,14 @@ The system is decomposed into the following components:
         - select renderer/presenter/input driver
     The CLI contains **no game logic** and **no rendering semantics**.
 8. **Persistence (Optional)**
+       Persistence supports durable data such as:
+        - high scores
+        - configuration
+        - deterministic replay traces
 9. **Test & Evaluation Harness**
+    The test harness enforces correctness.
 10. **Telemetry / Observability (Optional)**
+    Telemetry collects diagnostic data without affecting behavior.
 
 Notes:
 
