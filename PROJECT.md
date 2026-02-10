@@ -37,6 +37,7 @@ Human developers remain ultimately responsible for correctness and maintenance, 
 ```
 .
 ├── docs/                  # Normative development specifications (authoritative)
+├── docs/ideas/            # Non-normative preliminary features/component ideas for possible future consideration
 ├── tetris/
 │     ├── src/tetris/      # Python core + shell implementation package
 │     └── tests/           # Tests
@@ -256,7 +257,7 @@ This distinction is enforced by:
 
 This document records the **actual execution history** of agentic development.
 
-#### Implementation reports (`reports/IMPLEMENTATION_REPORTS.md`) — *Authoritative execution state*
+#### Implementation reports (`IMPLEMENTATION_REPORTS.md`) — *Authoritative execution state*
 
 The implementation log is an **append-only record** of:
 
@@ -348,12 +349,14 @@ To determine:
 
 **Directory**: `docs/specs/shell/`
 
-| Title                   | Filename            | Function / Role                                     |
-| ----------------------- | ------------------- | --------------------------------------------------- |
-| Runtime Specification   | `RUNTIME_SPEC.md`   | Tick loop, execution modes, and orchestration rules |
-| Rendering Specification | `RENDERING_SPEC.md` | ASCII renderer contract and output format           |
-| CLI Specification       | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior      |
-| Replay Specification    | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format          |
+| Title                            | Filename            | Function / Role                                             |
+| -------------------------------- | ------------------- | ----------------------------------------------------------- |
+| Runtime Specification            | `RUNTIME_SPEC.md`   | Tick loop, execution modes, and orchestration rules         |
+| Rendering Specification          | `RENDERING_SPEC.md` | ASCII renderer contract and output format                   |
+| CLI Specification                | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior              |
+| Replay Specification             | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format                  |
+| Renderer interface specification | `RENDERER_API.md`   | Renderer API and its strict purity guarantees               |
+| Runtime interface specification  | `RUNTIME_API.md`    | Runtime API and its role as the execution-time orchestrator |
 
 ---
 
@@ -446,6 +449,8 @@ Adding a new component requires adding:
 * An extended description in `Extended development documentation overview` below
 * A test oracle document (optional)
 * An acceptance gate (optional in `ACCEPTANCE_GATES.md`)
+
+Raw / early ideas should be noted under `docs/ideas/`. Agents **MUST** ignore this path by default unless specifically instructed otherwise.
 
 ### Notes
 

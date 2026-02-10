@@ -18,6 +18,8 @@ Before writing, modifying, or deleting **any** files, the agent must:
         - identify and report ambiguities or inconsistencies,
         - abort execution on critical errors (e.g. malformed skills, missing required references).
 
+**IMPORTANT**: Ignore `docs/ideas/` directory contents by default, unless specifically instructed otherwise.
+
 If any required files are missing or inaccessible, the agent must immediately stop and output:
 
 ```
@@ -33,7 +35,7 @@ No further reasoning or action is permitted after this output.
 
 ## Implementation Reports (MANDATORY)
 
-`reports/IMPLEMENTATION_REPORTS.md` is the **authoritative execution state** of this repository.
+`IMPLEMENTATION_REPORTS.md` is the **authoritative execution state** of this repository.
 
 Before performing **any non-trivial action**, the agent must:
 
@@ -42,6 +44,8 @@ Before performing **any non-trivial action**, the agent must:
     - current **repository phase**,
     - current **acceptance gate** (if any),
     - last recorded **status** (`completed`, `blocked`, etc.).
+
+---
 
 ### Reporting rules
 
