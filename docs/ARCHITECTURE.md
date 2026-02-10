@@ -168,17 +168,54 @@ Decision:
 
 ### 5.4 Persistence options
 
-Options:
+Persistence is out of MVP unless explicitly requested. When introduced, persistence splits into:
 
-- (A) None (MVP) ✅
-- (B) High score file (JSON)
-- (C) Replay traces (seed + input stream)
-- (D) Full state snapshots
+- **Persisted artifacts (what):**
+    - (A) None (MVP) ✅
+    - (B) Configuration (shell-level settings)
+    - (C) High scores
+    - (D) Replay traces (seed + per-tick inputs) ✅ highest evaluation value
+    - (E) Full state snapshots (debugging / audit)
+- **Storage formats (how):**
+    - (1) INI
+    - (2) JSON
+    - (3) YAML
+    - (4) SQLite
 
-Decision:
+#### Options: storage formats (how)
 
-- Out of MVP unless explicitly requested.
-- Replay traces are the most valuable next step for agent evaluation.
+**INI**
+- Pros: stdlib (`configparser`), human-editable, stable.
+- Cons: limited typing/structure; awkward for nested schemas; poor fit for replay traces.
+
+**JSON**
+- Pros: stdlib (`json`), strict typing surface, deterministic serialization achievable, excellent for replay traces and snapshots.
+- Cons: less ergonomic for comments; schema validation needs explicit code.
+
+**YAML**
+- Pros: very human-friendly for config; supports comments and richer structures.
+- Cons: requires third-party dependency; parser behavior and type coercion can add accidental complexity; less ideal for a minimal benchmark.
+
+**SQLite**
+- Pros: structured querying, robust for growing datasets (many replays, telemetry), transactional integrity.
+- Cons: introduces schema management; overkill for early benchmark artifacts; adds operational surface not needed for determinism.
+
+**Practical guidance (aligned to gates/phases)**
+
+- **Phase 2 / Gate 13 (Replay)**: JSON is the right default (stdlib + deterministic + diffable).
+- **Config files** (when you add them): INI or JSON both fit “no extra deps”; YAML only if you explicitly value human authoring/comments enough to justify a dependency.
+- **SQLite** only makes sense when you have _many_ artifacts (hundreds/thousands of replays, telemetry records) and want queryability—i.e., later “benchmark scaling” phase.
+
+#### Default decisions (current)
+
+- MVP: **no persistence**.
+- If persistence is introduced for evaluation (recommended first): use **JSON replay traces**.
+    - Rationale: deterministic, minimal dependencies, diffable, CI-friendly.
+
+Non-goals (until explicitly added):
+
+- YAML dependency for baseline benchmark.
+- SQLite database management for baseline benchmark.
 
 ---
 
