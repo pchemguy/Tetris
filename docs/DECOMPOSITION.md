@@ -73,9 +73,10 @@ The system is decomposed into the following components:
     - call the renderer
     - delegate output to the presenter
     - detect termination
-    The runtime orchestrates; it does not define rules.
+    The runtime orchestrates; it does not define rules. Runtime consumes already-resolved `core_config`/`shell_config` and already-instantiated dependencies; it does not discover configuration or load files.
 7. **App Shell (CLI / Entrypoints)**
     The **app shell** is the user-facing entry layer.
+    CLI is the _composition root_.
     - parse command-line arguments
     - select execution mode (run / script / replay)
     - wire components together
@@ -87,6 +88,7 @@ The system is decomposed into the following components:
     - high scores
     - configuration
     - deterministic replay traces
+    Persistence is invoked by the **composition root (CLI)** for loading configuration and replay/script inputs; it may also be used by runtime _only_ for explicitly specified run outputs (e.g., saving replays), preferably via injected sinks.
 9. **Test & Evaluation Harness**
     The test harness enforces correctness.
 10. **Telemetry / Observability (Optional)**
@@ -350,7 +352,7 @@ component unless explicitly designated as public API.
 
 ---
 
-## 5. Delivery staging
+## 6. Delivery staging
 
 The recommended staged expansion beyond the pure core:
 
@@ -364,7 +366,7 @@ The recommended staged expansion beyond the pure core:
 
 ---
 
-## 6. Skill mapping note (non-normative)
+## 7. Skill mapping note (non-normative)
 
 Agent skills should map to roles that primarily “own” one component:
 
