@@ -1,9 +1,12 @@
 ---
 name: PROJECT.md
+description: This document acts as the primary entry point for project's technical documentation, and explains its documentation system and high-level workflows.
 URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
 
 # PROJECT.md
+
+This document acts as the primary entry point for project's technical documentation, and explains its documentation system and high-level workflows.
 
 ## 1. Project overview
 
@@ -53,18 +56,18 @@ Code exists to satisfy the docs — not the other way around.
 The workflow below assumes full understanding of the documentation authority model described in the next section.
 
 1. **Read all normative documents** (mandatory).
-2. **Read `IMPLEMENTATION_LOG.md`** to determine current state.
+2. **Read `IMPLEMENTATION_REPORTS.md`** to determine current state.
 3. Determine the current repository **phase** (`docs/PHASES.md`).
 4. Confirm the current **acceptance gate** (`docs/ACCEPTANCE_GATES.md`).
 5. Implement incrementally, gate by gate.
 6. Write tests mapped to the applicable `docs/*_TEST_ORACLE.md` document(s).
-7. Append results to `IMPLEMENTATION_LOG.md`.
+7. Append results to `IMPLEMENTATION_REPORTS.md`.
 8. Stop and escalate on ambiguity.
 9. Extend behavior **only by updating documentation first**.
 
 ---
 
-## 4. Normative Documentation System
+## 4. Normative documentation system
 
 This repository is governed by a **layered documentation system**. Each document belongs to a **defined class** serving a distinct purpose in constraining, guiding, or evaluating the development process. The intent of this system is to:
 
@@ -253,7 +256,7 @@ This distinction is enforced by:
 
 This document records the **actual execution history** of agentic development.
 
-#### Implementation log (`IMPLEMENTATION_LOG.md`) — *Authoritative execution state*
+#### Implementation reports (`reports/IMPLEMENTATION_REPORTS.md`) — *Authoritative execution state*
 
 The implementation log is an **append-only record** of:
 
@@ -299,28 +302,32 @@ To determine:
 * *what behavior is allowed* → consult **component specifications**,
 * *what must be tested* → consult **test oracles**.
 
-### Project-wide
+### System architecture
 
-| Title                        | Filename                  | Function / Role                                                                 |
-| ---------------------------- | ------------------------- | ------------------------------------------------------------------------------- |
-| Project Overview (this file) | `PROJECT.md`              | Primary entry point; explains the documentation system and workflow              |
-| Documentation Authority Map  | `DOCS_AUTHORITY_MAP.md`   | Authoritative hierarchy and conflict-resolution rules among docs                 |
-| Repository Evolution Phases  | `PHASES.md`               | Allowed scope of work at each stage of repository evolution                      |
-| Acceptance Gates             | `ACCEPTANCE_GATES.md`     | Milestone-based acceptance criteria and progression rules                        |
-| Implementation Log           | `IMPLEMENTATION_LOG.md`   | Append-only execution record of phase/gate progress and agent actions            |
+**Directory**: `docs/architecture/`
 
----
-
-### System-level contracts
-
-| Title                | Filename           | Function / Role                                   |
-| -------------------- | ------------------ | ------------------------------------------------- |
-| System Architecture  | `ARCHITECTURE.md`  | High-level system architecture and design choices |
-| System Decomposition | `DECOMPOSITION.md` | Explicit component decomposition and boundaries   |
+| Title                       | Filename                | Function / Role                                                  |
+| --------------------------- | ----------------------- | ---------------------------------------------------------------- |
+| System Architecture         | `ARCHITECTURE.md`       | High-level system architecture and design choices                |
+| System Decomposition        | `DECOMPOSITION.md`      | Explicit component decomposition and boundaries                  |
+| Documentation Authority Map | `DOCS_AUTHORITY_MAP.md` | Authoritative hierarchy and conflict-resolution rules among docs |
 
 ---
 
-### Core / engine contracts
+### Development control
+
+**Directory**: `docs/control/`
+
+| Title                       | Filename              | Function / Role                                             |
+| --------------------------- | --------------------- | ----------------------------------------------------------- |
+| Repository Evolution Phases | `PHASES.md`           | Allowed scope of work at each stage of repository evolution |
+| Acceptance Gates            | `ACCEPTANCE_GATES.md` | Milestone-based acceptance criteria and progression rules   |
+
+---
+
+### Core contracts
+
+**Directory**: `docs/specs/core/`
 
 | Title              | Filename                  | Function / Role                                  |
 | ------------------ | ------------------------- | ------------------------------------------------ |
@@ -333,15 +340,9 @@ To determine:
 
 ---
 
-### Core test oracle
-
-| Title            | Filename              | Function / Role                               |
-| ---------------- | --------------------- | --------------------------------------------- |
-| Core Test Oracle | `CORE_TEST_ORACLE.md` | Mandatory correctness tests for the pure core |
-
----
-
 ### Shell contracts
+
+**Directory**: `docs/specs/shell/`
 
 | Title                   | Filename            | Function / Role                                     |
 | ----------------------- | ------------------- | --------------------------------------------------- |
@@ -349,6 +350,35 @@ To determine:
 | Rendering Specification | `RENDERING_SPEC.md` | ASCII renderer contract and output format           |
 | CLI Specification       | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior      |
 | Replay Specification    | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format          |
+
+---
+
+### I/O API specifications
+
+**Directory**: `docs/specs/io/`
+
+| Title                                | Filename              | Function / Role                                           |
+| ------------------------------------ | --------------------- | --------------------------------------------------------- |
+| Input driver interface specification | `INPUT_DRIVER_API.md` | Input Driver API and its strict responsibility boundaries |
+| Presenter interface specification    | `PRESENTER_API.md`    | Presenter API and its strict responsibility boundaries    |
+
+### Progress reporting
+
+**Directory**: `docs/reports/`
+
+| Title                  | Filename                    | Function / Role                                                       |
+| ---------------------- | --------------------------- | --------------------------------------------------------------------- |
+| Implementation Reports | `IMPLEMENTATION_REPORTS.md` | Append-only execution record of phase/gate progress and agent actions |
+
+### Core / engine contracts
+
+---
+
+### Core test oracle
+
+| Title            | Filename              | Function / Role                               |
+| ---------------- | --------------------- | --------------------------------------------- |
+| Core Test Oracle | `CORE_TEST_ORACLE.md` | Mandatory correctness tests for the pure core |
 
 ---
 

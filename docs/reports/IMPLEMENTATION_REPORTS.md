@@ -1,11 +1,11 @@
 ---
-name: IMPLEMENTATION_LOG.md
+name: IMPLEMENTATION_REPORTS.md
 URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
 
-# IMPLEMENTATION LOG
+# IMPLEMENTATION REPORT INSTRUCTIONS
 
-**Agentic Development Execution Log (Authoritative State)**
+**Agentic Development Execution Reports (Authoritative State)**
 
 ---
 
@@ -52,9 +52,9 @@ The **latest entry with `status: completed` or `status: blocked`** defines the c
 
 ---
 
-## 3. Log entry schema (normative)
+## 3. Report entry schema (normative)
 
-Each log entry consists of:
+Each report entry consists of:
 
 1. A **YAML header** (machine-readable)
 2. A **free-form Markdown body** (human-readable)
@@ -158,14 +158,14 @@ artifacts:
   modified:
     - PROJECT.md
   added:
-    - IMPLEMENTATION_LOG.md
+    - IMPLEMENTATION_REPORTSORTS.md
   deleted: []
 tests:
   executed: false
   oracle: []
   result: not_run
 outcome:
-  summary: "Phase 0 documentation spine established; execution log introduced"
+  summary: "Phase 0 documentation spine established; execution report introduced"
   next_step: "Proceed to Gate 1 (core skeleton) in Phase 1"
 blockers: []
 assumptions:
@@ -175,12 +175,11 @@ assumptions:
 
 ### Summary
 
-Initialized the execution log and integrated it into the documentation authority system.
-No code was written. All actions were documentation-only and in-scope for Phase 0.
+Initialized the execution report and integrated it into the documentation authority system. No code was written. All actions were documentation-only and in-scope for Phase 0.
 
 ### Details
 
-* Introduced `IMPLEMENTATION_LOG.md` as append-only execution record
+* Introduced `IMPLEMENTATION_REPORTS.md` as append-only execution record
 * Integrated into PROJECT.md workflow and index
 * Confirmed no contradictions with PHASES or ACCEPTANCE_GATES
 
@@ -207,13 +206,13 @@ Agents must not create entries with `status: planned` unless explicitly instruct
 
 ## 7. What belongs here vs elsewhere
 
-| Information type                  | Location                 |
-|----------------------------------|--------------------------|
-| What is allowed                  | PHASES.md                |
-| What is correct                  | ACCEPTANCE_GATES.md      |
-| What must be tested              | *_TEST_ORACLE.md         |
-| What exists structurally         | ARCHITECTURE / DECOMP    |
-| **What actually happened**       | IMPLEMENTATION_LOG.md    |
+| Information type           | Location                     |
+| -------------------------- | ---------------------------- |
+| What is allowed            | PHASES.md                    |
+| What is correct            | ACCEPTANCE_GATES.md          |
+| What must be tested        | *_TEST_ORACLE.md             |
+| What exists structurally   | ARCHITECTURE / DECOMPOSITION |
+| **What actually happened** | IMPLEMENTATION_REPORTS.md    |
 
 ---
 
@@ -221,4 +220,15 @@ Agents must not create entries with `status: planned` unless explicitly instruct
 
 If a future agent does not know **what to do next**, the correct answer is:
 
-> “Read `IMPLEMENTATION_LOG.md`.”
+> “Read `IMPLEMENTATION_REPORTS.md`.”
+
+---
+
+# IMPLEMENTATION REPORTS
+
+> [!NOTE]
+> 
+> **APPEND IMPLEMENTATION REPORT RECORDS BELOW THIS NOTE**
+
+---
+

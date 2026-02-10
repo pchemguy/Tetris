@@ -31,25 +31,25 @@ No further reasoning or action is permitted after this output.
 
 ---
 
-## Implementation Log (MANDATORY)
+## Implementation Reports (MANDATORY)
 
-`IMPLEMENTATION_LOG.md` is the **authoritative execution state** of this repository.
+`reports/IMPLEMENTATION_REPORTS.md` is the **authoritative execution state** of this repository.
 
 Before performing **any non-trivial action**, the agent must:
 
-1. Read `IMPLEMENTATION_LOG.md` in full.
+1. Read `IMPLEMENTATION_REPORTS.md` in full.
 2. Determine and explicitly acknowledge:
     - current **repository phase**,
     - current **acceptance gate** (if any),
     - last recorded **status** (`completed`, `blocked`, etc.).
 
-### Logging rules
+### Reporting rules
 
-3. The agent must append **exactly one new entry** to `IMPLEMENTATION_LOG.md`:
+3. The agent must append **exactly one new entry** to `IMPLEMENTATION_REPORTS.md`:
     - **before** starting a unit of work *only if* recording intent was explicitly requested, **or**
     - **after** completing, blocking, aborting, or refusing the unit of work.
 4. Each entry must:
-    - follow the schema defined in `IMPLEMENTATION_LOG.md`,
+    - follow the schema defined in `IMPLEMENTATION_REPORTS.md`,
     - truthfully record:
         - success,
         - partial completion,
@@ -62,6 +62,6 @@ Before performing **any non-trivial action**, the agent must:
     - create speculative or placeholder entries,
     - create multiple entries for the same unit of work unless explicitly instructed.
 
-Failure to read or correctly append to `IMPLEMENTATION_LOG.md` is a **protocol violation**.
+Failure to read or correctly append to `IMPLEMENTATION_REPORTS.md` is a **protocol violation**.
 
 ---
