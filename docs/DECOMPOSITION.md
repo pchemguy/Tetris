@@ -31,12 +31,57 @@ This document is **normative** and applies to all acceptance gates.
 The system is decomposed into the following components:
 
 1. **Core (Engine)**
+       The **core** is the authoritative simulation.
+        - It defines _all_ game state and state transitions.
+        - It is deterministic, side-effect-free, and testable in isolation.
+        - It exposes a minimal public API (`new_game`, `step`) and nothing more.
+       The core **never** performs I/O, rendering, timing, or platform interaction.
 2. **Renderer (pure)**
+    The **renderer** is a _pure presentation transformer_.
+        - Convert a `GameState` into a presentable representation: 
+          `render(state: GameState) -> str`
+        - formats state,
+        - applies presentation rules,
+        - produces deterministic output.
+      Rendering is **representation**, not display.
 3. **Terminal Presenter (I/O)**
+    The **presenter** is responsible for _emitting rendered output_ to a concrete medium (e.g. a terminal).
+        - consumes renderer output
+        - performs I/O
+        - has no knowledge of game rules or state evolution
+        - clear screen / position cursor
+        - print frame
+        - flush
+        - optionally throttle output rate (but timing belongs in runtime)
+        - handle terminal sizing quirks if you decide to support them (or explicitly forbid)
 4. **Input Driver (I/O)**
+       The **input driver** interfaces with the operating system or environment.
+        - read raw input events (keyboard, stdin, etc.)  
+        - perform non-blocking polling if required
+        - translate raw keys to higher-level signals (or hand raw keys to controller)
 5. **Input Controller (mapping / policy)**
+       The **input controller** maps input signals to game-level intent.
+        - map keys to `InputEvent`
+        - enforce per-tick semantics (no implicit repeats unless specified)
+        - possibly handle key debouncing/repeat policy (but your core model says “no implicit repeat”)
 6. **Runtime (Game Loop / Orchestrator)**
+    The **runtime** coordinates execution.
+        - maintain the current `GameState`
+        - schedule ticks (real-time or virtual-time)
+        - collect inputs via input driver + controller
+        - call `step()` exactly once per tick
+        - call the renderer
+        - delegate output to the presenter
+        - detect termination
+    The runtime orchestrates; it does not define rules.
 7. **App Shell (CLI / Entrypoints)**
+    The **app shell** is the user-facing entry layer.
+        - parse command-line arguments
+        - select execution mode (run / script / replay)
+        - wire components together
+        - configure runtime and dependencies
+        - select renderer/presenter/input driver
+    The CLI contains **no game logic** and **no rendering semantics**.
 8. **Persistence (Optional)**
 9. **Test & Evaluation Harness**
 10. **Telemetry / Observability (Optional)**
