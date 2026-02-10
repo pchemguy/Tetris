@@ -196,6 +196,7 @@ specification being present and acknowledged.
 - Tests must be able to run without any interactive UI.
 - Deterministic scripted runs must be supported for evaluation.
 - Rendering semantics and output side effects are strictly separated.
+- The App Shell (CLI) is the composition root: it loads external data (config/replay) via Persistence and wires dependencies; the runtime does not load files or discover configuration.
 
 ---
 

@@ -345,24 +345,7 @@ Persistence is a service, not a controller.
 
 ---
 
-## 4. Practical “baseline console app” minimal set
-
-If you want the smallest complete ASCII console game that still respects boundaries:
-
-* Core ✅
-* Renderer ✅ (pure)
-* Presenter ✅ (stdout)
-* Runtime ✅ (scripted required; interactive optional)
-* CLI ✅
-* Input Controller ✅ (maps keys to InputEvent)
-* Input Driver ✅ (only if interactive mode is implemented)
-* Persistence ❓ optional (replay implies it; config file implies it)
-
-For Phase 2 baseline app (shell completeness 10–13), you can still keep **interactive input/presenter** out unless you add a dedicated gate for it (you already hinted at that in staging).
-
----
-
-## 5. Interfaces between components
+## 4. Interfaces between components
 
 The only allowed cross-component interfaces are:
 
@@ -395,7 +378,110 @@ component unless explicitly designated as public API.
 
 ---
 
+## 5. Practical “baseline console app” minimal set
+
+If you want the smallest complete ASCII console game that still respects boundaries:
+
+* Core ✅
+* Renderer ✅ (pure)
+* Presenter ✅ (stdout)
+* Runtime ✅ (scripted required; interactive optional)
+* CLI ✅
+* Input Controller ✅ (maps keys to InputEvent)
+* Input Driver ✅ (only if interactive mode is implemented)
+* Persistence ❓ optional (replay implies it; config file implies it)
+
+For Phase 2 baseline app (shell completeness 10–13), you can still keep **interactive input/presenter** out unless you add a dedicated gate for it (you already hinted at that in staging).
+
+---
+
 ## 6. Recommended baseline console flow (who calls whom)
+
+### 6.0 Composition and Execution Master Controllers
+
+There are **two different “control centers”**, operating at different times:
+
+#### 1. Composition-time: App Shell (CLI)
+
+*(runs once, before execution starts)*
+
+The CLI is the **composition root**.
+
+It answers:
+
+* *What mode are we running in?*
+* *Which renderer / presenter / input stack do we use?*
+* *Where does configuration come from?*
+* *Are we running scripted, replay, or interactive?*
+
+It does:
+
+* parse arguments,
+* load config / replay via Persistence,
+* construct:
+    * runtime,
+    * renderer,
+    * presenter,
+    * input driver + controller,
+* inject all dependencies into runtime,
+* then **hands off control**.
+
+After this point, the CLI is done.
+
+---
+
+#### 2. Execution-time: Runtime
+
+*(runs the entire program lifetime)*
+
+Once started, **runtime is the hub-and-spokes controller**.
+
+It owns:
+
+* the tick loop,
+* the current `GameState`,
+* input collection timing,
+* calling `step()` exactly once per tick,
+* calling renderer,
+* delegating output to presenter,
+* termination conditions.
+
+During execution:
+
+**Data Flow**
+
+```
+Input Driver  →  
+                \
+Input Controller → Runtime → Core → Renderer → Presenter
+```
+
+**Control Flow**
+
+```
+                +------------------+
+                |   Input Driver   |
+                +------------------+
+                         |
+                         v
+                +------------------+
+                | Input Controller |
+                +------------------+
+                         |
+                         v
++--------+      +------------------+      +----------+
+|  Core  | <--- |     Runtime      | ---> | Renderer |
++--------+      +------------------+      +----------+
+                         |
+                         v
+                +------------------+
+                |    Presenter     |
+                +------------------+
+```
+
+Runtime is the sole execution coordinator; all other components are dependencies invoked by runtime and must not invoke each other’s internal logic.
+
+---
 
 ### 6.1 `run` (interactive)
 
@@ -415,6 +501,22 @@ component unless explicitly designated as public API.
     * terminate on game over / user exit condition
 3. **Persistence (optional)**
     * maybe save high score / config (but only if spec says)
+
+```
+CLI (composition root)
+ ├─ loads config / replay (Persistence)
+ ├─ wires components
+ └─ hands control to Runtime
+
+Runtime (orchestrator)
+ ├─ owns tick loop
+ ├─ calls Core.step()
+ ├─ calls Renderer.render()
+ └─ delegates I/O to Presenter / Input stack
+
+Core (pure)
+ └─ authoritative simulation
+```
 
 **Why CLI loads config here:** because config affects *composition* (renderer choice, interactive tick rate, input mapping), which are shell decisions.
 

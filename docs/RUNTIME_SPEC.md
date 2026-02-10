@@ -29,11 +29,26 @@ The runtime is responsible for:
 4. Rendering the resulting state
 5. Detecting termination
 
+**Configuration and I/O boundaries (normative)**
+
+- The runtime consumes an **already-resolved configuration** provided by the App Shell (CLI).
+- The runtime must not:
+    - locate configuration files,
+    - parse configuration formats,
+    - load configuration or replay data from disk,
+    - parse command-line arguments.
+- External data loading (config, script inputs, replay files) is performed by:
+    - the App Shell (CLI), via Persistence, before runtime execution begins.
+
 The runtime must not implement game logic.
 
 ---
 
 ## 3. Execution modes
+
+**Composition root note (normative)**
+
+Execution mode selection and dependency wiring occur in the App Shell (CLI). The runtime does not select modes; it executes the mode it is constructed for.
 
 ### 3.1 Scripted (virtual-time) mode — REQUIRED
 
@@ -74,6 +89,8 @@ Interactive mode MUST NOT be used as a source of truth for correctness or accept
 ---
 
 ## 4. Render state (exactly once per tick)
+
+The runtime operates on already-constructed dependencies (renderer, presenter, input stack) and a resolved configuration.
 
 For each tick:
 
