@@ -2,34 +2,97 @@
 name: AGENTS.md
 ---
 
-## Mandatory Project Discovery Steps
+## IMPORTANT - Documentation Reference Convention
 
-Before writing, modifying, or deleting **any** files, the agent must:
+Only the following Markdown files reside at repository root:
 
-1. Read and operationalize the following files and all files they reference:
-    - `AGENTS.md` (this file)
-    - `README.md`
-    - `PROJECT.md`
-2. Discover available agent skills:
-    - Enumerate `.agent/skills/`.
-    - Analyze all discovered skills.
-    - For each skill, perform baseline diagnostics to:
-        - verify the skill is well-defined and usable,
-        - identify and report ambiguities or inconsistencies,
-        - abort execution on critical errors (e.g. malformed skills, missing required references).
+- `AGENTS.md`
+- `PROJECT.md`
+- `README.md`
 
-**IMPORTANT**: Ideas are non-normative and inert; agents must not implement, infer intent from, or act on anything in `docs/ideas/`.
+All other Markdown documents referenced by filename only (e.g., `IMPLEMENTATION_REPORTS.md`, `PHASES.md`, `ACCEPTANCE_GATES.md`) are located:
 
-If any required files are missing or inaccessible, the agent must immediately stop and output:
+- under `docs/` (directly or within its subdirectories), or
+- in the same directory as the referring document.
+
+Agents must consult the "`docs/` structure" section of `PROJECT.md` to resolve document paths correctly.
+
+If a referenced document cannot be resolved deterministically, the agent must halt with:
 
 ```
+BLOCKED  
+Unresolved documentation reference: <filename>
+```
+
+Failure to resolve documentation location correctly is a protocol failure.
+
+---
+
+## Mandatory Project Discovery Protocol
+
+Before writing, modifying, or deleting **any files**, the agent must:
+
+1. Read and operationalize:
+    - `AGENTS.md`
+    - `PROJECT.md`
+    - `README.md`
+2. Resolve and read all documents referenced by those files.
+3. Discover available agent skills:
+    - Enumerate `.agent/skills/`.
+    - Analyze all discovered skills.
+    - For each skill:
+        - verify it is well-defined and usable,
+        - identify ambiguities or inconsistencies,
+        - abort execution on critical errors (e.g., malformed skills, missing required references).
+
+If any required files are missing, inaccessible, or unresolved, the agent must immediately stop and output:
+
+```
+
 BLOCKED
 Missing or inaccessible artifacts:
 
 * <list of files>
+
 ```
 
 No further reasoning or action is permitted after this output.
+
+---
+
+## Non-normative "Ideas" (Hard Rules)
+
+The directory:
+
+```
+
+docs/ideas/
+
+```
+
+contains **non-normative, speculative documents**. These documents have **zero authority** and exist only to preserve future possibilities or rejected options.
+
+Agents must obey:
+
+1. **No authority**
+    - Nothing in `docs/ideas/` overrides or supplements any normative document.
+2. **No action**
+    - Do not implement, partially implement, refactor toward, or prepare code for anything described solely in `docs/ideas/`.
+3. **No inference**
+    - Do not infer roadmap, intent, priorities, or implied requirements from ideas.
+4. **No scope expansion**
+    - Do not use ideas to justify adding features, introducing components, modifying tests, or changing acceptance criteria.
+5. **Logging requirement**
+    - If an idea document is read, it must:
+        - be listed under `artifacts.read` in `IMPLEMENTATION_REPORTS.md`,
+        - explicitly state that **no action was taken** based on it.
+
+Allowed (strictly limited):
+
+- Read for context only when explicitly instructed.
+- Assist in rewriting/promoting an idea into a normative document when explicitly requested.
+
+Violation of any rule in this section is a **protocol failure**.
 
 ---
 
@@ -37,128 +100,84 @@ No further reasoning or action is permitted after this output.
 
 `IMPLEMENTATION_REPORTS.md` is the **authoritative execution state** of this repository.
 
-Before performing **any non-trivial action**, the agent must:
+Before performing any **non-trivial action**, the agent must:
 
-1. Read `IMPLEMENTATION_REPORTS.md` in full.
-2. Determine and explicitly acknowledge:
-    - current **repository phase**,
-    - current **acceptance gate** (if any),
-    - last recorded **status** (`completed`, `blocked`, etc.).
+1. Confirm `IMPLEMENTATION_REPORTS.md` exists.
+2. Read it in full.
+3. Determine and explicitly acknowledge:
+    - current **repository phase** (`PHASES.md`),
+    - current **acceptance gate** (`ACCEPTANCE_GATES.md`),
+    - last recorded **status**.
 
----
-
-### Reporting rules
-
-3. The agent must append **exactly one new entry** to `IMPLEMENTATION_REPORTS.md`:
-    - **before** starting a unit of work *only if* recording intent was explicitly requested, **or**
-    - **after** completing, blocking, aborting, or refusing the unit of work.
-4. Each entry must:
-    - follow the schema defined in `IMPLEMENTATION_REPORTS.md`,
-    - truthfully record:
-        - success,
-        - partial completion,
-        - blockage,
-        - failure,
-        - or refusal to proceed,
-    - list all relevant artifacts read and modified.
-5. The agent must **not**:
-    - edit or delete existing log entries,
-    - create speculative or placeholder entries,
-    - create multiple entries for the same unit of work unless explicitly instructed.
-
-Failure to read or correctly append to `IMPLEMENTATION_REPORTS.md` is a **protocol violation**.
-
----
-
-Below is a **drop-in clause** you can paste directly into **`AGENTS.md`**.
-It is written to be **unambiguous, enforceable, and agent-safe**, and it fits cleanly with your existing discovery + implementation-log protocol.
-
----
-
-## Treatment of Non-Normative “Ideas” Documents
-
-### Scope
-
-The directory:
+If `IMPLEMENTATION_REPORTS.md` does not exist:
 
 ```
-docs/ideas/
+
+BLOCKED
+Missing required execution state:
+
+* IMPLEMENTATION_REPORTS.md
+
 ```
 
-contains **non-normative, speculative documents**.
-
-These documents exist solely to record **future possibilities, rejected options, or exploratory thoughts**.
-They do **not** define requirements, constraints, or permissions.
+No action is permitted without execution state.
 
 ---
 
-### Mandatory agent rules
+### Reporting Rules (Strict)
 
-Agents **must** obey the following rules when encountering `docs/ideas/`:
+For each non-trivial unit of work, the agent must append **two entries** to `IMPLEMENTATION_REPORTS.md`:
 
-1. **No authority**
-    * Documents under `docs/ideas/` have **zero normative authority**.
-    * They do not override, amend, or supplement any specification, gate, or phase.
-2. **No action**
-    * Agents must **not implement**, partially implement, or prepare code for anything described solely in `docs/ideas/`.
-    * Agents must **not treat ideas as backlog, TODOs, or implied future work**.
-3. **No inference**
-    * Agents must **not infer intent, roadmap, or priorities** from the presence of an idea.
-    * The existence of an idea does **not** imply that it will ever be implemented.
-4. **No scope expansion**
-    * Ideas must **never** be used to justify:
-         * expanding scope,
-         * adding features,
-         * refactoring existing components,
-         * introducing new components,
-         * modifying tests or acceptance criteria.
-5. **Logging requirement**
-    * If an agent reads or references a document in `docs/ideas/`, it must:
-         * explicitly list it under `artifacts.read` in `IMPLEMENTATION_REPORTS.md`,
-         * state that no action was taken based on it.
+1. **Start entry**
+    - status: `planned` or `in_progress`
+    - records intended phase and target gate
+2. **End entry**
+    - status: `completed`, `blocked`, `failed`, or `aborted`
+    - records actual outcome and test results
 
----
+Each entry must:
 
-### Allowed uses (strictly limited)
+- follow the schema defined in `IMPLEMENTATION_REPORTS.md`,
+- list all artifacts read / modified / added / deleted,
+- record blockers and assumptions when applicable,
+- reflect truthful execution state.
 
-Agents **may**:
+The agent must not:
 
-* Read ideas for **context only**, when explicitly instructed.
-* Cite ideas in discussion or analysis **without acting on them**.
-* Assist a human in **rewriting or promoting** an idea into a normative document *only when explicitly requested*.
+- edit or delete existing entries,
+- create speculative or placeholder entries,
+- collapse multiple independent work units into one entry.
 
----
+Failure to comply is a **protocol violation**.
 
-### Disallowed phrasing (hard rule)
+If a protocol violation is detected mid-run, the agent must stop and output:
 
-Agents must **never** use phrases such as:
+```
+BLOCKED
+Protocol violation:
 
-* “planned feature”
-* “future requirement”
-* “will be implemented later”
-* “next step according to ideas”
-
-Unless a **normative document explicitly says so**.
+* <short description>
+```
 
 ---
 
-### Violation severity
+## Gate 0 Self-Verification Requirement
 
-Any of the following constitutes a **protocol violation**:
+Before attempting any gate beyond 0, the agent must confirm:
 
-* Implementing behavior described only in `docs/ideas/`
-* Treating an idea as a requirement or TODO
-* Using ideas to justify scope expansion
-* Failing to log idea access when relevant
+- All normative documents referenced in `PROJECT.md` are resolved.
+- Import boundaries defined in `DECOMPOSITION.md` are understood.
+- Applicable test oracle documents are identified.
+- Current phase permits the target gate.
 
-Protocol violations must result in **immediate halt** and a `BLOCKED` status.
-
----
-
-### Summary (agent-facing)
-
-> **Ideas are inert.
-> They inform humans, not agents.
-> Nothing happens unless a spec changes.**
+Failure to perform this verification is a Gate 0 failure.
 
 ---
+
+## Summary (Agent-Facing)
+
+> Documentation defines what is allowed.  
+> Acceptance gates define what is correct.  
+> Phases define when work is allowed.  
+> Implementation reports define what actually happened.  
+> Ideas define nothing.
