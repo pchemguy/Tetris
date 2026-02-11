@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "registry_id": "TETRIS.COMPONENT_REGISTRY",
+  "registry_version": 1,
+  "project_id": "TETRIS",
+  "last_updated_utc": "2026-02-11T00:00:00Z",
+
+  "components": [
+    {
+      "component_id": "core",
+      "component_title": "Core (Engine)",
+      "component_kind": "core",
+      "component_status": "active",
+      "normative": true,
+
+      "package_roots": ["tetris.core"],
+      "source_paths": ["tetris/src/tetris/core/"],
+
+      "public_api_modules": ["tetris.core"],
+      "notes": "Pure deterministic simulation. No I/O, no time."
+    },
+    {
+      "component_id": "renderer",
+      "component_title": "Renderer (pure)",
+      "component_kind": "shell",
+      "component_status": "active",
+      "normative": true,
+
+      "package_roots": ["tetris.rendering"],
+      "source_paths": ["tetris/src/tetris/rendering/"],
+
+      "public_api_modules": ["tetris.rendering"],
+      "notes": "Pure transform: GameState -> str (or richer frame type if specified)."
+    },
+    {
+      "component_id": "presenter",
+      "component_title": "Terminal Presenter (I/O)",
+      "component_kind": "shell",
+      "component_status": "active",
+      "normative": true,
+
+      "package_roots": ["tetris.presentation"],
+      "source_paths": ["tetris/src/tetris/presentation/"],
+
+      "public_api_modules": ["tetris.presentation"],
+      "notes": "I/O adapter. Emits frames. Must not interpret game semantics."
+    },
+    {
+      "component_id": "input_driver",
+      "component_title": "Input Driver (I/O)",
+      "component_kind": "shell",
+      "component_status": "active",
+      "normative": true,
+
+      "package_roots": ["tetris.input.driver"],
+      "source_paths": ["tetris/src/tetris/input/driver/"],
+
+      "public_api_modules": ["tetris.input.driver"],
+      "notes": "OS/environment input boundary. Raw signals only."
+    },
+    {
+      "component_id": "input_controller",
+      "component_title": "Input Controller (mapping/policy)",
+      "component_kind": "shell",
+      "component_status": "active",
+      "normative": true,
+
+      "package_roots": ["tetris.input"],
+      "source_paths": ["tetris/src/tetris/input/"],
+
+      "public_api_modules": ["tetris.input"],
+      "notes": "Maps raw signals to InputEvent per INPUT_MODEL."
+    },
+    {
+      "component_id": "runtime",
+      "component_title": "Runtime (Game Loop / Orchestrator)",
+      "component_kind": "shell",
+      "component_status": "active",
+      "normative": true,
+
+      "package_roots": ["tetris.runtime"],
+      "source_paths": ["tetris/src/tetris/runtime/"],
+
+      "public_api_modules": ["tetris.runtime"],
+      "notes": "Execution-time hub. Owns tick loop; calls core once per tick."
+    },
+    {
+      "component_id": "cli",
+      "component_title": "App Shell (CLI / Entrypoints)",
+      "component_kind": "shell",
+      "component_status": "active",
+      "normative": true,
+
+      "package_roots": ["tetris.cli", "tetris.__main__"],
+      "source_paths": ["tetris/src/tetris/"],
+
+      "public_api_modules": ["tetris.cli", "tetris.__main__"],
+      "notes": "Composition root. Parses args, loads config, wires dependencies."
+    },
+    {
+      "component_id": "persistence",
+      "component_title": "Persistence (Optional)",
+      "component_kind": "shell",
+      "component_status": "optional",
+      "normative": true,
+
+      "package_roots": ["tetris.persistence"],
+      "source_paths": ["tetris/src/tetris/persistence/"],
+
+      "public_api_modules": ["tetris.persistence"],
+      "notes": "I/O services: config/replay load; optional save outputs."
+    },
+    {
+      "component_id": "test_harness",
+      "component_title": "Test & Evaluation Harness",
+      "component_kind": "testing",
+      "component_status": "active",
+      "normative": true,
+
+      "package_roots": [],
+      "source_paths": ["tetris/tests/"],
+
+      "public_api_modules": [],
+      "notes": "Pytest suite + evaluation harness. Not importable by production code."
+    },
+    {
+      "component_id": "telemetry",
+      "component_title": "Telemetry / Observability (Optional)",
+      "component_kind": "shell",
+      "component_status": "optional",
+      "normative": true,
+
+      "package_roots": ["tetris.telemetry"],
+      "source_paths": ["tetris/src/tetris/telemetry/"],
+
+      "public_api_modules": ["tetris.telemetry"],
+      "notes": "Passive instrumentation. Must not become controller."
+    }
+  ],
+
+  "doc_scope_enum": [
+    "global",
+    "core",
+    "shell",
+    "component:core",
+    "component:renderer",
+    "component:presenter",
+    "component:input_driver",
+    "component:input_controller",
+    "component:runtime",
+    "component:cli",
+    "component:persistence",
+    "component:test_harness",
+    "component:telemetry"
+  ],
+
+  "dependency_policy": {
+    "rule": "deny_by_default",
+    "allowed_component_edges": [
+      ["runtime", "core"],
+      ["runtime", "renderer"],
+      ["runtime", "presenter"],
+      ["runtime", "input_driver"],
+      ["runtime", "input_controller"],
+
+      ["cli", "runtime"],
+      ["cli", "core"],
+      ["cli", "renderer"],
+      ["cli", "presenter"],
+      ["cli", "input_driver"],
+      ["cli", "input_controller"],
+      ["cli", "persistence"],
+
+      ["renderer", "core"]
+    ],
+    "forbidden_component_edges": [
+      ["core", "runtime"],
+      ["core", "cli"],
+      ["core", "renderer"],
+      ["core", "presenter"],
+      ["core", "input_driver"],
+      ["core", "input_controller"],
+      ["core", "persistence"],
+      ["core", "telemetry"],
+
+      ["presenter", "core"],
+      ["presenter", "runtime"],
+
+      ["input_driver", "core"],
+      ["input_driver", "runtime"],
+
+      ["persistence", "runtime"],
+      ["persistence", "cli"],
+
+      ["telemetry", "runtime"],
+      ["telemetry", "cli"]
+    ],
+    "notes": [
+      "The dependency graph is component-level policy; module-level import rules should be derived from package_roots.",
+      "Renderer may import core types only (enforced by code review / tooling)."
+    ]
+  },
+
+  "enforcement": {
+    "lint_targets": [
+      "tetris/src/tetris/",
+      "tetris/tests/"
+    ],
+    "tooling_notes": [
+      "Generate DOC_SCHEMA doc_scope enum from doc_scope_enum.",
+      "Validate @DOC_ID references in markdown against YAML doc_id inventory.",
+      "Optional: static import linter can map module imports to component_id via package_roots."
+    ]
+  }
+}

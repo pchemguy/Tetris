@@ -2,6 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Documentation Metadata Schema",
   "type": "object",
+
+  "definitions": {
+    "doc_id_type": {
+      "type": "string",
+      "pattern": "^[0-9A-Za-z_]+(\\.[0-9A-Za-z_]+)*$"
+    }
+  },
+
   "required": [
     "doc_id",
     "doc_title",
@@ -15,14 +23,18 @@
     "superseded_by",
     "references"
   ],
+
   "properties": {
+
     "doc_id": {
-      "type": "string",
-      "pattern": "^[0-9A-Za-z_]+(\\.[0-9A-Za-z_]+)*$"
+      "$ref": "#/definitions/doc_id_type"
     },
+
     "doc_title": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
+
     "doc_kind": {
       "type": "string",
       "enum": [
@@ -37,10 +49,12 @@
         "idea"
       ]
     },
+
     "doc_scope": {
       "type": "string",
       "pattern": "^(global|core|shell|component:[a-z_]+)$"
     },
+
     "doc_status": {
       "type": "string",
       "enum": [
@@ -49,6 +63,7 @@
         "deprecated"
       ]
     },
+
     "doc_authority": {
       "type": "string",
       "enum": [
@@ -56,32 +71,38 @@
         "non_normative"
       ]
     },
+
     "gate_applies_to": {
       "type": "string",
       "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"
     },
+
     "phase_applies_to": {
       "type": "string",
       "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"
     },
+
     "supersedes": {
       "type": "array",
       "items": {
-        "type": "string",
-        "pattern": "^[A-Z0-9_]+$"
+        "$ref": "#/definitions/doc_id_type"
       }
     },
+
     "superseded_by": {
-      "type": ["string", "null"],
-      "pattern": "^[A-Z0-9_]+$"
+      "oneOf": [
+        { "$ref": "#/definitions/doc_id_type" },
+        { "type": "null" }
+      ]
     },
+
     "references": {
       "type": "array",
       "items": {
-        "type": "string",
-        "pattern": "^[A-Z0-9_]+$"
+        "$ref": "#/definitions/doc_id_type"
       }
     }
   },
+
   "additionalProperties": false
 }
