@@ -293,21 +293,11 @@ All agents must:
 
 This section provides a **synoptic index** of all normative documents grouped by **conceptual responsibility**; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one. Partial discovery or selective reading constitutes non-compliance.
 
-This section is not a/an
-
-* development checklist,
-* implementation sequence,
-* tutorial.
-
-To determine:
-
-* *what applies now* → consult **phases** and **acceptance gates**,
-* *what behavior is allowed* → consult **component specifications**,
-* *what must be tested* → consult **test oracles**.
-
 **IMPORTANT**: For each group, relative path (with respect to project directory / repo root) of the containing directory is provided. In other documents, these files will be conventionally referred to by name only. You must use appropriate relative prefix from this section to locate individual files.
 
-### System architecture
+### `docs/` structure
+
+#### System architecture
 
 **Directory**: `docs/architecture/`
 
@@ -319,7 +309,7 @@ To determine:
 
 ---
 
-### Development control
+#### Development control
 
 **Directory**: `docs/control/`
 
@@ -330,7 +320,7 @@ To determine:
 
 ---
 
-### Core contracts
+#### Core contracts
 
 **Directory**: `docs/specs/core/`
 
@@ -345,7 +335,7 @@ To determine:
 
 ---
 
-### Shell contracts
+#### Shell contracts
 
 **Directory**: `docs/specs/shell/`
 
@@ -361,7 +351,7 @@ To determine:
 
 ---
 
-### I/O API specifications
+#### I/O API specifications
 
 **Directory**: `docs/specs/io/`
 
@@ -370,7 +360,7 @@ To determine:
 | Input driver interface specification | `INPUT_DRIVER_API.md` | Input Driver API and its strict responsibility boundaries |
 | Presenter interface specification    | `PRESENTER_API.md`    | Presenter API and its strict responsibility boundaries    |
 
-### Progress reporting
+#### Progress reporting
 
 **Directory**: `docs/reports/`
 
@@ -380,7 +370,7 @@ To determine:
 
 ---
 
-### Core test oracle
+#### Core test oracle
 
 **Directory**: `docs/oracles/core/`
 
@@ -390,7 +380,7 @@ To determine:
 
 ---
 
-### Shell-level test oracles
+#### Shell-level test oracles
 
 **Directory**: `docs/oracles/shell/`
 
@@ -456,10 +446,17 @@ Raw / early ideas should be noted under `docs/ideas/`. Agents **MUST** ignore th
 
 ### Notes
 
-* This section is a **synopsis**, not a substitute for reading the documents themselves.
+* This section is a **synopsis**, not a development checklist, an implementation sequence, a tutorial, or a substitute for reading the documents themselves.
 * All documents listed above are **normative** unless explicitly stated otherwise. Non-normative documents (guides, notes, examples) may be added later.
 * All test oracle documents follow the naming convention `<COMPONENT>_TEST_ORACLE.md` and apply only to the corresponding acceptance gate(s).
 * If a conflict arises between code and docs, the implementation is considered incorrect.
+
+To determine:
+
+* *what applies now* → consult **phases** and **acceptance gates**,
+* *what behavior is allowed* → consult **component specifications**,
+* *what must be tested* → consult **test oracles**.
+
 
 ---
 
