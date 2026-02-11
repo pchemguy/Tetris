@@ -1,0 +1,216 @@
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "TETRIS.COMPONENT_REGISTRY.schema.json",
+  "title": "Tetris Component Registry Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "registry_id",
+    "project_id",
+    "reserved_scopes",
+    "description",
+    "scope_token_convention",
+    "components",
+    "doc_scope_enum",
+    "dependency_policy",
+    "enforcement"
+  ],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "registry_id": {
+      "type": "string",
+      "pattern": "^[0-9A-Za-z_]+(\\.[0-9A-Za-z_]+)*$"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[0-9A-Za-z_]+$"
+    },
+    "description": {"type": "string"},
+    "reserved_scopes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["global", "core", "shell", "testing"]
+      }
+    },
+    "scope_token_convention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "layers", "example"],
+      "properties": {
+        "format": {
+          "type": "string",
+          "const": "<layer>:<component_id>"
+        },
+        "layers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["core", "shell", "testing"]
+          }
+        },
+        "example": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "doc_scope_enum": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/doc_scope_token" }
+    },
+    "dependency_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "allowed_component_edges", "forbidden_component_edges", "notes"],
+      "properties": {
+        "rule": {
+          "type": "string",
+          "enum": ["deny_by_default"]
+        },
+        "allowed_component_edges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/component_edge" }
+        },
+        "forbidden_component_edges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/component_edge" }
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "enforcement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lint_targets", "tooling_notes"],
+      "properties": {
+        "lint_targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "tooling_notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "component_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "python_module": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"
+    },
+    "layer": {
+      "type": "string",
+      "enum": ["core", "shell", "testing"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "reserved", "deprecated"]
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "layer",
+        "title",
+        "description",
+        "status",
+        "required",
+        "package",
+        "public_api_modules"
+      ],
+      "properties": {
+        "component_id": { "$ref": "#/$defs/component_id" },
+        "layer": { "$ref": "#/$defs/layer" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" },
+        "required": { "type": "boolean" },
+        "package": {
+          "type": ["string", "null"],
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/python_module" }
+          ]
+        },
+        "source_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "public_api_modules": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/python_module" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "layer": { "const": "testing" } },
+            "required": ["layer"]
+          },
+          "then": {
+            "properties": {
+              "package": { "type": "null" }
+            },
+            "required": ["source_paths"]
+          }
+        }
+      ]
+    },
+    "doc_scope_token": {
+      "type": "string",
+      "enum": [
+        "global",
+        "core",
+        "shell",
+        "testing",
+        "core:core",
+        "shell:renderer",
+        "shell:presenter",
+        "shell:input_driver",
+        "shell:input_controller",
+        "shell:runtime",
+        "shell:cli",
+        "shell:persistence",
+        "shell:telemetry",
+        "testing:testing"
+      ]
+    },
+    "component_edge": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [{ "$ref": "#/$defs/component_id" }, { "$ref": "#/$defs/component_id" }]
+    }
+  }
+}
+```

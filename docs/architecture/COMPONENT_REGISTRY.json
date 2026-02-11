@@ -1,9 +1,9 @@
-```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_version": "1.0.0",
   "registry_id": "TETRIS.COMPONENT_REGISTRY",
   "project_id": "TETRIS",
+  "description": "Authoritative registry of system components and their layers. Used to generate explicit doc_scope enum values in DOC_SCHEMA and to enforce core vs shell boundaries.",
   "reserved_scopes": ["global", "core", "shell", "testing"],
   "scope_token_convention": {
     "format": "<layer>:<component_id>",
@@ -178,4 +178,3 @@
     ]
   }
 }
-```
