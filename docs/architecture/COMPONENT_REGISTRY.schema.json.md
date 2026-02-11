@@ -155,19 +155,24 @@
         "description": { "type": "string" },
         "status": { "$ref": "#/$defs/status" },
         "required": { "type": "boolean" },
+  
         "package": {
-          "type": ["string", "null"],
-          "anyOf": [
+          "oneOf": [
             { "type": "null" },
             { "$ref": "#/$defs/python_module" }
           ]
         },
+  
         "source_paths": {
           "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
           "items": { "type": "string" }
         },
+  
         "public_api_modules": {
           "type": "array",
+          "uniqueItems": true,
           "items": { "$ref": "#/$defs/python_module" }
         }
       },
@@ -186,6 +191,7 @@
         }
       ]
     },
+  
     "doc_scope_token": {
       "type": "string",
       "enum": [
@@ -205,12 +211,16 @@
         "testing:testing"
       ]
     },
+  
     "component_edge": {
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
-      "items": [{ "$ref": "#/$defs/component_id" }, { "$ref": "#/$defs/component_id" }]
+      "prefixItems": [
+        { "$ref": "#/$defs/component_id" },
+        { "$ref": "#/$defs/component_id" }
+      ],
+      "items": false
     }
-  }
 }
 ```
