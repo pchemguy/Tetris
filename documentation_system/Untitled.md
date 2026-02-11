@@ -7,6 +7,8 @@ Below is a **complete, drop-in DOC_ID metadata system** you can adopt across `do
 
 You’ll add a small YAML block near the top of each normative doc.
 
+@RUNTIME_SPEC
+
 ---
 
 ## DOC_ID Metadata System (Normative)
