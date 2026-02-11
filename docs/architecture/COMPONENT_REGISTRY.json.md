@@ -1,55 +1,57 @@
+```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "1.0.0",
   "registry_id": "TETRIS.COMPONENT_REGISTRY",
-  "registry_version": 1,
   "project_id": "TETRIS",
-  "last_updated_utc": "2026-02-11T00:00:00Z",
+  "reserved_scopes": ["global", "core", "shell"],
+  "scope_token_convention": {
+    "format": "<layer>:<component_id>",
+    "layers": ["core", "shell"],
+    "example": ["core:engine", "shell:runtime"]
+  },
 
   "components": [
     {
       "component_id": "core",
-      "component_title": "Core (Engine)",
-      "component_kind": "core",
-      "component_status": "active",
-      "normative": true,
+      "layer": "core",
+      "title": "Core (Engine)",
+      "description": "Pure deterministic simulation. Owns GameState evolution and game rules via new_game()/step().",
+      "status": "active",
+      "required": true,
 
-      "package_roots": ["tetris.core"],
-      "source_paths": ["tetris/src/tetris/core/"],
-
-      "public_api_modules": ["tetris.core"],
-      "notes": "Pure deterministic simulation. No I/O, no time."
+      "package": "tetris.core",
+      "public_api_modules": ["tetris.core"]
     },
+
     {
       "component_id": "renderer",
-      "component_title": "Renderer (pure)",
-      "component_kind": "shell",
-      "component_status": "active",
-      "normative": true,
-
-      "package_roots": ["tetris.rendering"],
-      "source_paths": ["tetris/src/tetris/rendering/"],
-
-      "public_api_modules": ["tetris.rendering"],
-      "notes": "Pure transform: GameState -> str (or richer frame type if specified)."
+      "layer": "shell",
+      "title": "Renderer (pure)",
+      "description": "Pure presentation transformer. Converts GameState into a deterministic frame representation (e.g., ASCII text). No I/O.",
+      "status": "active",
+      "required": true,
+      
+      "package": "tetris.rendering",
+      "public_api_modules": ["tetris.rendering"]
     },
+    
     {
       "component_id": "presenter",
-      "component_title": "Terminal Presenter (I/O)",
-      "component_kind": "shell",
-      "component_status": "active",
-      "normative": true,
-
-      "package_roots": ["tetris.presentation"],
-      "source_paths": ["tetris/src/tetris/presentation/"],
-
-      "public_api_modules": ["tetris.presentation"],
-      "notes": "I/O adapter. Emits frames. Must not interpret game semantics."
+      "layer": "shell",
+      "title": "Terminal Presenter (I/O)",
+      "description": "Output adapter. Emits rendered frames to a terminal/stream (clear, write, flush). Treats frames as opaque text/bytes.",
+      "status": "active",
+      "required": true,
+      
+      "package": "tetris.presentation",
+      "public_api_modules": ["tetris.presenter"]
     },
     {
       "component_id": "input_driver",
-      "component_title": "Input Driver (I/O)",
-      "component_kind": "shell",
-      "component_status": "active",
+      "title": "Input Driver (I/O)",
+      "layer": "shell",
+      "status": "active",
       "normative": true,
 
       "package_roots": ["tetris.input.driver"],
@@ -60,9 +62,9 @@
     },
     {
       "component_id": "input_controller",
-      "component_title": "Input Controller (mapping/policy)",
-      "component_kind": "shell",
-      "component_status": "active",
+      "title": "Input Controller (mapping/policy)",
+      "layer": "shell",
+      "status": "active",
       "normative": true,
 
       "package_roots": ["tetris.input"],
@@ -73,9 +75,9 @@
     },
     {
       "component_id": "runtime",
-      "component_title": "Runtime (Game Loop / Orchestrator)",
-      "component_kind": "shell",
-      "component_status": "active",
+      "title": "Runtime (Game Loop / Orchestrator)",
+      "layer": "shell",
+      "status": "active",
       "normative": true,
 
       "package_roots": ["tetris.runtime"],
@@ -86,9 +88,9 @@
     },
     {
       "component_id": "cli",
-      "component_title": "App Shell (CLI / Entrypoints)",
-      "component_kind": "shell",
-      "component_status": "active",
+      "title": "App Shell (CLI / Entrypoints)",
+      "layer": "shell",
+      "status": "active",
       "normative": true,
 
       "package_roots": ["tetris.cli", "tetris.__main__"],
@@ -99,9 +101,9 @@
     },
     {
       "component_id": "persistence",
-      "component_title": "Persistence (Optional)",
-      "component_kind": "shell",
-      "component_status": "optional",
+      "title": "Persistence (Optional)",
+      "layer": "shell",
+      "status": "optional",
       "normative": true,
 
       "package_roots": ["tetris.persistence"],
@@ -112,9 +114,9 @@
     },
     {
       "component_id": "test_harness",
-      "component_title": "Test & Evaluation Harness",
-      "component_kind": "testing",
-      "component_status": "active",
+      "title": "Test & Evaluation Harness",
+      "layer": "testing",
+      "status": "active",
       "normative": true,
 
       "package_roots": [],
@@ -125,9 +127,9 @@
     },
     {
       "component_id": "telemetry",
-      "component_title": "Telemetry / Observability (Optional)",
-      "component_kind": "shell",
-      "component_status": "optional",
+      "title": "Telemetry / Observability (Optional)",
+      "layer": "shell",
+      "status": "optional",
       "normative": true,
 
       "package_roots": ["tetris.telemetry"],
@@ -213,3 +215,4 @@
     ]
   }
 }
+```
