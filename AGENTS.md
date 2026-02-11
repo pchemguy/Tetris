@@ -2,34 +2,73 @@
 name: AGENTS.md
 ---
 
-## Documentation Resolution Algorithm (Normative)
+## Document Filename Resolution Algorithm (Normative)
 
 When encountering a reference to a Markdown document by filename only (e.g., `PHASES.md`, `CORE_API.md`, `IMPLEMENTATION_REPORTS.md`), the agent must resolve the file path using the following deterministic algorithm.
 
-The agent must not guess, infer, or approximate paths.
+Resolution rules:
 
+* The agent must not guess, infer, or approximate paths.
+* The filename match must be **exact** (case-sensitive).
+* Partial matches are forbidden.
+* Similar names are forbidden.
+* Fuzzy matching is forbidden.
 
-Only the following Markdown files reside at repository root:
+Agents must list every successfully resolved document under `artifacts.read` in `IMPLEMENTATION_REPORTS.md`.
 
-- `AGENTS.md`
-- `PROJECT.md`
-- `README.md`
+---
 
-All other Markdown documents referenced by filename only (e.g., `IMPLEMENTATION_REPORTS.md`, `PHASES.md`, `ACCEPTANCE_GATES.md`) are located:
+### Step 1 - Check collocated reference
 
-- under `docs/` (directly or within its subdirectories), or
-- in the same directory as the referring document.
-
-Agents must consult the "`docs/` structure" section of `PROJECT.md` to resolve document paths correctly.
-
-If a referenced document cannot be resolved deterministically, the agent must halt with:
+Check:
 
 ```
-BLOCKED  
-Unresolved documentation reference: <filename>
+<directory_of_referring_document>/<filename>
 ```
 
-Failure to resolve documentation location correctly is a protocol failure.
+If the file exists there, resolution succeeds.
+
+If not, proceed to Step 2.
+
+---
+
+### Step 2 - Consult `PROJECT.md`
+
+Agents must attempt to find EXACT filename match within the "Technical documentation index" section of `PROJECT.md`.
+
+If match is
+
+- **found**, use location specified within the matched subsection of the index,
+- **not found** - resolution fails.
+
+---
+
+### Failure behavior (mandatory)
+
+If resolution fails for any reason, the agent must immediately halt and output:
+
+```
+BLOCKED
+Unresolved documentation reference:
+
+* <filename>
+```
+
+No further reasoning or action is permitted.
+
+---
+
+### Prohibited behaviors
+
+The agent must not:
+
+* assume directory names (e.g., "probably under `core/`"),
+* resolve by semantic guess,
+* ignore ambiguous duplicates,
+* substitute similarly named documents,
+* continue execution after failed resolution.
+
+Any of the above constitutes a **protocol violation** and must result in a halt.
 
 ---
 
