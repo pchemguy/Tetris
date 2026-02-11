@@ -74,30 +74,28 @@
     
     {
       "component_id": "runtime",
-      "title": "Runtime (Game Loop / Orchestrator)",
       "layer": "shell",
+      "title": "Runtime (Game Loop / Orchestrator)",
+      "description": "Execution-time hub. Owns tick loop, calls step() once per tick, calls renderer, delegates output, terminates on game over.",
       "status": "active",
-      "normative": true,
-
-      "package_roots": ["tetris.runtime"],
-      "source_paths": ["tetris/src/tetris/runtime/"],
-
-      "public_api_modules": ["tetris.runtime"],
-      "notes": "Execution-time hub. Owns tick loop; calls core once per tick."
+      "required": true,
+      
+      "package": "tetris.runtime",
+      "public_api_modules": ["tetris.runtime"]
     },
+    
     {
       "component_id": "cli",
-      "title": "App Shell (CLI / Entrypoints)",
       "layer": "shell",
+      "title": "App Shell (CLI / Entrypoints)",
+      "description": "Composition root. Parses CLI args, loads external inputs/config via persistence, wires dependencies, then hands control to runtime.",
       "status": "active",
-      "normative": true,
-
-      "package_roots": ["tetris.cli", "tetris.__main__"],
-      "source_paths": ["tetris/src/tetris/"],
-
-      "public_api_modules": ["tetris.cli", "tetris.__main__"],
-      "notes": "Composition root. Parses args, loads config, wires dependencies."
+      "required": true,
+      
+      "package": "tetris.cli",
+      "public_api_modules": ["tetris.cli", "tetris.__main__"]
     },
+    
     {
       "component_id": "persistence",
       "title": "Persistence (Optional)",
