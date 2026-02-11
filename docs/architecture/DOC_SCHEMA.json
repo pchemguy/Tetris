@@ -7,7 +7,7 @@
 
     "doc_id_type": {
       "type": "string",
-      "pattern": "^[A-Z][0-9A-Z_]*$"
+      "pattern": "^[A-Z][0-9A-Z_]+$"
     },
 
     "doc_scope_enum": {
@@ -42,10 +42,7 @@
     "doc_status",
     "doc_authority",
     "gate_applies_to",
-    "phase_applies_to",
-    "supersedes",
-    "superseded_by",
-    "references"
+    "phase_applies_to"
   ],
 
   "properties": {
@@ -107,6 +104,7 @@
 
     "supersedes": {
       "type": "array",
+      "default": [],
       "uniqueItems": true,
       "items": {
         "$ref": "#/definitions/doc_id_type"
@@ -117,11 +115,13 @@
       "oneOf": [
         { "$ref": "#/definitions/doc_id_type" },
         { "type": "null" }
-      ]
+      ],
+      "default": null
     },
 
     "references": {
       "type": "array",
+      "default": [],
       "uniqueItems": true,
       "items": {
         "$ref": "#/definitions/doc_id_type"
