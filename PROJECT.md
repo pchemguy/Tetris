@@ -58,10 +58,10 @@ The workflow below assumes full understanding of the documentation authority mod
 
 1. **Read all normative documents** (mandatory).
 2. **Read `IMPLEMENTATION_REPORTS.md`** to determine current state.
-3. Determine the current repository **phase** (`docs/PHASES.md`).
-4. Confirm the current **acceptance gate** (`docs/ACCEPTANCE_GATES.md`).
+3. Determine the current repository **phase** (`PHASES.md`).
+4. Confirm the current **acceptance gate** (`ACCEPTANCE_GATES.md`).
 5. Implement incrementally, gate by gate.
-6. Write tests mapped to the applicable `docs/*_TEST_ORACLE.md` document(s).
+6. Write tests mapped to the applicable `*_TEST_ORACLE.md` document(s).
 7. Append results to `IMPLEMENTATION_REPORTS.md`.
 8. Stop and escalate on ambiguity.
 9. Extend behavior **only by updating documentation first**.
@@ -140,6 +140,44 @@ Together, these documents prevent:
 
 ---
 
+#### Gate applicability rules (normative)
+
+The applicability of documents to acceptance gates defined in `ACCEPTANCE_GATES.md` is governed by the following rules:
+
+- **System-level contracts** apply to **all gates**. They constrain the system globally and must be obeyed at all stages.
+- **Core / engine contracts** apply to **core gates (0–9)**. They define the pure simulation and must not be violated during core development or extension.
+- **Core test oracle** (`CORE_TEST_ORACLE.md`) applies to **Gates 1–6**, and additionally to **Gates 7–9** if those optional core extensions are enabled.
+- **Shell contracts** apply to **Gate 0** (discovery and scope awareness) and to their respective **shell gates (10–13)** when implementation is permitted.
+- **Shell-level test oracles** apply to **exactly one gate each**, corresponding to the shell component they validate.
+- **Gate 0** applies universally as a discovery and compliance gate and therefore requires awareness of all normative documents, even if they are not yet implemented.
+
+These rules are authoritative and supersede any informal interpretation of document scope.
+
+---
+
+#### Phase ↔ Gate matrix
+
+The following table defines which acceptance gates are expected to be exercised within each repository evolution phase. This matrix is **normative** and constrains scope. It does not replace the detailed gate definitions in `docs/ACCEPTANCE_GATES.md`.
+
+| Phase | Phase name                                 | Applicable gates |
+| ----- | ------------------------------------------ | ---------------- |
+| 0     | Contract spine & evaluation framework      | 0                |
+| 1     | Core-only MVP benchmark                    | 0–6              |
+| 2     | System / shell completeness (baseline app) | 0, 10–13         |
+| 3     | Optional extensions & hardening            | 0, 7–9           |
+| 4     | Variant shells & alternative interfaces    | 0, 10–13 (+ext.) |
+| 5     | Benchmark scaling & agent evaluation       | 0–13             |
+
+#### Notes
+
+- **Gate 0** applies in *all phases* as a discovery and compliance gate.
+- Gates **1–6** define the **mandatory core MVP**.
+- Gates **7–9** are optional core extensions and may be completed in Phase 1 or Phase 3.
+- Gates **10–13** define shell/system completeness and must not be attempted before Phase 2.
+- “(+ext.)” indicates that additional gates may be introduced for new shell variants.
+
+---
+
 ### System architecture and decomposition (what exists, how it is structured)
 
 Documents in this class define the **structural reality of the system**. They constrain *what the system is*, independent of behavior, tests, or development order. This class also consists of two distinct documents with **different levels of abstraction and authority**:
@@ -215,23 +253,7 @@ Behavior must not be inferred from tests, examples, or implementation patterns; 
 
 ---
 
-### Test oracles (how correctness is proven)
-
-Test oracle documents define **what must be proven** for an implementation to be considered correct. They answer questions such as:
-
-* Which behaviors must be tested?
-* What scenarios are mandatory?
-* What level of determinism is required?
-* What constitutes sufficient coverage for acceptance?
-
-Test oracles are **normative**: passing ad-hoc or convenience tests is insufficient if oracle-mandated tests are missing. Each test oracle applies to:
-
-* a specific component, and
-* a specific acceptance gate (or small range of gates).
-
----
-
-### Core vs shell distinction (what is inside vs outside the simulation)
+#### Core vs shell distinction (what is inside vs outside the simulation)
 
 The system is intentionally split into:
 
@@ -251,11 +273,29 @@ This distinction is enforced by:
 
 ---
 
-## 5. Normative Documentation System
+### Test oracles (how correctness is proven)
+
+Test oracle documents define **what must be proven** for an implementation to be considered correct. They answer questions such as:
+
+* Which behaviors must be tested?
+* What scenarios are mandatory?
+* What level of determinism is required?
+* What constitutes sufficient coverage for acceptance?
+
+Test oracles are **normative**: passing ad-hoc or convenience tests is insufficient if oracle-mandated tests are missing. Each test oracle applies to:
+
+* a specific component, and
+* a specific acceptance gate (or small range of gates).
+
+---
 
 ### Execution record (what has actually happened)
 
-This document records the **actual execution history** of agentic development.
+These documents record the **actual execution history** of agentic development. Unlike specifications or gates (which define what is allowed or correct), these documents
+
+- define **state**, not policy,
+- are **authoritative** for “current progress”,
+- are required reading for any agent resuming work.
 
 #### Implementation reports (`IMPLEMENTATION_REPORTS.md`) — *Authoritative execution state*
 
@@ -273,14 +313,6 @@ It answers questions such as:
 - *Which gate was last attempted, and with what outcome?*
 - *What assumptions or blockers were discovered?*
 
-This document is:
-
-- **state**, not policy,
-- **authoritative** for “current progress”,
-- required reading for any agent resuming work.
-
-Unlike specifications or gates, the implementation log does **not** define what is allowed or correct; it records **what actually occurred**.
-
 All agents must:
 
 - read it before acting,
@@ -289,15 +321,13 @@ All agents must:
 
 ---
 
-## 6. Development documentation index (synopsis) and integration
+## 5. Technical documentation index
 
 This section provides a **synoptic index** of all normative documents grouped by **conceptual responsibility**; applicability and permitted use are determined solely by the Gate applicability rules and `ACCEPTANCE_GATES.md`, not by table order. Agents are expected to **discover and reason over all of them**, not just one. Partial discovery or selective reading constitutes non-compliance.
 
 **IMPORTANT**: For each group, relative path (with respect to project directory / repo root) of the containing directory is provided. In other documents, these files will be conventionally referred to by name only. You must use appropriate relative prefix from this section to locate individual files.
 
-### `docs/` structure
-
-#### System architecture
+### System architecture
 
 **Directory**: `docs/architecture/`
 
@@ -309,7 +339,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 ---
 
-#### Development control
+### Development control
 
 **Directory**: `docs/control/`
 
@@ -320,7 +350,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 ---
 
-#### Core contracts
+### Core contracts
 
 **Directory**: `docs/specs/core/`
 
@@ -335,7 +365,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 ---
 
-#### Shell contracts
+### Shell contracts
 
 **Directory**: `docs/specs/shell/`
 
@@ -351,7 +381,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 ---
 
-#### I/O API specifications
+### I/O API specifications
 
 **Directory**: `docs/specs/io/`
 
@@ -360,7 +390,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 | Input driver interface specification | `INPUT_DRIVER_API.md` | Input Driver API and its strict responsibility boundaries |
 | Presenter interface specification    | `PRESENTER_API.md`    | Presenter API and its strict responsibility boundaries    |
 
-#### Progress reporting
+### Progress reporting
 
 **Directory**: `docs/reports/`
 
@@ -370,7 +400,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 ---
 
-#### Core test oracle
+### Core test oracle
 
 **Directory**: `docs/oracles/core/`
 
@@ -380,7 +410,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 ---
 
-#### Shell-level test oracles
+### Shell-level test oracles
 
 **Directory**: `docs/oracles/shell/`
 
@@ -391,44 +421,6 @@ This section provides a **synoptic index** of all normative documents grouped by
 | CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
 | Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
 | Config Test Oracle    | `CONFIG_TEST_ORACLE.md`    | *(TODO)*                                            |
-
----
-
-### Gate applicability rules (normative)
-
-The applicability of documents to acceptance gates defined in `ACCEPTANCE_GATES.md` is governed by the following rules:
-
-- **System-level contracts** apply to **all gates**. They constrain the system globally and must be obeyed at all stages.
-- **Core / engine contracts** apply to **core gates (0–9)**. They define the pure simulation and must not be violated during core development or extension.
-- **Core test oracle** (`CORE_TEST_ORACLE.md`) applies to **Gates 1–6**, and additionally to **Gates 7–9** if those optional core extensions are enabled.
-- **Shell contracts** apply to **Gate 0** (discovery and scope awareness) and to their respective **shell gates (10–13)** when implementation is permitted.
-- **Shell-level test oracles** apply to **exactly one gate each**, corresponding to the shell component they validate.
-- **Gate 0** applies universally as a discovery and compliance gate and therefore requires awareness of all normative documents, even if they are not yet implemented.
-
-These rules are authoritative and supersede any informal interpretation of document scope.
-
----
-
-### Phase ↔ Gate matrix
-
-The following table defines which acceptance gates are expected to be exercised within each repository evolution phase. This matrix is **normative** and constrains scope. It does not replace the detailed gate definitions in `docs/ACCEPTANCE_GATES.md`.
-
-| Phase | Phase name                                 | Applicable gates |
-| ----- | ------------------------------------------ | ---------------- |
-| 0     | Contract spine & evaluation framework      | 0                |
-| 1     | Core-only MVP benchmark                    | 0–6              |
-| 2     | System / shell completeness (baseline app) | 0, 10–13         |
-| 3     | Optional extensions & hardening            | 0, 7–9           |
-| 4     | Variant shells & alternative interfaces    | 0, 10–13 (+ext.) |
-| 5     | Benchmark scaling & agent evaluation       | 0–13             |
-
-#### Notes
-
-- **Gate 0** applies in *all phases* as a discovery and compliance gate.
-- Gates **1–6** define the **mandatory core MVP**.
-- Gates **7–9** are optional core extensions and may be completed in Phase 1 or Phase 3.
-- Gates **10–13** define shell/system completeness and must not be attempted before Phase 2.
-- “(+ext.)” indicates that additional gates may be introduced for new shell variants.
 
 ---
 
@@ -460,7 +452,7 @@ To determine:
 
 ---
 
-## 7. Extended development documentation overview
+## 6. Extended development documentation overview
 
 This section explains **how each document is intended to be used**, both by AI agents and by human developers supervising or reviewing agent output.
 

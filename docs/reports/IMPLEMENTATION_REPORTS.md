@@ -103,7 +103,7 @@ Agents must use a stable identifier across runs when possible.
 
 Each entry MUST follow this exact structure:
 
-````md
+`````md
 ---
 
 ```yaml
@@ -171,7 +171,6 @@ blockers: []
 assumptions:
   - "No code implementation permitted in Phase 0"
 ```
-````
 
 ### Summary
 
@@ -188,40 +187,26 @@ Initialized the execution report and integrated it into the documentation author
 * Agent should move to Phase 1
 * Target Gate: 1 (Core skeleton & types)
 * Read CORE_API.md and CORE_TEST_ORACLE.md before coding
+`````
 
 ---
 
 ## 6. Status field semantics (normative)
 
-- `planned` — intention recorded, no action taken
-- `in_progress` — partial work performed
-- `completed` — gate/phase objective satisfied
-- `blocked` — progress impossible without clarification
-- `failed` — attempted but did not meet criteria
-- `aborted` — intentionally stopped (with reason)
+
+| Status        | Description                               |
+| ------------- | ----------------------------------------- |
+| `planned`     | intention recorded, no action taken       |
+| `in_progress` | partial work performed                    |
+| `completed`   | gate/phase objective satisfied            |
+| `blocked`     | progress impossible without clarification |
+| `failed`      | attempted but did not meet criteria       |
+| `aborted`     | intentionally stopped (with reason)       |
+
 
 Agents must not create entries with `status: planned` unless explicitly instructed to record intent without execution.
 
 ---
-
-## 7. What belongs here vs elsewhere
-
-| Information type           | Location                     |
-| -------------------------- | ---------------------------- |
-| What is allowed            | PHASES.md                    |
-| What is correct            | ACCEPTANCE_GATES.md          |
-| What must be tested        | *_TEST_ORACLE.md             |
-| What exists structurally   | ARCHITECTURE / DECOMPOSITION |
-| **What actually happened** | IMPLEMENTATION_REPORTS.md    |
-
----
-
-## 8. Final rule (non-negotiable)
-
-If a future agent does not know **what to do next**, the correct answer is:
-
-> “Read `IMPLEMENTATION_REPORTS.md`.”
-
 ---
 
 # IMPLEMENTATION REPORTS

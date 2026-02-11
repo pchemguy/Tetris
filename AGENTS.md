@@ -2,7 +2,12 @@
 name: AGENTS.md
 ---
 
-## IMPORTANT - Documentation Reference Convention
+## Documentation Resolution Algorithm (Normative)
+
+When encountering a reference to a Markdown document by filename only (e.g., `PHASES.md`, `CORE_API.md`, `IMPLEMENTATION_REPORTS.md`), the agent must resolve the file path using the following deterministic algorithm.
+
+The agent must not guess, infer, or approximate paths.
+
 
 Only the following Markdown files reside at repository root:
 
