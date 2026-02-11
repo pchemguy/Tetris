@@ -4,9 +4,33 @@
   "type": "object",
 
   "definitions": {
+
     "doc_id_type": {
       "type": "string",
-      "pattern": "^[0-9A-Za-z_]+(\\.[0-9A-Za-z_]+)*$"
+      "pattern": "^[A-Z][0-9A-Z_]*$"
+    },
+
+    "doc_scope_enum": {
+      "type": "string",
+      "enum": [
+        "global",
+        "core",
+        "shell",
+        "testing",
+
+        "core:core",
+
+        "shell:renderer",
+        "shell:presenter",
+        "shell:input_driver",
+        "shell:input_controller",
+        "shell:runtime",
+        "shell:cli",
+        "shell:persistence",
+        "shell:telemetry",
+
+        "testing:testing"
+      ]
     }
   },
 
@@ -51,8 +75,7 @@
     },
 
     "doc_scope": {
-      "type": "string",
-      "pattern": "^(global|core|shell|component:[a-z_]+)$"
+      "$ref": "#/definitions/doc_scope_enum"
     },
 
     "doc_status": {
@@ -84,6 +107,7 @@
 
     "supersedes": {
       "type": "array",
+      "uniqueItems": true,
       "items": {
         "$ref": "#/definitions/doc_id_type"
       }
@@ -98,6 +122,7 @@
 
     "references": {
       "type": "array",
+      "uniqueItems": true,
       "items": {
         "$ref": "#/definitions/doc_id_type"
       }
