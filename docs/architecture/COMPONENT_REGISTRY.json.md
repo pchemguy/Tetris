@@ -47,19 +47,19 @@
       "package": "tetris.presentation",
       "public_api_modules": ["tetris.presenter"]
     },
+    
     {
       "component_id": "input_driver",
-      "title": "Input Driver (I/O)",
       "layer": "shell",
+      "title": "Input Driver (I/O)",
+      "description": "Raw input acquisition from OS/environment (keyboard/stdin). Produces raw signals for the Input Controller.",
       "status": "active",
-      "normative": true,
-
-      "package_roots": ["tetris.input.driver"],
-      "source_paths": ["tetris/src/tetris/input/driver/"],
-
-      "public_api_modules": ["tetris.input.driver"],
-      "notes": "OS/environment input boundary. Raw signals only."
+      "required": false,
+      
+      "package": "tetris.input.driver",
+      "public_api_modules": ["tetris.input.driver"]
     },
+    
     {
       "component_id": "input_controller",
       "title": "Input Controller (mapping/policy)",
