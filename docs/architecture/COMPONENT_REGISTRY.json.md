@@ -62,17 +62,16 @@
     
     {
       "component_id": "input_controller",
-      "title": "Input Controller (mapping/policy)",
       "layer": "shell",
+      "title": "Input Controller (Mapping/Policy)",
+      "description": "Maps raw input signals to InputEvent sequences per tick, enforcing per-tick semantics and policy (no implicit repeat unless specified).",
       "status": "active",
-      "normative": true,
+      "required": false,
 
-      "package_roots": ["tetris.input"],
-      "source_paths": ["tetris/src/tetris/input/"],
-
-      "public_api_modules": ["tetris.input"],
-      "notes": "Maps raw signals to InputEvent per INPUT_MODEL."
+      "package": "tetris.input.controller",
+      "public_api_modules": ["tetris.input"]
     },
+    
     {
       "component_id": "runtime",
       "title": "Runtime (Game Loop / Orchestrator)",
