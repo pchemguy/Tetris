@@ -869,7 +869,7 @@ Defines **mandatory tests** for replay loading, validation, and execution.
 
 ---
 
-## 8. Audience note
+## 7. Audience note
 
 * **AI agents**: This document defines your operating environment. Partial reading is failure.
 * **Human developers**: This document is intended to remain readable, editable, and authoritative even as AI assistance evolves.
