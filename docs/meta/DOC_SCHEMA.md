@@ -191,7 +191,7 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
     - Human-readable title.
 - `kind`
     - Classification of document role:
-        - `control`, `architecture`, `decomposition`, `spec`, `oracle`, `api`, `map`, `report`, `idea`.
+        - `meta`, `control`, `architecture`, `decomposition`, `spec`, `oracle`, `api`, `map`, `report`, `idea`.
 - `scope`
     - An explicit scope token enumerated in `DOC_SCHEMA.json`.
     - The source of truth for valid scope tokens is `COMPONENT_REGISTRY.json`.

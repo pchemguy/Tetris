@@ -1,11 +1,11 @@
 ---
 doc_id: DOC_GRAPH_SPEC
 name: DOC_GRAPH_SPEC.md
-doc_title: Documentation Graph Visualization Specification
-doc_kind: map
-doc_scope: global
-doc_status: active
-doc_authority: normative
+title: Documentation Graph Visualization Specification
+kind: map
+scope: global
+status: active
+authority: normative
 gate_applies_to: all
 phase_applies_to: all
 description: Defines how to extract and render a documentation dependency graph from DOC_SCHEMA YAML metadata and @DOC_ID references.
@@ -43,7 +43,7 @@ The resulting graph is used for:
 ### 2.1 Repository inputs
 
 - Markdown documents participating in the doc system (YAML front matter must validate against `DOC_SCHEMA.json`).
-- `COMPONENT_REGISTRY.json` (for validating `doc_scope` and for grouping/legend).
+- `COMPONENT_REGISTRY.json` (for validating `scope` and for grouping/legend).
 
 ### 2.2 Authority rules
 
@@ -59,13 +59,13 @@ The resulting graph is used for:
 Each node corresponds to **exactly one** document.
 
 - Node ID: `doc_id` (YAML `doc_id`)
-- Node label: `doc_title` (YAML `doc_title`)
+- Node label: `title` (YAML `title`)
 - Additional node attributes:
     - `name`
-    - `doc_kind`
-    - `doc_scope`
-    - `doc_status`
-    - `doc_authority`
+    - `kind`
+    - `scope`
+    - `status`
+    - `authority`
     - `gate_applies_to`
     - `phase_applies_to`
 
@@ -170,7 +170,7 @@ Output: `docs/reports/DOC_GRAPH.mmd` (path may differ; use your docs layout poli
 
 - Format: `flowchart LR` (or `TD`, but must be consistent)
 - Nodes must display:
-    - `doc_id` and `doc_title` (minimum)
+    - `doc_id` and `title` (minimum)
 - Edges:
     - normative edges: solid arrow
     - prose edges: dashed arrow
@@ -202,12 +202,12 @@ Output: `docs/reports/DOC_GRAPH.dot`
 
 ### 6.1 Grouping (subgraphs / swimlanes)
 
-Renderers SHOULD group nodes by `doc_scope`:
+Renderers SHOULD group nodes by `scope`:
 
 * `global`, `core`, `shell`, `testing`,
 * and component-specific tokens like `shell:runtime` if present.
 
-If grouping is not supported by the output format, grouping may be omitted, but node labels MUST still include `doc_scope` in an inspectable way (tooltip/label suffix).
+If grouping is not supported by the output format, grouping may be omitted, but node labels MUST still include `scope` in an inspectable way (tooltip/label suffix).
 
 ### 6.2 Styling and legend (required)
 
@@ -216,7 +216,7 @@ Graph output MUST include a legend indicating:
 * solid edges = YAML `references` (normative)
 * dashed edges = prose `@DOC_ID` mentions (non-authoritative)
 
-Optional node styling by `doc_kind`:
+Optional node styling by `kind`:
 
 * `control`: distinct shape/class
 * `spec`, `oracle`, `api`, `map`, `report`, `idea`: distinct classes
@@ -234,8 +234,8 @@ Tooling MUST support generating filtered graphs:
 
 Optional filters:
 
-* by `doc_authority` (normative only),
-* by `doc_scope` (e.g., only `shell:*` docs),
+* by `authority` (normative only),
+* by `scope` (e.g., only `shell:*` docs),
 * by gate/phase applicability ranges.
 
 ---

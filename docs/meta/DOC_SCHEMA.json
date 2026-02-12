@@ -69,6 +69,7 @@
     "kind": {
       "type": "string",
       "enum": [
+        "meta",
         "control",
         "architecture",
         "decomposition",
