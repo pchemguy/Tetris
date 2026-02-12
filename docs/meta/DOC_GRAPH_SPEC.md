@@ -219,13 +219,16 @@ Let `layer(A)` be source layer and `layer(B)` be target layer.
 
 Rules:
 
-* `L4` may reference L3, L2, L1, L0
-* `L3` may reference L2, L1, L0
-* `L2` may reference L1, L0
-* `L1` may reference L0
-* `L0` may reference any layer
-* `L5` may reference any layer (log surface)
-* `OUT` documents are excluded from structural validation
+| Source layer | Allowed target layers for **normative `references`** |
+| ------------ | ---------------------------------------------------- |
+| L0           | L0–L5                                                |
+| L1           | L0, L2, L3, L4                                       |
+| L2           | L2                                                   |
+| L3           | L2, L3                                               |
+| L4           | L2, L3, L4                                           |
+| L5           | L0–L5                                                |
+
+
 
 If violated:
 
