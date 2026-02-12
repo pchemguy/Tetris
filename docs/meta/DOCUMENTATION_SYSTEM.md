@@ -9,7 +9,7 @@ authority: normative
 gate_applies_to: all
 phase_applies_to: all
 supersedes: []
-superseded_by:
+superseded_by: null
 references:
   - DOC_SCHEMA
   - COMPONENT_REGISTRY
@@ -22,40 +22,17 @@ description: Defines the structure, authority rules, and roles of the repository
 
 ## 1. Purpose
 
-This document defines the **documentation infrastructure** of the repository.
+This document defines the **documentation infrastructure** of the repository. It governs the **meta-layer**: not game behavior, not architecture, not tests — but the structure that makes those documents coherent, verifiable, and automatable.
 
-It formalizes:
-
-* how documents are identified,
-* how components are classified,
-* how authority and scope are determined,
-* how cross-document references are validated,
-* how documentation integrity is enforced at Gate 0.
-
-The documentation system itself is treated as a **first-class, auditable subsystem** of the project.
-
-It is designed to ensure that:
-
-* documentation is machine-checkable,
-* authority is explicit and deterministic,
-* scope boundaries are enforceable,
-* references are structurally valid,
-* evolution is controlled and traceable.
-
-This document governs the **meta-layer** of the repository: not game behavior, not architecture, not tests — but the structure that makes those documents coherent, verifiable, and automatable.
-
-**Audience note**
-
-* **AI agents**: This document defines your operating environment. Partial reading is failure.
-* **Human developers**: This document is intended to remain readable, editable, and authoritative even as AI assistance evolves.
+The documentation system itself is treated as a **first-class, auditable subsystem** of the project: documentation is machine-checkable, authority is explicit, scope boundaries are enforceable, references are structurally valid, and evolution is controlled and traceable.
 
 ---
 
 ## 2. Metadata and cross-document references
 
-Every normative document declares a stable `DOC_ID` in its YAML header as defined in `DOC_SCHEMA.md`. This identifier is the authoritative identity of the document and remains valid regardless of filename or directory location. Documents may reference one another in prose using `@DOC_ID` (for example, `@DOC_SCHEMA` for `DOC_SCHEMA.md`) as a convenience marker. Authoritative relationships between documents are declared in metadata, not inferred from filenames or directory structure. This enables tooling to validate identifiers, resolve references, and construct a deterministic documentation graph as defined in `DOC_GRAPH_SPEC.md`.
+Every normative document declares a stable identifier (`doc_id`) in its YAML header, as defined in `DOC_SCHEMA.md`. Documents may reference one another in prose using `@DOC_ID` markers (for example, `@DOC_SCHEMA`) as a convenience mechanism; these markers are non-authoritative and are validated against the set of declared document identifiers.
 
-In this document, other documents will be generally referred do by their name. Actual location of individual files is indicated in the `Technical documentation index` section of this document. In other documents, location independent `@DOC_ID` references will be generally used instead, while filenames may still refer to documents within the same group/directory.
+Tooling may use YAML metadata and `@DOC_ID` markers to validate references and construct a deterministic documentation graph as defined in `DOC_GRAPH_SPEC.md`.
 
 ---
 
