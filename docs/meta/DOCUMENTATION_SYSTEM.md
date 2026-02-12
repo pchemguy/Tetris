@@ -152,6 +152,8 @@ Documentation in this repository is organized in a **layered structure**. Each d
 | L5 — Execution State (Reports)                       | What has actually happened         | `docs/reports/`      |
 | -                                                    | What may be researched or tried    | `docs/ideas/`        |
 
+Note: layer assignment is derived solely from the `kind` field found in document's YAML metadata defined in `@DOC_SCHEMA` using "Canonical layer mapping" defined in `@DOC_GRAPH_SPEC`.
+
 ---
 
 ### L1 — Governance (Process Control)

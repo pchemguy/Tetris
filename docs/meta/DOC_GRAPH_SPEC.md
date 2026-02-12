@@ -181,66 +181,21 @@ At minimum, the following kinds must be understood for layer mapping:
 
 ---
 
-## 3. Layer mapping rules (deterministic)
+## 3. Canonical layer mapping (normative)
 
-Tooling MUST assign each `doc` node to exactly one layer using the following mapping:
+Layer assignment is derived solely from `kind` using a fixed mapping; paths and titles are non-authoritative.
 
-### 3.1 L0 — Documentation Infrastructure (Meta-layer)
-
-A doc belongs to `L0` if **any** of the following holds:
-
-* `kind == meta`, OR
-* `doc_id` is one of:
-    * `DOC_SCHEMA`
-    * `COMPONENT_REGISTRY`
-    * `DOC_GRAPH_SPEC`
-    * `DOCS_AUTHORITY_MAP`
-    * `DOCUMENTATION_SYSTEM` (if used as the narrative umbrella doc)
-
-Also included in L0:
-
-* `*.schema.json` files for these meta artifacts.
-
-### 3.2 L1 — Governance (Process Control)
-
-A doc belongs to `L1` if:
-
-* `kind == control`, AND
-* it is not classified as `L0`.
-
-Examples:
-
-* `PHASES`
-* `ACCEPTANCE_GATES`
-
-### 3.3 L2 — System Structure (Global Contracts)
-
-A doc belongs to `L2` if:
-
-* `kind in {architecture, decomposition}`
-
-### 3.4 L3 — Behavioral Specifications (Component Contracts)
-
-A doc belongs to `L3` if:
-
-* `kind in {spec, api}`
-
-### 3.5 L4 — Test Oracles (Proof Obligations)
-
-A doc belongs to `L4` if:
-
-* `kind == oracle`
-
-### 3.6 L5 — Execution State (Reports)
-
-A doc belongs to `L5` if:
-
-* `kind == report`, AND
-* it is not classified as `L0`.
-
-Examples:
-
-* `IMPLEMENTATION_REPORTS`
+| `kind`         | Layer | Notes                                                                                        |
+| -------------- | ----- | -------------------------------------------------------------------------------------------- |
+| `meta`         | L0    | Documentation infrastructure (schemas/graph spec/etc.)                                       |
+| `map`          | L0    | If it’s _documentation infrastructure mapping_ (authority maps, doc inventories, doc graphs) |
+| `control`      | L1    | Governance (phases, gates, process constraints)                                              |
+| `architecture` | L2    | System structure (architecture + decomposition-style docs)                                   |
+| `spec`         | L3    | Behavioral contracts (core/shell specs)                                                      |
+| `api`          | L3    | Public adapter/API contracts; still behavioral, not infrastructure                           |
+| `oracle`       | L4    | Proof obligations / test oracle definitions                                                  |
+| `report`       | L5    | Append-only execution state (implementation reports, generated reports)                      |
+| `idea`         | OUT   | Not in L0–L5; explicitly non-normative by default                                            |
 
 ---
 
