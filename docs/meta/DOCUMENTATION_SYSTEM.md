@@ -44,10 +44,14 @@ It is designed to ensure that:
 
 This document governs the **meta-layer** of the repository: not game behavior, not architecture, not tests — but the structure that makes those documents coherent, verifiable, and automatable.
 
+---
+
 ## 2. Metadata and cross-document references
 
 Every normative document declares a stable `DOC_ID` in its YAML header as defined in `DOC_SCHEMA.md`. This identifier is the authoritative identity of the document and remains valid regardless of filename or directory location. Documents may reference one another in prose using `@DOC_ID` (for example, `@DOC_SCHEMA` for `DOC_SCHEMA.md`) as a convenience marker. Authoritative relationships between documents are declared in metadata, not inferred from filenames or directory structure. This enables tooling to validate identifiers, resolve references, and construct a deterministic documentation graph as defined in `DOC_GRAPH_SPEC.md`.
- 
+
+---
+
 ## 3. Layered organization
 
 ### Overview
@@ -166,6 +170,8 @@ Documentation in this repository is organized in a **layered structure**. Each d
 | L4 — Test Oracles (Proof Obligations)                | How correctness is proven          |
 | L5 — Execution State (Reports)                       | What has actually happened         |
 
+---
+
 ### L1 — Governance (Process Control)
 
 Documents in this class control the **development process itself**, not system behavior. They define **when certain kinds of work are permitted**, and **under what conditions progress is considered acceptable**. This class consists of two distinct, complementary documents with **non-overlapping authority**:
@@ -261,6 +267,8 @@ The following table defines which acceptance gates are expected to be exercised 
 - Gates **10–13** define shell/system completeness and must not be attempted before Phase 2.
 - “(+ext.)” indicates that additional gates may be introduced for new shell variants.
 
+---
+
 ### L2 — System Structure (Global Contracts)
 
 Documents in this class define the **structural reality of the system**. They constrain *what the system is*, independent of behavior, tests, or development order. This class also consists of two distinct documents with **different levels of abstraction and authority**:
@@ -316,6 +324,8 @@ Architecture without decomposition is aspirational. Decomposition without archit
 
 All implementation must conform to **both**.
 
+---
+
 ### L3 — Behavioral Specifications (Component Contracts)
 
 These documents define **what the system does**, component by component. They are **normative behavioral contracts**, not implementation guides. They answer questions such as:
@@ -352,6 +362,8 @@ This distinction is enforced by:
 * acceptance gates,
 * component-specific test oracles.
 
+---
+
 ### L4 — Test Oracles (Proof Obligations)
 
 Test oracle documents define **what must be proven** for an implementation to be considered correct. They answer questions such as:
@@ -365,6 +377,8 @@ Test oracles are **normative**: passing ad-hoc or convenience tests is insuffici
 
 * a specific component, and
 * a specific acceptance gate (or small range of gates).
+
+---
 
 ### L5 — Execution State (Reports)
 
@@ -395,6 +409,8 @@ All agents must:
 - read it before acting,
 - append to it after acting,
 - never rewrite or delete history.
+
+---
 
 ## 4. Technical documentation index
 
@@ -554,7 +570,9 @@ To determine:
 
 This section explains **how each document is intended to be used**, both by AI agents and by human developers supervising or reviewing agent output.
 
-### Project-wide
+---
+
+### L1 — Governance (Process Control)
 
 #### `ACCEPTANCE_GATES.md` — Milestone control
 
@@ -598,7 +616,7 @@ Defines the **allowed scope of work** at each stage of the repository’s evolut
 
 ---
 
-### System-level contracts
+### L2 — System Structure (Global Contracts)
 
 #### `ARCHITECTURE.md` — System-level architecture
 
@@ -643,9 +661,11 @@ Defines the **authoritative component breakdown** of the system.
 
 ---
 
-### Core / engine contracts
+### L3 — Behavioral Specifications (Component Contracts)
 
-#### `GAME_RULES.md` — Behavioral specification
+#### Core / engine contracts
+
+##### `GAME_RULES.md` — Behavioral specification
 
 **Role**  
 Defines **what** the game does.
@@ -669,7 +689,7 @@ Defines **what** the game does.
 
 ---
 
-#### `GAME_STATE.md` — State machine and step semantics
+##### `GAME_STATE.md` — State machine and step semantics
 
 **Role**  
 Defines **how** the game evolves deterministically.
@@ -690,7 +710,7 @@ Defines **how** the game evolves deterministically.
 
 ---
 
-#### `INPUT_MODEL.md` — Input semantics
+##### `INPUT_MODEL.md` — Input semantics
 
 **Role**  
 Defines **how inputs are applied** per tick.
