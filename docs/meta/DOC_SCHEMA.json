@@ -51,6 +51,10 @@
     "phase_applies_to"
   ],
 
+  "not": {
+    "required": ["url", "urls"]
+  },
+  
   "properties": {
 
     "doc_id": {
@@ -107,7 +111,7 @@
 
     "supersedes": {
       "type": "array",
-      "default": [],
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "$ref": "#/definitions/doc_id_type"
@@ -119,12 +123,11 @@
         { "$ref": "#/definitions/doc_id_type" },
         { "type": "null" }
       ],
-      "default": null
     },
 
     "references": {
       "type": "array",
-      "default": [],
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "$ref": "#/definitions/doc_id_type"
@@ -142,9 +145,5 @@
 
   },
 
-  "not": {
-    "required": ["url", "urls"]
-  },
-  
   "additionalProperties": false
 }

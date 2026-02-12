@@ -80,20 +80,21 @@ Every participating document MUST include the following keys:
 - `authority`
 - `gate_applies_to`
 - `phase_applies_to`
+
+Additionally, it MAY include the following optional keys:
+
 - `supersedes`
 - `superseded_by`
 - `references`
-
-Additionally, it MAY include:
-
 - `description`
 - {`url` | `urls`}
 
 Notes:
 
 - Keys are case-sensitive and MUST match exactly.
-- YAML lists MUST be present even when empty (`[]`).
+- Required YAML lists MUST be populated even when empty (`[]`).
 - YAML `null` MUST be explicit where allowed (`null`).
+- Optional empty YAML keys should omitted.
 
 ---
 
@@ -204,9 +205,9 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
     - Short human-readable summary (1–3 sentences recommended).
 - `url` / `urls`
     - Optional external reference(s).
-    - Most docs should use `url` (single link) and leave `urls: []`.
+    - Most docs should use `url` (single link).
     - `urls` exists only when multiple links are necessary.
-    - A doc MUST NOT include both `url` and `urls` simultaneously.
+    - A doc MUST NOT include both `url` and `urls` keys simultaneously.
 - `supersedes`
     - Array of DOC_IDs that this document supersedes. May be empty.
 - `superseded_by`

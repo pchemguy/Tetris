@@ -24,7 +24,7 @@ Specifically, it enables:
 
 If a component does not exist in `COMPONENT_REGISTRY.json`, it is **not a recognized component** for documentation, dependency, or scope purposes.
 
-This registry is **normative**.
+Although documentation tooling uses this registry to validate `scope` tokens, the registry is an architectural artifact: it is the authoritative machine-readable representation of the system's component decomposition and permitted component dependencies.
 
 ---
 
