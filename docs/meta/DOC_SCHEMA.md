@@ -35,11 +35,11 @@ The authoritative machine schema is **`DOC_SCHEMA.json`**.
 ### 2.1 Which documents must include metadata
 
 All Markdown documents intended to participate in the repository’s documentation system **must** include a YAML front matter block that validates against
-`DOC_SCHEMA.json`. Root documents are allowed to participate (e.g., `PROJECT.md`), but the minimum expectation is:
+`DOC_SCHEMA.json`. Root documents are allowed to participate, but the minimum expectation is:
 
 - all normative documents under `docs/` include metadata,
-- any doc listed in the `PROJECT.md` index includes metadata,
-- any doc referenced by `references` includes metadata.
+- any doc listed in the `AGENTS.md` index includes metadata,
+- any doc, which can be backtracked to `AGENTS.md` via `references`, includes metadata.
 
 ### 2.2 Special case: `docs/ideas/`
 

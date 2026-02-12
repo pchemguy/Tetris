@@ -1,3 +1,22 @@
+---
+doc_id: COMPONENT_REGISTRY
+name: COMPONENT_REGISTRY.md
+title: Component Registry
+kind: architecture
+scope: global
+status: active
+authority: normative
+gate_applies_to: all
+phase_applies_to: all
+description: Human-readable explanation of registered components and layer model.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - DOC_SCHEMA
+  - DECOMPOSITION
+  - ACCEPTANCE_GATES
+  - PHASES
+  - ARCHITECTURE
+---
 
 # COMPONENT_REGISTRY
 
@@ -32,7 +51,7 @@ Although documentation tooling uses this registry to validate `scope` tokens, th
 
 ### 2.1 `DECOMPOSITION.md`
 
-* `DECOMPOSITION.md` defines **semantic responsibilities and architectural boundaries**.
+* `@DECOMPOSITION` defines **semantic responsibilities and architectural boundaries**.
 * `COMPONENT_REGISTRY.json` defines the **canonical identifiers and layer classification** of those components.
 
 In short:
@@ -177,7 +196,7 @@ Testing-layer components:
 
 Introducing a new component requires **all** of the following steps.
 
-### Step 1 — Update `DECOMPOSITION.md`
+### Step 1 — Update `@DECOMPOSITION`
 
 * Add the component to the top-level list (if applicable).
 * Define responsibilities.
@@ -281,10 +300,10 @@ This is a **Gate 0 architectural violation**.
 
 This registry does **not**:
 
-* define correctness criteria (see `ACCEPTANCE_GATES.md` and test oracles),
+* define correctness criteria (see `@ACCEPTANCE_GATES` and test oracles),
 * define behavioral rules (see spec documents),
-* authorize implementation (see `PHASES.md`),
-* replace architectural reasoning (see `ARCHITECTURE.md`).
+* authorize implementation (see `@PHASES`),
+* replace architectural reasoning (see `@ARCHITECTURE`).
 
 It defines only:
 

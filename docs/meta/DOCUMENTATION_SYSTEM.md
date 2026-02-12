@@ -8,8 +8,6 @@ status: active
 authority: normative
 gate_applies_to: all
 phase_applies_to: all
-supersedes: []
-superseded_by: null
 references:
   - DOC_SCHEMA
   - COMPONENT_REGISTRY
@@ -435,13 +433,13 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 **Directory**: `docs/architecture/`
 
-| Title                                | Filename                         | Function / Role                                                                |
-| ------------------------------------ | -------------------------------- | ------------------------------------------------------------------------------ |
-| System Architecture                  | `ARCHITECTURE.md`                | High-level system architecture and design decisions (Functional Core / Shell). |
-| System Decomposition                 | `DECOMPOSITION.md`               | Explicit component decomposition and responsibility boundaries.                |
-| Component Registry (Normative)       | `COMPONENT_REGISTRY.md`          | Human-readable explanation of registered components and layer model.           |
-| Component Registry (Machine Schema)  | `COMPONENT_REGISTRY.schema.json` | JSON Schema validating `COMPONENT_REGISTRY.json`.                              |
-| Component Registry (Instance)        | `COMPONENT_REGISTRY.json`        | Canonical list of components, layers, and dependency policy.                   |
+| Title                               | Filename                         | Function / Role                                                                |
+| ----------------------------------- | -------------------------------- | ------------------------------------------------------------------------------ |
+| System Architecture                 | `ARCHITECTURE.md`                | High-level system architecture and design decisions (Functional Core / Shell). |
+| System Decomposition                | `DECOMPOSITION.md`               | Explicit component decomposition and responsibility boundaries.                |
+| Component Registry (Normative)      | `COMPONENT_REGISTRY.md`          | Human-readable explanation of registered components and layer model.           |
+| Component Registry (Machine Schema) | `COMPONENT_REGISTRY.schema.json` | JSON Schema validating `COMPONENT_REGISTRY.json`.                              |
+| Component Registry (Instance)       | `COMPONENT_REGISTRY.json`        | Canonical list of components, layers, and dependency policy.                   |
 
 ---
 
