@@ -55,6 +55,8 @@ This document governs the **meta-layer** of the repository: not game behavior, n
 
 Every normative document declares a stable `DOC_ID` in its YAML header as defined in `DOC_SCHEMA.md`. This identifier is the authoritative identity of the document and remains valid regardless of filename or directory location. Documents may reference one another in prose using `@DOC_ID` (for example, `@DOC_SCHEMA` for `DOC_SCHEMA.md`) as a convenience marker. Authoritative relationships between documents are declared in metadata, not inferred from filenames or directory structure. This enables tooling to validate identifiers, resolve references, and construct a deterministic documentation graph as defined in `DOC_GRAPH_SPEC.md`.
 
+In this document, other documents will be generally referred do by their name. Actual location of individual files is indicated in the `Technical documentation index` section of this document. In other documents, location independent `@DOC_ID` references will be generally used instead, while filenames may still refer to documents within the same group/directory.
+
 ---
 
 ## 3. Layered organization
