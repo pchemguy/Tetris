@@ -36,14 +36,80 @@ Every normative document declares a stable identifier (`doc_id`) in its YAML hea
 
 ### Overview
 
-Documentation in this repository is organized in a **layered structure**. Each document belongs to a **defined layer** serving a distinct purpose in constraining, guiding, or evaluating the development process. The intent of this organization is to:
+Documentation in this repository is organized in a **layered structure**. Each document belongs to a defined layer serving a distinct purpose in constraining, guiding, or evaluating the development process. This layering model is **not** a “who references whom” model and it is not a statement about where work must start. It is a **normative interpretation and constraint model**:
 
-* make **expectations explicit**,
-* surface and document all assumptions,
-* allow both humans and AI agents to reason correctly about:
-    * *what exists*,
-    * *what is allowed*,
-    * *what is correct*.
+* A higher layer defines the **terms of validity** for lower layers.
+* A lower layer provides **evidence** about whether higher-layer claims are satisfied in practice.
+
+There are therefore two opposed flows:
+
+#### Constraint / validity flow (top → bottom)
+
+This is what the vertical arrows represent.
+
+* **L2 → L3**: Architecture and decomposition define what components exist and where responsibilities lie; specifications must conform to those structural boundaries.
+* **L3 → L4**: Specifications define what must be true; test oracles define what must be demonstrated to support those claims.
+* **L4 → L5**: Oracles define what counts as valid evidence; reports record evidence and outcomes in that oracle vocabulary.
+
+#### Meaning / diagnosis flow (bottom → top)
+
+Interpretation flows in the opposite direction.
+
+* **L5 has meaning only through L4.** A report or log is uninterpreted until an oracle defines the questions it answers.
+* **L4 + L5 determine whether L3 is satisfied.** Oracles and results establish whether specifications hold.
+* **L3 satisfaction (or failure) reflects back to L2.** Persistent failures may indicate either implementation defects or structural flaws in architecture or decomposition.
+
+In short:
+
+* **Progression of work tends to move downward.**
+* **Interpretation of results moves upward.**
+
+---
+
+### Position of meta-layers
+
+#### L1 (Governance)
+
+L1 does not define system meaning. It defines **workflow governance**.
+
+* L2–L4 define the system and correctness independent of phases or gates.
+* L1 defines how change is managed in a controlled way (compartmentalization, sequencing, permission to attempt work).
+
+Therefore:
+
+* Architecture and decomposition (L2) can exist without governance (L1).
+* Governance (L1) is meaningful only insofar as it governs L2–L4.
+
+L1 is not “above” L2 in the semantic stack. It is above in the **control stack**. L2 does not depend on L1 for meaning; L1 depends on L2–L4 for substance.
+
+---
+
+#### L0 (Documentation Infrastructure)
+
+L0 operates at a different abstraction level.
+
+It serves two distinct roles:
+
+1. **Enablement and validation**
+   It provides the mechanism that makes the documentation system machine-checkable: stable identifiers, scope inventory, graph extraction, and validation rules.
+
+   L0 is logically prior (tooling depends on it), but it is semantically external to L2–L4.
+   Development layers do not depend on L0 for meaning.
+
+2. **System integration surface**
+   The main documentation document, `DOCUMENTATION_SYSTEM.md`, integrates and explains the documentation base as a whole, including L0 itself.
+
+Consequences:
+
+* L0 artifacts are required for enforcement and automation.
+* A human can understand L2–L4 without knowing L0 exists, though it would be more difficult.
+* While not strictly required, L0 is even more important for tooling and agents.
+
+Development layers remain **meta-agnostic** by design.
+
+---
+
+### Structural model
 
 ```
                     ┌───────────────────────────────────────────┐
@@ -56,104 +122,77 @@ Documentation in this repository is organized in a **layered structure**. Each d
 │    Defines how docs are identified, scoped, linked, and validated.             │
 │                                                                                │
 │      - DOC_SCHEMA.md / DOC_SCHEMA.json                                         │
-│          * YAML front matter schema                                            │
-│          * identifier + applicability + authority fields                       │
-│                                                                                │
-│      - COMPONENT_REGISTRY.md / COMPONENT_REGISTRY.json (+ schema)              │
-│          * canonical component ids + layers                                    │
-│          * doc_scope enum inventory                                            │
-│                                                                                │
 │      - DOC_GRAPH_SPEC.md                                                       │
-│          * allowed node/edge types + validations                               │
-│                                                                                │
-│    Outputs / enforcement:                                                      │
-│      - machine-validated doc inventory                                         │
-│      - validated @DOC_ID references (convenience)                              │
-│      - generated doc graph / reports                                           │
 └────────────────────────────────────────────────────────────────────────────────┘
-                                     │                                         
-                                     │ constrains + validates                  
-                                     v                                         
+                                     │
+                                     │ constrains + validates
+                                     v
 ┌────────────────────────────────────────────────────────────────────────────────┐
 │ L1 — Governance (Process Control)                                              │
-│    Defines when work is allowed and what “done” means.                         │
-│                                                                                │
-│      - PHASES.md             (scope permission)                                │
-│      - ACCEPTANCE_GATES.md   (progression + pass/fail criteria)                │
+│      - PHASES.md                                                               │
+│      - ACCEPTANCE_GATES.md                                                     │
 │                                                                                │
 │    Relationship: Phase allows attempting a gate; gates define correctness.     │
 └────────────────────────────────────────────────────────────────────────────────┘
-                                     │                                         
-                                     │ constrains system structure             
-                                     v                                         
+                                     │
+                                     │ constrains system structure
+                                     v
 ┌────────────────────────────────────────────────────────────────────────────────┐
 │ L2 — System Structure (Global Contracts)                                       │
-│    Defines architecture intent and component responsibility boundaries.        │
-│                                                                                │
 │      - ARCHITECTURE.md                                                         │
 │      - DECOMPOSITION.md                                                        │
-│                                                                                │
-│    These apply to all gates.                                                   │
+│      - COMPONENT_REGISTRY.md / COMPONENT_REGISTRY.json                         │
 └────────────────────────────────────────────────────────────────────────────────┘
-                                     │                                         
-                                     │ constrains behavior                     
-                                     v                                         
+                                     │
+                                     │ constrains behavior
+                                     v
 ┌────────────────────────────────────────────────────────────────────────────────┐
 │ L3 — Behavioral Specifications (Component Contracts)                           │
-│    Defines what the system does; if not specified, it must not be implemented. │
-│                                                                                │
-│      - Core specs: GAME_RULES, GAME_STATE, INPUT_MODEL, ERROR_HANDLING,        │
-│                   SHAPES_AND_ROTATIONS, CORE_API, ...                          │
-│      - Shell specs: RUNTIME_SPEC, RENDERING_SPEC, CLI_SPEC, REPLAY_SPEC, ...   │
-│      - Shell APIs: PRESENTER_API, INPUT_DRIVER_API, ...                        │
+│      - Core specs                                                              │
+│      - Shell specs                                                             │
+│      - Shell APIs                                                              │
 └────────────────────────────────────────────────────────────────────────────────┘
-                                     │                                         
-                                     │ defines required proof                  
-                                     v                                         
+                                     │
+                                     │ defines required proof
+                                     v
 ┌────────────────────────────────────────────────────────────────────────────────┐
 │ L4 — Test Oracles (Proof Obligations)                                          │
-│    Defines what must be tested to claim correctness at each gate.              │
-│                                                                                │
-│      - CORE_TEST_ORACLE.md                                                     │
-│      - RENDERING_TEST_ORACLE.md                                                │
-│      - RUNTIME_TEST_ORACLE.md                                                  │
-│      - CLI_TEST_ORACLE.md                                                      │
-│      - REPLAY_TEST_ORACLE.md                                                   │
-│      - CONFIG_TEST_ORACLE.md (if enabled)                                      │
 └────────────────────────────────────────────────────────────────────────────────┘
-                                     │                                         
-                                     │ records execution history (state)       
-                                     v                                         
+                                     │
+                                     │ records execution history (state)
+                                     v
 ┌────────────────────────────────────────────────────────────────────────────────┐
 │ L5 — Execution State (Reports)                                                 │
-│    Records what actually happened, append-only.                                │
-│                                                                                │
-│      - IMPLEMENTATION_REPORTS.md                                               │
-│      - generated reports/ (optional)                                           │
 └────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-- Higher layers **constrain** lower layers.
-- Lower layers must not “reach upward” to change the meaning of higher layers.
-- If two documents conflict:
-    1. resolve by **authority** (`normative` over `non_normative`), then
-    2. by explicit `supersedes` / `superseded_by` relationships, if present, then
-    3. by **layer precedence** (L0 → L5).
+---
 
-| Layer                                                | Question                           | Directory            |
-| ---------------------------------------------------- | ---------------------------------- | -------------------- |
-| L0 — Documentation Infrastructure (Meta-layer)       | How the project is documented      | `docs/meta/`         |
-| L1 — Governance (Process Control)                    | When work is allowed and evaluated | `docs/control/`      |
-| L2 — System Structure (Global Contracts)             | What exists, how it is structured  | `docs/architecture/` |
-| L3 — Behavioral Specifications (Component Contracts) | What behavior is defined           | `docs/specs/`        |
-| L4 — Test Oracles (Proof Obligations)                | How correctness is proven          | `docs/oracles/`      |
-| L5 — Execution State (Reports)                       | What has actually happened         | `docs/reports/`      |
-| -                                                    | What may be researched or tried    | `docs/ideas/`        |
+### Conflict resolution rule (normative)
 
-Note: layer assignment is derived solely from the `kind` field found in document's YAML metadata defined in `@DOC_SCHEMA` using "Canonical layer mapping" defined in `@DOC_GRAPH_SPEC`.
+If two documents conflict:
+
+1. Resolve by **authority** (`normative` over `non_normative`).
+2. Resolve by explicit `supersedes` / `superseded_by`.
+3. Resolve by **layer precedence** (L0 → L5), meaning higher-layer validity conditions override lower-layer artifacts.
 
 ---
 
+### Layer index
+
+| Layer | Question                           | Directory            |
+| ----- | ---------------------------------- | -------------------- |
+| L0    | How the project is documented      | `docs/meta/`         |
+| L1    | When work is allowed and evaluated | `docs/control/`      |
+| L2    | What exists, how it is structured  | `docs/architecture/` |
+| L3    | What behavior is defined           | `docs/specs/`        |
+| L4    | How correctness is proven          | `docs/oracles/`      |
+| L5    | What has actually happened         | `docs/reports/`      |
+| –     | What may be researched or tried    | `docs/ideas/`        |
+
+Layer assignment is derived solely from the `kind` field in YAML metadata as defined in `@DOC_SCHEMA` and interpreted according to the canonical layer mapping in `@DOC_GRAPH_SPEC`.
+
+---
 ### L1 — Governance (Process Control)
 
 Documents in this class control the **development process itself**, not system behavior. They define **when certain kinds of work are permitted**, and **under what conditions progress is considered acceptable**. This class consists of two distinct, complementary documents with **non-overlapping authority**:
