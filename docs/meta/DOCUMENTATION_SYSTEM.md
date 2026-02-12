@@ -30,9 +30,7 @@ The documentation system itself is treated as a **first-class, auditable subsyst
 
 ## 2. Metadata and cross-document references
 
-Every normative document declares a stable identifier (`doc_id`) in its YAML header, as defined in `DOC_SCHEMA.md`. Documents may reference one another in prose using `@DOC_ID` markers (for example, `@DOC_SCHEMA`) as a convenience mechanism; these markers are non-authoritative and are validated against the set of declared document identifiers.
-
-Tooling may use YAML metadata and `@DOC_ID` markers to validate references and construct a deterministic documentation graph as defined in `DOC_GRAPH_SPEC.md`.
+Every normative document declares a stable identifier (`doc_id`) in its YAML header, as defined in `DOC_SCHEMA.md`. Documents may reference one another in prose using `@DOC_ID` markers (for example, `@DOC_SCHEMA`) as a convenience mechanism; these markers are non-authoritative and are validated against the set of declared document identifiers. Tooling may use YAML metadata and `@DOC_ID` markers to validate references and construct a deterministic documentation graph as defined in `DOC_GRAPH_SPEC.md`.
 
 ---
 
