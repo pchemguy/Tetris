@@ -10,8 +10,6 @@ gate_applies_to: all
 phase_applies_to: all
 description: Defines how to extract and render a documentation dependency graph from DOC_SCHEMA YAML metadata and @DOC_ID references.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-supersedes: []
-superseded_by:
 references:
   - DOC_SCHEMA
   - COMPONENT_REGISTRY
@@ -61,15 +59,6 @@ Represents a single Markdown or JSON artifact that participates in the doc syste
 
 * `description` (string)
 * `url` (string) OR `urls` (array of strings)
-
-##### `doc` node subtypes
-
-1. **Normative dependency edge** (authoritative)
-    - Source: YAML `references: [...]`
-    - Semantics: “This doc depends on the referenced doc(s) for normative meaning.”
-2. **Prose mention edge** (convenience, non-authoritative)
-    - Source: body text tokens matching `@DOC_ID`
-    - Semantics: “This doc mentions the referenced doc in prose; may indicate informal coupling.”
 
 #### B) `layer` node
 
@@ -172,7 +161,6 @@ At minimum, the following kinds must be understood for layer mapping:
 * `meta`
 * `control`
 * `architecture`
-* `decomposition`
 * `spec`
 * `api`
 * `oracle`
