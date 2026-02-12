@@ -35,7 +35,7 @@ Human developers remain ultimately responsible for correctness and maintenance, 
 ## 2. Repository layout (high level)
 
 ```
-.
+Tetris/
 ├── docs/                  # Normative development specifications (authoritative)
 ├── docs/ideas/            # Non-normative preliminary features/component ideas for possible future consideration
 ├── tetris/

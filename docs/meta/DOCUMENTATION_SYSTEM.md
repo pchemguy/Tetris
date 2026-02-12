@@ -167,15 +167,15 @@ Documentation in this repository is organized in a **layered structure**. Each d
     2. by **layer precedence** (L0 → L5), then
     3. by explicit `supersedes` / `superseded_by` relationships, if present.
 
-
-| Layer                                                | Question                           |
-| ---------------------------------------------------- | ---------------------------------- |
-| L0 — Documentation Infrastructure (Meta-layer)       | How the project is documented      |
-| L1 — Governance (Process Control)                    | When work is allowed and evaluated |
-| L2 — System Structure (Global Contracts)             | What exists, how it is structured  |
-| L3 — Behavioral Specifications (Component Contracts) | What behavior is defined           |
-| L4 — Test Oracles (Proof Obligations)                | How correctness is proven          |
-| L5 — Execution State (Reports)                       | What has actually happened         |
+| Layer                                                | Question                           | Directory            |
+| ---------------------------------------------------- | ---------------------------------- | -------------------- |
+| L0 — Documentation Infrastructure (Meta-layer)       | How the project is documented      | `docs/meta/`         |
+| L1 — Governance (Process Control)                    | When work is allowed and evaluated | `docs/control/`      |
+| L2 — System Structure (Global Contracts)             | What exists, how it is structured  | `docs/architecture/` |
+| L3 — Behavioral Specifications (Component Contracts) | What behavior is defined           | `docs/specs/`        |
+| L4 — Test Oracles (Proof Obligations)                | How correctness is proven          | `docs/oracles/`      |
+| L5 — Execution State (Reports)                       | What has actually happened         | `docs/reports/`      |
+| -                                                    | What may be researched or tried    | `docs/ideas/`        |
 
 ---
 
