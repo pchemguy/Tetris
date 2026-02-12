@@ -59,7 +59,7 @@ Idea docs have **zero authority** unless a normative document explicitly promote
 
 ---
 
-## 3. YAML front matter requirements (normative)
+## 3. YAML front matter requirements
 
 ### 3.1 Location
 
@@ -228,7 +228,7 @@ Valid `scope` values are defined by the component registry:
 - `COMPONENT_REGISTRY.json` provides `doc_scope_enum`.
 - `DOC_SCHEMA.json` hardcodes the enum **generated from the registry**.
 
-### 7.2 Tooling policy (normative)
+### 7.2 Tooling policy
 
 Tooling MUST treat the registry as source-of-truth and enforce:
 
