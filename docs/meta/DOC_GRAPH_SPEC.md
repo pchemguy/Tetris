@@ -19,15 +19,16 @@ references:
 
 ## 1. Purpose
 
-This spec defines the **canonical doc graph model** used to render and validate the repository’s documentation system and a deterministic procedure to render that graph into one or more concrete outputs (e.g., Mermaid, DOT).
+This spec defines the **canonical documentation graph model** used to render and validate the repository’s documentation system and a deterministic procedure to produce one or more concrete outputs (e.g., Mermaid, DOT).
 
 It exists to ensure tooling can:
 
-* classify docs into **layers L0–L5** deterministically,
-* render the repository-wide **authority/constraint flow** as a stable diagram,
-* validate that all docs participate consistently (no “floating” normative docs).
+* classify documents into conceptual layers **L0–L5** deterministically,
+* validate cross-document dependencies,
+* enforce structural consistency of the documentation system,
+* render a stable and reproducible visualization of documentation relationships.
 
-This spec does **not** define doc content; it defines how docs are **represented and connected** as a graph.
+This spec does **not** define document content. It defines how documents are **modeled, classified, and connected**.
 
 ---
 
@@ -35,128 +36,118 @@ This spec does **not** define doc content; it defines how docs are **represented
 
 ### 2.1 Node types
 
-Tooling MUST represent the documentation system using these node types:
+Tooling MUST represent the documentation system using the following node types.
 
 #### A) `doc` node
 
-Represents a single Markdown or JSON artifact that participates in the doc system.
+Represents a single Markdown or JSON artifact that participates in the documentation system.
 
 **Identity**
 
-* Node key: `doc_id` (from YAML front matter for `.md`, or from file metadata for `.json` registry artifacts).
+* Node key: `doc_id`
 
 **Required attributes**
 
 * `doc_id` (string; unique)
 * `name` (filename; string)
-* `kind` (enum; see §2.3)
-* `authority` (enum: `normative` | `non_normative`)
-* `status` (enum: `draft` | `active` | `deprecated`)
-* `scope` (enum token from registry / schema)
-* `layer` (enum; computed by tooling; see §3)
+* `kind` (enum; from `DOC_SCHEMA`)
+* `authority` (`normative` | `non_normative`)
+* `status` (`draft` | `active` | `deprecated`)
+* `scope` (enum token from registry/schema)
+* `layer` (enum; **computed**, not authored; see §3)
 
 **Optional attributes**
 
-* `description` (string)
-* `url` (string) OR `urls` (array of strings)
+* `description`
+* `url` OR `urls`
 
-#### B) `layer` node
+There is no separate `layer` node type. Layer is a derived classification attribute.
 
-Represents one of the conceptual layers **L0–L5**.
+---
 
-**Identity**
+#### B) `repository` node
 
-* Node key: `layer_id`
-
-**Required attributes**
-
-* `layer_id` (enum: `L0`|`L1`|`L2`|`L3`|`L4`|`L5`)
-* `title` (string)
-* `description` (string)
-
-#### C) `repository` node
-
-A single root node used to anchor diagram layout.
+A single root node used to anchor layout.
 
 **Identity**
 
 * Node key: fixed `REPOSITORY`
 
-**Required attributes**
+Exactly one `repository` node MUST exist in rendered output.
 
-* `title` (string)
-
-> Rendering requirement: exactly one `repository` node MUST exist.
+---
 
 ### 2.2 Edge types
 
-Tooling MUST use only these directed edge types:
+Tooling MUST use only the following directed edge types.
 
-#### A) `belongs_to_layer`
+#### A) `references`
 
-Connects a `doc` node to its `layer` node.
-
-* `doc` → `layer`
-* Exactly one per `doc` that is part of the documentation system.
-
-#### B) `constrains`
-
-Represents **layer-to-layer constraint flow** (your vertical arrows).
-
-* `layer` → `layer`
-
-Allowed pairs are exactly:
-
-* `L0` → `L1`
-* `L1` → `L2`
-* `L2` → `L3`
-* `L3` → `L4`
-* `L4` → `L5`
-
-No other `constrains` edges are allowed.
-
-#### C) `references`
-
-Represents **explicit doc-to-doc dependency**.
+Represents an explicit document dependency.
 
 * `doc` → `doc`
-* Derived from YAML front matter `references: [...]` (authoritative)
-* Optionally enriched by `@DOC_ID` tokens in prose (non-authoritative convenience; see §5)
+* Derived from YAML `references: [...]`
+* Type = `normative`
 
-#### D) `produces`
+#### B) `mentions`
 
-Represents generation outputs (reports, graphs, inventories).
+Represents a non-authoritative `@DOC_ID` mention in body text.
 
-* `doc` → `doc` OR `layer` → `doc`
+* `doc` → `doc`
+* Derived from Markdown prose (see §5)
+* Type = `prose`
 
-Use cases:
+These edges MUST NOT override YAML dependencies.
 
-* `DOC_GRAPH_SPEC` produces a generated graph artifact report.
-* L0 tooling produces generated inventories.
+#### C) `produces` (optional)
 
-This edge is optional and should be used only when you have explicit generated artifacts.
+Represents generated artifacts or reports.
+
+* `doc` → `doc`
+
+Use only when explicitly modeling generated outputs (e.g., graph reports).
+
+---
 
 ### 2.3 Edge direction
 
-Edges point from **referrer → referred**.
+Edges always point:
 
-- If `A.references` contains `B`, render `A → B`.
-- If prose in `A` mentions `@B`, render `A → B` as prose-mention type.
+```
+referrer → referred
+```
 
-### 2.4 Edge precedence and de-duplication
+If `A.references` includes `B`, render:
 
-If both `doc` node subtypes produce an edge `A → B`:
+```
+A → B
+```
 
-- Render a **single** edge `A → B` with subtype = **normative**.
-- Prose mention is discarded as redundant.
+---
 
-Multiple identical edges MUST NOT be duplicated.
+### 2.4 Edge de-duplication
 
-### 2.5 Canonical doc kinds (for graph classification)
+If both:
 
-Graph tooling MUST interpret doc `kind` using the `DOC_SCHEMA` enum.
+* YAML `references`
+* and `@DOC_ID` prose mention
 
-At minimum, the following kinds must be understood for layer mapping:
+produce the same edge:
+
+* Emit a **single edge**
+* Type = `references`
+
+Prose edges are suppressed when redundant.
+
+Multiple identical edges MUST NOT be emitted.
+
+---
+
+### 2.5 Canonical doc kinds
+
+Graph tooling MUST interpret `kind` using the `DOC_SCHEMA` enum.
+
+At minimum:
 
 * `meta`
 * `control`
@@ -165,7 +156,8 @@ At minimum, the following kinds must be understood for layer mapping:
 * `api`
 * `oracle`
 * `report`
-* `idea` (non-normative)
+* `map`
+* `idea`
 
 ---
 
@@ -173,46 +165,74 @@ At minimum, the following kinds must be understood for layer mapping:
 
 Layer assignment is derived solely from `kind` using a fixed mapping; paths and titles are non-authoritative.
 
-| `kind`         | Layer | Notes                                                                                        |
-| -------------- | ----- | -------------------------------------------------------------------------------------------- |
-| `meta`         | L0    | Documentation infrastructure (schemas/graph spec/etc.)                                       |
-| `map`          | L0    | If it’s _documentation infrastructure mapping_ (authority maps, doc inventories, doc graphs) |
-| `control`      | L1    | Governance (phases, gates, process constraints)                                              |
-| `architecture` | L2    | System structure (architecture + decomposition-style docs)                                   |
-| `spec`         | L3    | Behavioral contracts (core/shell specs)                                                      |
-| `api`          | L3    | Public adapter/API contracts; still behavioral, not infrastructure                           |
-| `oracle`       | L4    | Proof obligations / test oracle definitions                                                  |
-| `report`       | L5    | Append-only execution state (implementation reports, generated reports)                      |
-| `idea`         | OUT   | Not in L0–L5; explicitly non-normative by default                                            |
+| `kind`         | Layer | Notes                                                              |
+| -------------- | ----- | ------------------------------------------------------------------ |
+| `meta`         | L0    | Documentation infrastructure (schemas/graph spec/etc.)             |
+| `map`          | L0    | Documentation inventory / authority maps                           |
+| `control`      | L1    | Governance (phases, gates, process constraints)                    |
+| `architecture` | L2    | System structure (architecture, decomposition, registry)           |
+| `spec`         | L3    | Behavioral contracts (core/shell specs)                            |
+| `api`          | L3    | Public adapter/API contracts; still behavioral, not infrastructure |
+| `oracle`       | L4    | Proof obligations / test oracle definitions                        |
+| `report`       | L5    | Execution state                                                    |
+| `idea`         | OUT   | Not in L0–L5; explicitly non-normative by default                  |
+
+`layer` is a **computed attribute**, not an independent node.
+
+If a normative document cannot be mapped to L0–L5, this is a **Gate 0 failure**.
 
 ---
 
-## 4. Required structure constraints
+## 4. Structural validation rules
 
-### 4.1 Layer nodes must exist
+### 4.1 Every normative doc must be classified
 
-The graph MUST contain exactly:
+For every `doc` where `authority == normative`:
 
-* 1 `repository` node
-* 6 `layer` nodes: `L0`…`L5`
+* `layer` MUST be one of L0–L5.
+* It MUST NOT be OUT.
+* It MUST appear in the graph.
 
-### 4.2 Layer constraint chain must exist
+Failure is a hard error.
 
-The graph MUST contain exactly 5 `constrains` edges forming the chain:
+---
 
-`L0 → L1 → L2 → L3 → L4 → L5`
+### 4.2 Layer precedence ordering
 
-No additional `constrains` edges are allowed.
+Layers have strict precedence:
 
-### 4.3 Every normative doc must be placed
+```
+L0 > L1 > L2 > L3 > L4 > L5
+```
 
-For every `doc` node where `authority == normative`:
+Interpretation:
 
-* a `belongs_to_layer` edge MUST exist (exactly one),
-* its layer MUST be one of `L0`…`L5`,
-* it MUST NOT be unclassified.
+Higher layers constrain lower layers.
 
-If any normative doc cannot be mapped to a layer, this is a **Gate 0 failure**.
+---
+
+### 4.3 Allowed cross-layer reference policy
+
+For normative `references` edges:
+
+Let `layer(A)` be source layer and `layer(B)` be target layer.
+
+Rules:
+
+* `L4` may reference L3, L2, L1, L0
+* `L3` may reference L2, L1, L0
+* `L2` may reference L1, L0
+* `L1` may reference L0
+* `L0` may reference any layer
+* `L5` may reference any layer (log surface)
+* `OUT` documents are excluded from structural validation
+
+If violated:
+
+* Tooling SHOULD emit a warning
+* Strict mode MAY treat as error
+
+This enforces the vertical constraint model without explicit layer nodes.
 
 ---
 
@@ -222,85 +242,67 @@ If any normative doc cannot be mapped to a layer, this is a **Gate 0 failure**.
 
 For each Markdown file:
 
-1. Detect YAML front matter at top-of-file delimited by:
-    - starting `---` on line 1
-    - ending `---` on a later line
+1. Detect YAML front matter.
 2. Parse YAML.
-3. Validate YAML against `DOC_SCHEMA.json`.
+3. Validate against `DOC_SCHEMA.json`.
 4. Register node keyed by `doc_id`.
-
-### 5.1 Authoritative references
-
-Tooling MUST extract authoritative `references` edges only from YAML front matter:
-
-* `references: [DOC_ID, ...]`
-
-For each entry:
-
-* Create a `references` edge from `doc_id` → referenced `DOC_ID` of type = `normative`.
-
-If a referenced `DOC_ID` does not exist in the YAML inventory, tooling MUST flag it.
-
-### 5.2 Convenience references (`@DOC_ID`) — optional enrichment
-
-Tooling MAY additionally extract `@DOC_ID` tokens from Markdown bodies to provide lint hints.
-
-#### 5.2.1 Exclude fenced code blocks
-
-- Any content within Markdown fenced code blocks MUST be ignored.
-    - A fenced code block begins with a line starting with three or more backticks or tildes
-    - It ends at the next matching fence of the same marker.
-- `@DOC_ID` tokens inside fenced code blocks are treated as examples and ignored.
-
-#### 5.2.2 Token pattern
-
-A prose reference token matches:
-
-- `@` followed by `DOC_ID` lexical format from @DOC_SCHEMA:
-    - `@` + `[A-Z][0-9A-Z_]*`
-
-Extract only the DOC_ID portion (without `@`).
-
-#### 5.2.3 Whitespace and formatting
-
-Tooling MUST treat `@DOC_ID` as valid even when surrounded by punctuation, single backticks, or Markdown emphasis, e.g.:
-
-- `(@DOC_ID)`
-- `"@DOC_ID",`
-- `_@DOC_ID_`
-- `*@DOC_ID*`
-- `` `@DOC_ID` ``
-
-#### 5.2.4 Emission rule
-
-* Treat these as **non-authoritative**:
-    * They MUST NOT create `references` edges automatically.
-    * They MAY create `produces` edges to a lint report, or be emitted as warnings (use type = `prose`).
-
-If a `@DOC_ID` token is not present in YAML inventory, tooling SHOULD flag it.
-
-### 5.3 Determinism constraints
-
-* The graph extraction MUST be deterministic given the repo state.
-* File iteration order MUST NOT affect output:
-    * tools must sort node IDs and edges before emitting.
 
 ---
 
-## 6. Allowed cross-layer reference policy (recommended, deterministic)
+### 5.2 Authoritative references
 
-This is a **graph validation rule**, not a prohibition on prose.
+Extract only from YAML:
 
-Tooling SHOULD enforce:
+```
+references: [DOC_ID, ...]
+```
 
-* `L4` (oracles) may reference `L3` (spec/api), `L2`, `L1`, `L0`.
-* `L3` (spec/api) may reference `L2`, `L1`, `L0`.
-* `L2` may reference `L1`, `L0`.
-* `L1` may reference `L0`.
-* `L5` may reference anything (it’s a log/reporting surface).
-* `L0` may reference anything.
+For each:
 
-If violated, tooling SHOULD emit a warning (or error if you choose strict mode).
+Create:
+
+```
+doc_id → referenced_doc_id
+type = references
+```
+
+If referenced `DOC_ID` does not exist → hard failure.
+
+---
+
+### 5.3 Prose references (`@DOC_ID`)
+
+Tooling MAY extract `@DOC_ID` tokens for linting.
+
+#### Exclusion rule
+
+Ignore fenced code blocks.
+
+#### Token rule
+
+Match:
+
+```
+@[A-Z][0-9A-Z_]*
+```
+
+Extract the DOC_ID portion.
+
+#### Emission rule
+
+* Create `mentions` edges.
+* Do NOT treat as authoritative.
+* Do NOT override YAML references.
+
+Unknown prose DOC_ID → warning.
+
+---
+
+### 5.4 Determinism requirements
+
+* Node and edge lists MUST be sorted before output.
+* File iteration order MUST NOT affect output.
+* Graph generation MUST be deterministic.
 
 ---
 
