@@ -2,7 +2,7 @@
 doc_id: DOC_GRAPH_SPEC
 name: DOC_GRAPH_SPEC.md
 title: Documentation Graph Visualization Specification
-kind: map
+kind: meta
 scope: global
 status: active
 authority: normative

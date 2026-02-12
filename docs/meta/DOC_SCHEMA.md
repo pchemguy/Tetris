@@ -2,7 +2,7 @@
 doc_id: DOC_SCHEMA
 name: DOC_SCHEMA.md
 title: Documentation Metadata Schema
-kind: control
+kind: meta
 scope: global
 status: active
 authority: normative
