@@ -1,6 +1,17 @@
 ---
+doc_id: DECOMPOSITION
 name: DECOMPOSITION.md
-URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+title: System Decomposition and Component Responsibilities
+kind: architecture
+scope: global
+status: active
+authority: normative
+gate_applies_to: all
+phase_applies_to: all
+description: Explicit component decomposition and responsibility boundaries.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - ARCHITECTURE
 ---
 
 # DECOMPOSITION
@@ -11,7 +22,7 @@ URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 
 ## 1. Purpose
 
-This document defines the **authoritative decomposition** of the Tetris application into components and assigns **explicit responsibility boundaries** to each.
+This document builds on prior developed tentative `@ARCHITECTURE` and defines the **authoritative decomposition** of the Tetris application into components and assigns **explicit responsibility boundaries** to each.
 
 It exists to:
 
