@@ -11,6 +11,7 @@ phase_applies_to: all
 description: High-level system architecture and design decisions (Functional Core / Shell).
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 references:
+  - DECOMPOSITION
 ---
 
 # ARCHITECTURE
@@ -65,7 +66,7 @@ Within the imperative shell, responsibilities are further separated into:
 - I/O adapters (input drivers, presenters),
 - coordination logic (runtime).
 
-These separations are architectural requirements, not implementation details.
+These separations are architectural requirements, not implementation details. Concrete component boundaries are defined in `@DECOMPOSITION`; this document defines architectural intent only.
 
 ---
 
@@ -120,11 +121,11 @@ Input Controller → Runtime → Core → Renderer → Presenter
                 | Input Controller |
                 +------------------+
                          |
-                         v
+ ========                v
 +--------+      +------------------+      +----------+
-|  Core  | <--- |     Runtime      | ---> | Renderer |
+|| Core || <--- |     Runtime      | ---> | Renderer |
 +--------+      +------------------+      +----------+
-                         |
+ ========                |
                          v
                 +------------------+
                 |    Presenter     |
@@ -214,7 +215,7 @@ Persistence is out of MVP unless explicitly requested. When introduced, persiste
 
 - **Phase 2 / Gate 13 (Replay)**: JSON is the right default (stdlib + deterministic + diffable).
 - **Config files** (when you add them): INI or JSON both fit “no extra deps”; YAML only if you explicitly value human authoring/comments enough to justify a dependency.
-- **SQLite** only makes sense when you have _many_ artifacts (hundreds/thousands of replays, telemetry records) and want queryability—i.e., later “benchmark scaling” phase.
+- **SQLite** only makes sense when you have _many_ artifacts (hundreds/thousands of replays, telemetry records) and want query ability—i.e., later “benchmark scaling” phase.
 
 #### Default decisions (current)
 
@@ -251,22 +252,7 @@ Shell may depend on:
 
 ---
 
-## 7. Extension docs required for non-core components
-
-The following architecture-level contracts govern non-core components:
-
-- `DECOMPOSITION.md` — component boundaries (authoritative)
-- `RENDERING_SPEC.md` — ASCII rendering semantics
-- `RUNTIME_SPEC.md` — execution modes and tick semantics
-- `CLI_SPEC.md` — entrypoints and command behavior
-- `REPLAY_SPEC.md` — deterministic replay format
-
-Agents must not implement or extend shell behavior without the corresponding
-specification being present and acknowledged.
-
----
-
-## 8. Architectural invariants (system-level)
+## 7. Architectural invariants (system-level)
 
 - The core is the single source of truth for game rules.
 - Renderer is side-effect free and does not mutate state.
@@ -278,7 +264,7 @@ specification being present and acknowledged.
 
 ---
 
-## 9. Near-term roadmap (architecture-driven)
+## 8. Near-term roadmap (architecture-driven)
 
 1. Complete core (Gates 0–6).
 2. Add ASCII renderer under `tetris.rendering`.

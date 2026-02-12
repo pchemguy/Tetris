@@ -266,9 +266,9 @@ authority: normative
 gate_applies_to: 11
 phase_applies_to: 2
 description: Defines execution modes and per-tick orchestration rules outside the core.
-url: null
-supersedes: []
-superseded_by: null
+url: https://someurl.com
+supersedes: [OLD_DOC_ID]
+superseded_by: NEW_DOC_ID
 references: [DECOMPOSITION, CORE_API, INPUT_MODEL]
 ---
 ````
