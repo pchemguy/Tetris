@@ -19,10 +19,7 @@ references:
 
 # Documentation Graph Visualization Specification (Normative)
 
-
-## Node and Edge Model for Documentation Graph (Normative)
-
-### 1. Purpose
+## 1. Purpose
 
 This spec defines the **canonical doc graph model** used to render and validate the repository’s documentation system and a deterministic procedure to render that graph into one or more concrete outputs (e.g., Mermaid, DOT).
 
@@ -102,8 +99,6 @@ A single root node used to anchor diagram layout.
 
 > Rendering requirement: exactly one `repository` node MUST exist.
 
----
-
 ### 2.2 Edge types
 
 Tooling MUST use only these directed edge types:
@@ -152,8 +147,6 @@ Use cases:
 
 This edge is optional and should be used only when you have explicit generated artifacts.
 
----
-
 ### 2.3 Edge direction
 
 Edges point from **referrer → referred**.
@@ -169,8 +162,6 @@ If both `doc` node subtypes produce an edge `A → B`:
 - Prose mention is discarded as redundant.
 
 Multiple identical edges MUST NOT be duplicated.
-
----
 
 ### 2.5 Canonical doc kinds (for graph classification)
 
@@ -284,6 +275,17 @@ If any normative doc cannot be mapped to a layer, this is a **Gate 0 failure**.
 
 ## 5. Reference extraction and validation
 
+### 5.1 YAML extraction
+
+For each Markdown file:
+
+1. Detect YAML front matter at top-of-file delimited by:
+    - starting `---` on line 1
+    - ending `---` on a later line
+2. Parse YAML.
+3. Validate YAML against `DOC_SCHEMA.json`.
+4. Register node keyed by `doc_id`.
+
 ### 5.1 Authoritative references
 
 Tooling MUST extract authoritative `references` edges only from YAML front matter:
@@ -292,7 +294,7 @@ Tooling MUST extract authoritative `references` edges only from YAML front matte
 
 For each entry:
 
-* Create a `references` edge from `doc_id` → referenced `DOC_ID`.
+* Create a `references` edge from `doc_id` → referenced `DOC_ID` of type = `normative`.
 
 If a referenced `DOC_ID` does not exist in the YAML inventory, tooling MUST flag it.
 
@@ -300,15 +302,45 @@ If a referenced `DOC_ID` does not exist in the YAML inventory, tooling MUST flag
 
 Tooling MAY additionally extract `@DOC_ID` tokens from Markdown bodies to provide lint hints.
 
-Rules:
+#### 5.2.1 Exclude fenced code blocks
 
-* Extract tokens matching `@([0-9A-Z_]+)`
-* Ignore fenced code blocks.
+- Any content within Markdown fenced code blocks MUST be ignored.
+    - A fenced code block begins with a line starting with three or more backticks or tildes
+    - It ends at the next matching fence of the same marker.
+- `@DOC_ID` tokens inside fenced code blocks are treated as examples and ignored.
+
+#### 5.2.2 Token pattern
+
+A prose reference token matches:
+
+- `@` followed by `DOC_ID` lexical format from @DOC_SCHEMA:
+    - `@` + `[A-Z][0-9A-Z_]*`
+
+Extract only the DOC_ID portion (without `@`).
+
+#### 5.2.3 Whitespace and formatting
+
+Tooling MUST treat `@DOC_ID` as valid even when surrounded by punctuation, single backticks, or Markdown emphasis, e.g.:
+
+- `(@DOC_ID)`
+- `"@DOC_ID",`
+- `_@DOC_ID_`
+- `*@DOC_ID*`
+- `` `@DOC_ID` ``
+
+#### 5.2.4 Emission rule
+
 * Treat these as **non-authoritative**:
     * They MUST NOT create `references` edges automatically.
-    * They MAY create `produces` edges to a lint report, or be emitted as warnings.
+    * They MAY create `produces` edges to a lint report, or be emitted as warnings (use type = `prose`).
 
 If a `@DOC_ID` token is not present in YAML inventory, tooling SHOULD flag it.
+
+### 5.3 Determinism constraints
+
+* The graph extraction MUST be deterministic given the repo state.
+* File iteration order MUST NOT affect output:
+    * tools must sort node IDs and edges before emitting.
 
 ---
 
@@ -354,97 +386,11 @@ Tooling MUST materialize the following layer nodes:
 
 ---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-> [!NOTE]
-> 
-> `Generate a Doc Graph visualization spec of DOC_SCHEMA`
-
-
-
----
-
-
-
----
-
-## 4. Extraction rules (deterministic)
-
-### 4.1 YAML extraction
-
-For each Markdown file:
-
-1. Detect YAML front matter at top-of-file delimited by:
-    - starting `---` on line 1
-    - ending `---` on a later line
-2. Parse YAML.
-3. Validate YAML against `DOC_SCHEMA.json`.
-4. Register node keyed by `doc_id`.
-
-### 4.2 Normative edges extraction
-
-For each node `A`:
-
-- For each `doc_id` `B` in `A.references`:
-    - Add edge `A → B` of type = normative.
-
-### 4.3 Prose `@DOC_ID` extraction (secondary edges)
-
-For each document body:
-
-- Scan for `@DOC_ID` tokens under these constraints:
-
-#### 4.3.1 Exclude fenced code blocks
-
-- Any content within Markdown fenced code blocks MUST be ignored.
-    - A fenced code block begins with a line starting with triple backticks ``` or triple tildes ~~~
-    - It ends at the next matching fence of the same marker.
-- `@DOC_ID` tokens inside fenced code blocks are treated as examples and ignored.
-
-#### 4.3.2 Token pattern
-
-A prose reference token matches:
-
-- `@` followed by `DOC_ID` lexical format from @DOC_SCHEMA:
-    - `@` + `[A-Z][0-9A-Z_]*`
-
-Extract only the DOC_ID portion (without `@`).
-
-#### 4.3.3 Whitespace and formatting
-
-Tooling MUST treat `@DOC_ID` as valid even when surrounded by punctuation or Markdown emphasis, e.g.:
-
-- `(@DOC_ID)`
-- `"@DOC_ID"`
-- `*@DOC_ID*`
-- `` `@DOC_ID` ``
-
-#### 4.3.4 Emission rule
-
-For each extracted `@B` in doc `A`:
-
-- If `B` exists as a known YAML `doc_id`, add edge `A → B` type=prose.
-- If `B` is unknown, report as a warning or error based on strictness (see §7).
-
----
-
-## 5. Required outputs
+## 9. Required outputs
 
 Tooling MUST be able to render at least these outputs:
 
-### 5.1 Mermaid graph (required)
+### 9.1 Mermaid graph (required)
 
 Output: `docs/reports/DOC_GRAPH.mmd` (path may differ; use your docs layout policy)
 
@@ -468,7 +414,7 @@ flowchart LR
   DOC_SCHEMA -.-> COMPONENT_REGISTRY
 ````
 
-### 5.2 DOT graph (optional but recommended)
+### 9.2 DOT graph (optional but recommended)
 
 Output: `docs/reports/DOC_GRAPH.dot`
 
@@ -478,9 +424,9 @@ Output: `docs/reports/DOC_GRAPH.dot`
 
 ---
 
-## 6. Visualization rules
+## 10. Visualization rules
 
-### 6.1 Grouping (subgraphs / swimlanes)
+### 10.1 Grouping (subgraphs / swimlanes)
 
 Renderers SHOULD group nodes by `scope`:
 
@@ -489,7 +435,7 @@ Renderers SHOULD group nodes by `scope`:
 
 If grouping is not supported by the output format, grouping may be omitted, but node labels MUST still include `scope` in an inspectable way (tooltip/label suffix).
 
-### 6.2 Styling and legend (required)
+### 10.2 Styling and legend (required)
 
 Graph output MUST include a legend indicating:
 
@@ -503,7 +449,7 @@ Optional node styling by `kind`:
 
 (Exact colors/shapes are output-format-specific; the rule is that kinds must be distinguishable.)
 
-### 6.3 Filtering modes (required)
+### 10.3 Filtering modes (required)
 
 Tooling MUST support generating filtered graphs:
 
@@ -520,9 +466,9 @@ Optional filters:
 
 ---
 
-## 7. Validation and failure behavior
+## 11. Validation and failure behavior
 
-### 7.1 Hard failures (must BLOCK in strict mode)
+### 11.1 Hard failures (must BLOCK in strict mode)
 
 Any of the following MUST be treated as a hard failure:
 
@@ -531,13 +477,13 @@ Any of the following MUST be treated as a hard failure:
 * YAML fails schema validation
 * YAML `references` contains a DOC_ID that does not exist in YAML inventory
 
-### 7.2 Soft failures (warnings)
+### 11.2 Soft failures (warnings)
 
 * Prose `@DOC_ID` references to unknown DOC_IDs MAY be warnings (recommended),
   since prose is non-authoritative.
 * Tooling SHOULD still report them in a “dangling mentions” section.
 
-### 7.3 Output report (required)
+### 11.3 Output report (required)
 
 Tooling MUST emit a report summary including:
 
@@ -547,13 +493,5 @@ Tooling MUST emit a report summary including:
 * list of unknown YAML references (if any)
 * list of dangling prose mentions (if any)
 * list of docs missing YAML (if any)
-
----
-
-## 8. Performance and determinism constraints
-
-* The graph extraction MUST be deterministic given the repo state.
-* File iteration order MUST NOT affect output:
-    * tools must sort node IDs and edges before emitting.
 
 ---
