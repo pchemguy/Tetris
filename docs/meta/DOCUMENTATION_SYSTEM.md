@@ -44,6 +44,11 @@ It is designed to ensure that:
 
 This document governs the **meta-layer** of the repository: not game behavior, not architecture, not tests — but the structure that makes those documents coherent, verifiable, and automatable.
 
+**Audience note**
+
+* **AI agents**: This document defines your operating environment. Partial reading is failure.
+* **Human developers**: This document is intended to remain readable, editable, and authoritative even as AI assistance evolves.
+
 ---
 
 ## 2. Metadata and cross-document references
@@ -235,12 +240,12 @@ Together, these documents prevent:
 
 The applicability of documents to acceptance gates defined in `ACCEPTANCE_GATES.md` is governed by the following rules:
 
+- **Gate 0** applies universally as a discovery and compliance gate and therefore requires awareness of all normative documents, even if they are not yet implemented.
 - **System-level contracts** apply to **all gates**. They constrain the system globally and must be obeyed at all stages.
 - **Core / engine contracts** apply to **core gates (0–9)**. They define the pure simulation and must not be violated during core development or extension.
-- **Core test oracle** (`CORE_TEST_ORACLE.md`) applies to **Gates 1–6**, and additionally to **Gates 7–9** if those optional core extensions are enabled.
 - **Shell contracts** apply to **Gate 0** (discovery and scope awareness) and to their respective **shell gates (10–13)** when implementation is permitted.
+- **Core test oracle** (`CORE_TEST_ORACLE.md`) applies to **Gates 1–6**, and additionally to **Gates 7–9** if those optional core extensions are enabled.
 - **Shell-level test oracles** apply to **exactly one gate each**, corresponding to the shell component they validate.
-- **Gate 0** applies universally as a discovery and compliance gate and therefore requires awareness of all normative documents, even if they are not yet implemented.
 
 These rules are authoritative and supersede any informal interpretation of document scope.
 
@@ -731,7 +736,7 @@ Defines **how inputs are applied** per tick.
 
 ---
 
-#### `ERROR_HANDLING.md` — Errors vs rejections
+##### `ERROR_HANDLING.md` — Errors vs rejections
 
 **Role**  
 Defines **failure vs rejection semantics**.
@@ -751,7 +756,7 @@ Defines **failure vs rejection semantics**.
 
 ---
 
-#### `SHAPES_AND_ROTATIONS.md` — Geometry truth table
+##### `SHAPES_AND_ROTATIONS.md` — Geometry truth table
 
 **Role**  
 Defines **exact tetromino geometry** and rotation states.
@@ -770,7 +775,7 @@ Defines **exact tetromino geometry** and rotation states.
 
 ---
 
-#### `CORE_API.md` — Python API contract
+##### `CORE_API.md` — Python API contract
 
 **Role**  
 Defines the **only supported public core API** for the core.
@@ -791,31 +796,9 @@ Defines the **only supported public core API** for the core.
 
 ---
 
-### Core Test Oracle
+#### Shell contracts
 
-#### `CORE_TEST_ORACLE.md` — Mandatory tests
-
-**Role**  
-Defines **what must be proven** for correctness.
-
-**Contents**
-
-- Explicit test oracles mapped to rules
-- Required vs optional tests
-- Minimum acceptable test set for MVP
-
-**Usage**
-
-- This document is the arbiter of correctness.
-- Passing ad-hoc tests is insufficient if oracles are missing.
-- Agents should generate tests directly traceable to this document.
-- Applies exclusively to Acceptance Gates 1–6.
-
----
- 
-### Shell contracts
-
-#### `RUNTIME_SPEC.md` — Execution model and orchestration
+##### `RUNTIME_SPEC.md` — Execution model and orchestration
 
 **Role**  
 Defines **how the system runs over time** outside the core.
@@ -837,7 +820,7 @@ Defines **how the system runs over time** outside the core.
 
 ---
 
-#### `RENDERING_SPEC.md` — Presentation contract
+##### `RENDERING_SPEC.md` — Presentation contract
 
 **Role**  
 Defines the **ASCII rendering contract** for the application.
@@ -859,7 +842,7 @@ Defines the **ASCII rendering contract** for the application.
 
 ---
 
-#### `CLI_SPEC.md` — Command-line interface
+##### `CLI_SPEC.md` — Command-line interface
 
 **Role**  
 Defines the **command-line surface** of the application.
@@ -880,7 +863,7 @@ Defines the **command-line surface** of the application.
 
 ---
 
-#### `REPLAY_SPEC.md` — Deterministic replay and evaluation
+##### `REPLAY_SPEC.md` — Deterministic replay and evaluation
 
 **Role**  
 Defines a **deterministic replay format** for evaluation, debugging, and regression testing.
@@ -901,9 +884,33 @@ Defines a **deterministic replay format** for evaluation, debugging, and regress
 
 ---
 
-### Shell Test Oracles
+### L4 — Test Oracles (Proof Obligations)
 
-#### `RENDERING_TEST_ORACLE.md` — Renderer correctness
+#### Core Test Oracle
+
+##### `CORE_TEST_ORACLE.md` — Mandatory tests
+
+**Role**  
+Defines **what must be proven** for correctness.
+
+**Contents**
+
+- Explicit test oracles mapped to rules
+- Required vs optional tests
+- Minimum acceptable test set for MVP
+
+**Usage**
+
+- This document is the arbiter of correctness.
+- Passing ad-hoc tests is insufficient if oracles are missing.
+- Agents should generate tests directly traceable to this document.
+- Applies exclusively to Acceptance Gates 1–6.
+
+---
+
+#### Shell Test Oracles
+
+##### `RENDERING_TEST_ORACLE.md` — Renderer correctness
 
 **Role**  
 Defines the **mandatory automated tests** that the ASCII renderer must satisfy.
@@ -926,7 +933,7 @@ Defines the **mandatory automated tests** that the ASCII renderer must satisfy.
 
 ---
 
-#### `RUNTIME_TEST_ORACLE.md` — Scripted runtime correctness
+##### `RUNTIME_TEST_ORACLE.md` — Scripted runtime correctness
 
 **Role**  
 Defines the **mandatory tests** for the scripted (virtual-time) runtime.
@@ -947,7 +954,7 @@ Defines the **mandatory tests** for the scripted (virtual-time) runtime.
 
 ---
 
-#### `CLI_TEST_ORACLE.md` — CLI behavior and robustness
+##### `CLI_TEST_ORACLE.md` — CLI behavior and robustness
 
 **Role**  
 Defines **mandatory behavioral tests** for the command-line interface.
@@ -967,7 +974,7 @@ Defines **mandatory behavioral tests** for the command-line interface.
 
 ---
 
-#### `REPLAY_TEST_ORACLE.md` — Deterministic replay correctness
+##### `REPLAY_TEST_ORACLE.md` — Deterministic replay correctness
 
 **Role**  
 Defines **mandatory tests** for replay loading, validation, and execution.
