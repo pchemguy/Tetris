@@ -331,11 +331,17 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 **Directory**: `docs/architecture/`
 
-| Title                       | Filename                | Function / Role                                                  |
-| --------------------------- | ----------------------- | ---------------------------------------------------------------- |
-| System Architecture         | `ARCHITECTURE.md`       | High-level system architecture and design choices                |
-| System Decomposition        | `DECOMPOSITION.md`      | Explicit component decomposition and boundaries                  |
-| Documentation Authority Map | `DOCS_AUTHORITY_MAP.md` | Authoritative hierarchy and conflict-resolution rules among docs |
+| Title                                | Filename                         | Function / Role                                                                |
+| ------------------------------------ | -------------------------------- | ------------------------------------------------------------------------------ |
+| System Architecture                  | `ARCHITECTURE.md`                | High-level system architecture and design decisions (Functional Core / Shell). |
+| System Decomposition                 | `DECOMPOSITION.md`               | Explicit component decomposition and responsibility boundaries.                |
+| Component Registry (Normative)       | `COMPONENT_REGISTRY.md`          | Human-readable explanation of registered components and layer model.           |
+| Component Registry (Machine Schema)  | `COMPONENT_REGISTRY.schema.json` | JSON Schema validating `COMPONENT_REGISTRY.json`.                              |
+| Component Registry (Instance)        | `COMPONENT_REGISTRY.json`        | Canonical list of components, layers, and dependency policy.                   |
+| Documentation Metadata Schema (Spec) | `DOC_SCHEMA.md`                  | Normative specification of documentation metadata semantics.                   |
+| Documentation Metadata Schema (JSON) | `DOC_SCHEMA.json`                | Machine-validated schema for YAML front matter in Markdown docs.               |
+| Documentation Graph Specification    | `DOC_GRAPH_SPEC.md`              | Rules for extracting and rendering documentation dependency graphs.            |
+| Documentation Authority Map          | `DOCS_AUTHORITY_MAP.md`          | Hierarchy and conflict-resolution rules among normative documents.             |
 
 ---
 
