@@ -306,72 +306,138 @@ Unknown prose DOC_ID → warning.
 
 ---
 
-## 7. Rendering directives (deterministic layout)
+## 6. Rendering directives (deterministic layout)
 
-To reproduce the diagram structure, renderers MUST:
+### 6.1 Vertical ordering
 
-1. Draw the `repository` node at top.
-2. Draw layer nodes vertically in order `L0..L5`.
-3. Draw `constrains` edges as vertical arrows between consecutive layers.
-4. Place `doc` nodes inside (or grouped under) their `layer` node.
-5. Optionally draw `references` edges as dotted lines, but they must not affect layer ordering.
+Renderers MUST group documents by computed `layer` in vertical order:
 
----
+```
+REPOSITORY
+L0
+L1
+L2
+L3
+L4
+L5
+```
 
-## 8. Minimal layer node definitions (normative)
-
-Tooling MUST materialize the following layer nodes:
-
-* `L0` — Documentation Infrastructure (Meta-layer)
-* `L1` — Governance (Process Control)
-* `L2` — System Structure (Global Contracts)
-* `L3` — Behavioral Specifications (Component Contracts)
-* `L4` — Test Oracles (Proof Obligations)
-* `L5` — Execution State (Reports)
+This grouping is layout-only; no explicit layer nodes are required.
 
 ---
 
-## 9. Required outputs
+### 6.2 Layer grouping
 
-Tooling MUST be able to render at least these outputs:
+In Mermaid:
 
-### 9.1 Mermaid graph (required)
+Use `subgraph` blocks for each layer.
 
-Output: `docs/reports/DOC_GRAPH.mmd` (path may differ; use your docs layout policy)
-
-- Format: `flowchart LR` (or `TD`, but must be consistent)
-- Nodes must display:
-    - `doc_id` and `title` (minimum)
-- Edges:
-    - normative edges: solid arrow
-    - prose edges: dashed arrow
-
-Example (illustrative):
+Example:
 
 ```mermaid
-flowchart LR
-  DOC_SCHEMA["DOC_SCHEMA<br/>Documentation Metadata Schema"]
-  COMPONENT_REGISTRY["COMPONENT_REGISTRY<br/>Component Registry"]
-  DOC_GRAPH_SPEC["DOC_GRAPH_SPEC<br/>Documentation Graph Visualization Spec"]
+flowchart TD
 
-  DOC_GRAPH_SPEC --> DOC_SCHEMA
-  DOC_GRAPH_SPEC --> COMPONENT_REGISTRY
-  DOC_SCHEMA -.-> COMPONENT_REGISTRY
-````
+  subgraph L0["L0 — Documentation Infrastructure"]
+    DOC_SCHEMA
+    DOC_GRAPH_SPEC
+  end
 
-### 9.2 DOT graph (optional but recommended)
-
-Output: `docs/reports/DOC_GRAPH.dot`
-
-* Must encode edge type via style:
-    * normative: solid
-    * prose: dashed
+  subgraph L1["L1 — Governance"]
+    PHASES
+    ACCEPTANCE_GATES
+  end
+```
 
 ---
 
-## 10. Visualization rules
+### 6.3 Edge styling
 
-### 10.1 Grouping (subgraphs / swimlanes)
+* YAML `references` → solid arrow
+* Prose references → dashed arrow
+
+A legend MUST be included.
+
+---
+
+## 6. Rendering directives (deterministic layout)
+
+### 6.1 Vertical ordering
+
+Renderers MUST group documents by computed `layer` in vertical order:
+
+```
+REPOSITORY
+L0
+L1
+L2
+L3
+L4
+L5
+```
+
+This grouping is layout-only; no explicit layer nodes are required.
+
+---
+
+### 6.2 Layer grouping
+
+In Mermaid:
+
+Use `subgraph` blocks for each layer.
+
+Example:
+
+```mermaid
+flowchart TD
+
+  subgraph L0["L0 — Documentation Infrastructure"]
+    DOC_SCHEMA
+    DOC_GRAPH_SPEC
+  end
+
+  subgraph L1["L1 — Governance"]
+    PHASES
+    ACCEPTANCE_GATES
+  end
+```
+
+---
+
+### 6.3 Edge styling
+
+* YAML `references` → solid arrow
+* Prose references → dashed arrow
+
+A legend MUST be included.
+
+---
+
+## 7. Required outputs
+
+### 7.1 Mermaid (required)
+
+Must include:
+
+* All `doc` nodes
+* All normative edges
+* Optional prose edges
+* Layer grouping
+* Legend
+
+---
+
+### 7.2 DOT (optional)
+
+Edges:
+
+* normative → solid
+* prose → dashed
+
+---
+
+## 8. Visualization rules
+
+### 8.1 Grouping (subgraphs / swimlanes)
 
 Renderers SHOULD group nodes by `scope`:
 
@@ -380,12 +446,12 @@ Renderers SHOULD group nodes by `scope`:
 
 If grouping is not supported by the output format, grouping may be omitted, but node labels MUST still include `scope` in an inspectable way (tooltip/label suffix).
 
-### 10.2 Styling and legend (required)
+### 8.2 Styling and legend (required)
 
 Graph output MUST include a legend indicating:
 
 * solid edges = YAML `references` (normative)
-* dashed edges = prose `@DOC_ID` mentions (non-authoritative)
+* dashed edges = prose `@DOC_ID` `mentions` (non-authoritative)
 
 Optional node styling by `kind`:
 
@@ -394,14 +460,14 @@ Optional node styling by `kind`:
 
 (Exact colors/shapes are output-format-specific; the rule is that kinds must be distinguishable.)
 
-### 10.3 Filtering modes (required)
+### 8.3 Filtering modes (required)
 
 Tooling MUST support generating filtered graphs:
 
 1. **Normative-only**
     * Only YAML `references` edges.
 2. **Full**
-    * YAML `references` edges + prose edges.
+    * YAML `references` edges + `mentions` edges.
 
 Optional filters:
 
@@ -411,24 +477,24 @@ Optional filters:
 
 ---
 
-## 11. Validation and failure behavior
+## 9. Validation and failure behavior
 
-### 11.1 Hard failures (must BLOCK in strict mode)
+### 9.1 Hard failures (must BLOCK in strict mode)
 
-Any of the following MUST be treated as a hard failure:
+Must BLOCK:
 
 * Duplicate `doc_id`
-* YAML metadata missing from a doc that is required to participate (policy: “all docs under docs/ except docs/ideas/”)
-* YAML fails schema validation
-* YAML `references` contains a DOC_ID that does not exist in YAML inventory
+* Missing YAML in required docs
+* YAML schema invalid
+* YAML `references` to unknown DOC_ID
+* Normative doc not classifiable to L0–L5
 
-### 11.2 Soft failures (warnings)
+### 9.2 Soft failures (warnings)
 
-* Prose `@DOC_ID` references to unknown DOC_IDs MAY be warnings (recommended),
-  since prose is non-authoritative.
-* Tooling SHOULD still report them in a “dangling mentions” section.
+* Unknown prose `@DOC_ID`
+* Cross-layer policy violation (unless strict mode)
 
-### 11.3 Output report (required)
+### 9.3 Output report (required)
 
 Tooling MUST emit a report summary including:
 
