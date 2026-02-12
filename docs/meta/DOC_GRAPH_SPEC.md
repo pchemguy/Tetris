@@ -211,31 +211,72 @@ Higher layers constrain lower layers.
 
 ---
 
-### 4.3 Allowed cross-layer reference policy
+### 4.3 Cross-layer reference validation (diagnostic only)
 
-For normative `references` edges:
+This section defines a **recommended validation policy** for normative `references` edges. It does **not** change the fixed layer constraint chain. It applies only to explicit YAML `references`.
 
-Let `layer(A)` be source layer and `layer(B)` be target layer.
+Let:
 
-Rules:
+* `layer(A)` be the layer of the referencing document
+* `layer(B)` be the layer of the referenced document
 
-| Source layer | Allowed target layers for **normative `references`** |
-| ------------ | ---------------------------------------------------- |
-| L0           | L0–L5                                                |
-| L1           | L0, L2, L3, L4                                       |
-| L2           | L2                                                   |
-| L3           | L2, L3                                               |
-| L4           | L2, L3, L4                                           |
-| L5           | L0–L5                                                |
+#### Intended semantic dependency direction
 
+The layered model distinguishes between:
 
+* **Constraint flow (L0 → L5)** — fixed structural validity chain
+* **Semantic dependency flow** — explicit YAML `references`
 
-If violated:
+Semantic dependencies should generally follow this principle:
 
-* Tooling SHOULD emit a warning
-* Strict mode MAY treat as error
+> A document may depend on documents that define its meaning or governance, but should not depend on documents that merely validate or record it.
 
-This enforces the vertical constraint model without explicit layer nodes.
+#### Recommended allowed reference directions
+
+Tooling SHOULD treat the following as normal:
+
+* `L0` → any layer (integration/meta surface)
+* `L1` → `L2`, `L3`, `L4`, `L0`
+* `L2` → None (intra-layer only)
+* `L3` → `L2`
+* `L4` → `L3`, `L2`
+* `L5` → any layer
+
+Tooling SHOULD treat the following as suspicious (emit warning):
+
+* `L2–L4` → `L0`
+    * Development layers should remain meta-agnostic.
+* `L2` → `L1`
+    * Architecture should not depend on governance rules.
+* `L3` → `L1`
+    * Specifications should not depend on workflow control.
+* `L4` → `L1`
+    * Oracles validate specs; they are not governed semantically by phases.
+* `L3` → `L4`
+    * Specifications must not depend on their own proof artifacts.
+
+#### No hard blocking
+
+Violations of these patterns:
+
+* MUST NOT block graph construction.
+* MUST NOT be treated as schema failures.
+* MUST be emitted in the validation report under:
+  `Cross-layer reference warnings`
+
+This keeps the system:
+
+* structurally deterministic,
+* semantically expressive,
+* non-dogmatic.
+
+#### Rationale
+
+* The **constraint chain** expresses validity conditions.
+* The **reference edges** express semantic dependence.
+* These are distinct mechanisms and must not be conflated.
+
+Layering is a **normative interpretation model**, not a rigid import system.
 
 ---
 
@@ -507,5 +548,207 @@ Tooling MUST emit a report summary including:
 * list of unknown YAML references (if any)
 * list of dangling prose mentions (if any)
 * list of docs missing YAML (if any)
+
+---
+
+## 10. Validation Report Format (Normative)
+
+Tooling MUST emit a structured validation report after graph extraction. The report MUST be deterministic and stable under file ordering. Output format MAY be JSON, Markdown, or both. JSON is recommended for CI; Markdown for human review.
+
+---
+
+### 10.1 Required top-level sections
+
+The report MUST contain:
+
+1. **Inventory Summary**
+2. **Layer Assignment Summary**
+3. **Normative Reference Matrix**
+4. **Cross-Layer Diagnostics**
+5. **Structural Failures**
+6. **Prose Reference Diagnostics**
+7. **Determinism Check**
+
+---
+
+### 10.2 Inventory Summary
+
+Must include:
+
+* total documents discovered
+* total normative documents
+* total non-normative documents
+* total YAML `references` edges
+* total prose `@DOC_ID` mentions
+* total unique `doc_id` values
+
+Example:
+
+```json
+{
+  "total_docs": 42,
+  "normative_docs": 37,
+  "non_normative_docs": 5,
+  "normative_edges": 81,
+  "prose_edges": 23,
+  "unique_doc_ids": 42
+}
+```
+
+---
+
+### 10.3 Layer Assignment Summary
+
+Tooling MUST emit:
+
+* Count of documents per layer (L0–L5, OUT)
+* List of normative docs that failed layer mapping (if any)
+
+Example:
+
+```json
+{
+  "L0": 4,
+  "L1": 2,
+  "L2": 2,
+  "L3": 14,
+  "L4": 8,
+  "L5": 3,
+  "OUT": 9,
+  "unclassified_normative_docs": []
+}
+```
+
+If any normative doc cannot be mapped → **Hard failure**.
+
+---
+
+### 10.4 Normative Reference Matrix
+
+Tooling MUST compute a layer-to-layer matrix for YAML `references`. Matrix entry `[A][B]` = number of edges from layer A → layer B.
+
+Example:
+
+| From \ To | L0 | L1 | L2 | L3 | L4 | L5 |
+| --------- | -- | -- | -- | -- | -- | -- |
+| L0        | 0  | 2  | 3  | 5  | 1  | 0  |
+| L1        | 4  | 0  | 2  | 3  | 1  | 0  |
+| L2        | 0  | 0  | 0  | 6  | 0  | 0  |
+| L3        | 0  | 0  | 3  | 0  | 0  | 0  |
+| L4        | 0  | 0  | 5  | 9  | 0  | 0  |
+| L5        | 2  | 1  | 3  | 4  | 2  | 0  |
+
+This table is critical because it reveals:
+
+* illegal upward semantic coupling
+* meta leakage into dev layers
+* architectural drift over time
+
+This matrix MUST be sorted and deterministic.
+
+---
+
+### 10.5 Cross-Layer Diagnostics
+
+For each YAML `references` edge:
+
+If it violates the recommended semantic policy (§6):
+
+Emit:
+
+```json
+{
+  "type": "cross_layer_warning",
+  "from_doc": "ARCHITECTURE",
+  "from_layer": "L2",
+  "to_doc": "PHASES",
+  "to_layer": "L1",
+  "reason": "Architecture should not depend on governance"
+}
+```
+
+This section MUST list:
+
+* all suspicious edges
+* total suspicious edge count
+
+These are **warnings**, not hard failures.
+
+---
+
+### 10.6 Structural Failures (Hard Errors)
+
+The following MUST block in strict mode:
+
+* Duplicate `doc_id`
+* Missing YAML in required doc
+* YAML schema invalid
+* YAML `references` to unknown `doc_id`
+* Normative doc without layer assignment
+
+Each error MUST include:
+
+```json
+{
+  "type": "hard_failure",
+  "doc_id": "X",
+  "message": "Duplicate doc_id"
+}
+```
+
+---
+
+### 10.7 Prose Reference Diagnostics
+
+Tooling MUST emit:
+
+* total prose mentions
+* list of unknown prose targets
+* list of prose-only references (not in YAML)
+
+Example:
+
+```json
+{
+  "unknown_prose_targets": ["UNKNOWN_DOC"],
+  "prose_only_edges": [
+    {"from": "ARCHITECTURE", "to": "DECOMPOSITION"}
+  ]
+}
+```
+
+These MUST NOT block.
+
+---
+
+### 10.8 Determinism Check
+
+Tooling MUST ensure:
+
+* Node list sorted lexicographically by `doc_id`
+* Edge list sorted `(from_doc, to_doc)`
+* Report output stable across runs
+
+Emit:
+
+```json
+{
+  "deterministic_ordering": true
+}
+```
+
+If false → treat as tool implementation error.
+
+---
+
+### Why this matters
+
+This gives you:
+
+* a structural audit surface (hard guarantees),
+* a semantic drift surface (warnings),
+* a measurable architectural health signal (matrix),
+* CI-friendly diffability.
+* It keeps layering philosophical and normative — while making enforcement mechanical and measurable.
 
 ---
