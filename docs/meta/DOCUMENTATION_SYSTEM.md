@@ -30,7 +30,7 @@ The documentation system itself is treated as a **first-class, auditable subsyst
 
 ## 2. Metadata and cross-document references
 
-Every normative document declares a stable identifier (`doc_id`) in its YAML header, as defined in `DOC_SCHEMA.md`. Documents may reference one another in prose using `@DOC_ID` markers (for example, `@DOC_SCHEMA`) as a convenience mechanism; these markers are non-authoritative and are validated against the set of declared document identifiers. Tooling may use YAML metadata and `@DOC_ID` markers to validate references and construct a deterministic documentation graph as defined in `DOC_GRAPH_SPEC.md`.
+Every normative document declares a stable identifier (`doc_id`) in its YAML header, as defined in `DOC_SCHEMA.md`. Documents may reference one another in prose using `@DOC_ID` markers (for example, `@DOC_SCHEMA`) as a convenience mechanism; YAML metadata remains authoritative, and `@DOC_ID` markers are validated against the repository’s declared identifiers. Tooling may use YAML metadata and `@DOC_ID` markers to validate references and construct a deterministic documentation graph as defined in `DOC_GRAPH_SPEC.md`.
 
 ---
 
@@ -38,7 +38,7 @@ Every normative document declares a stable identifier (`doc_id`) in its YAML hea
 
 ### Overview
 
-Documentation in this repository is organized in a **layered structure**. Each document belongs to a **defined class** (or layer) serving a distinct purpose in constraining, guiding, or evaluating the development process. The intent of this organization is to:
+Documentation in this repository is organized in a **layered structure**. Each document belongs to a **defined layer** serving a distinct purpose in constraining, guiding, or evaluating the development process. The intent of this organization is to:
 
 * make **expectations explicit**,
 * surface and document all assumptions,
@@ -139,8 +139,8 @@ Documentation in this repository is organized in a **layered structure**. Each d
 - Lower layers must not “reach upward” to change the meaning of higher layers.
 - If two documents conflict:
     1. resolve by **authority** (`normative` over `non_normative`), then
-    2. by **layer precedence** (L0 → L5), then
-    3. by explicit `supersedes` / `superseded_by` relationships, if present.
+    2. by explicit `supersedes` / `superseded_by` relationships, if present, then
+    3. by **layer precedence** (L0 → L5).
 
 | Layer                                                | Question                           | Directory            |
 | ---------------------------------------------------- | ---------------------------------- | -------------------- |

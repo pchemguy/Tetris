@@ -9,9 +9,7 @@ authority: normative
 gate_applies_to: all
 phase_applies_to: all
 description: Normative schema for YAML metadata embedded in repository Markdown documents.
-url:
-supersedes: []
-superseded_by:
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 references:
   - COMPONENT_REGISTRY
 ---
@@ -194,7 +192,7 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
         - `meta`, `control`, `architecture`, `decomposition`, `spec`, `oracle`, `api`, `map`, `report`, `idea`.
 - `scope`
     - An explicit scope token enumerated in `DOC_SCHEMA.json`.
-    - The source of truth for valid scope tokens is `COMPONENT_REGISTRY.json`.
+    - Scope tokens correspond to architectural component identities and global classifications declared in `COMPONENT_REGISTRY.json`
 - `status`
     - `draft`, `active`, `deprecated`.
 - `authority`
@@ -226,7 +224,7 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
 Valid `scope` values are defined by the component registry:
 
 - `COMPONENT_REGISTRY.json` provides `doc_scope_enum`.
-- `DOC_SCHEMA.json` hardcodes the enum **generated from the registry**.
+- `DOC_SCHEMA.json` hardcodes a copy of the `doc_scope_enum` declared in `COMPONENT_REGISTRY.json`.
 
 ### 7.2 Tooling policy
 
