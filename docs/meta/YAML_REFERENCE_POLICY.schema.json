@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "YAML_REFERENCE_POLICY.schema.json",
+  "title": "YAML Reference Policy Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "policy_name",
+    "applies_to",
+    "enforcement",
+    "layers",
+    "allowed_reference_targets"
+  ],
+  "properties": {
+    "policy_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "applies_to": {
+      "type": "string",
+      "const": "yaml_references"
+    },
+    "enforcement": {
+      "type": "string",
+      "enum": ["warning", "error", "off"]
+    },
+    "layers": {
+      "type": "array",
+      "const": ["L0", "L1", "L2", "L3", "L4", "L5"]
+    },
+    "allowed_reference_targets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["L0", "L1", "L2", "L3", "L4", "L5"],
+      "properties": {
+        "L0": { "$ref": "#/$defs/layer_list" },
+        "L1": { "$ref": "#/$defs/layer_list" },
+        "L2": { "$ref": "#/$defs/layer_list" },
+        "L3": { "$ref": "#/$defs/layer_list" },
+        "L4": { "$ref": "#/$defs/layer_list" },
+        "L5": { "$ref": "#/$defs/layer_list" }
+      }
+    }
+  },
+  "$defs": {
+    "layer": {
+      "type": "string",
+      "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]
+    },
+    "layer_list": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/layer" }
+    }
+  }
+}

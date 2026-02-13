@@ -211,9 +211,13 @@ Higher layers constrain lower layers.
 
 ---
 
+Here is the revised section with an explicit integration of `@YAML_REFERENCE_POLICY` as the authoritative machine-readable source of the rules, while keeping this section normative and explanatory.
+
+---
+
 ### 4.3 Cross-layer reference validation (diagnostic only)
 
-This section defines a **recommended validation policy** for normative `references` edges. It does **not** change the fixed layer constraint chain. It applies only to explicit YAML `references`.
+This section defines a **recommended validation policy** for normative `references` edges. It does **not** change the fixed layer constraint chain. It applies only to explicit YAML `references`. The authoritative machine-readable policy is defined in `@YAML_REFERENCE_POLICY` (`YAML_REFERENCE_POLICY.json`). This section explains its intent and semantic rationale.
 
 Let:
 
@@ -237,10 +241,10 @@ Tooling SHOULD treat the following as normal:
 
 * `L0` → any layer (integration/meta surface)
 * `L1` → `L2`, `L3`, `L4`, `L0`
-* `L2` → None (intra-layer only)
+* `L2` → `L2`
 * `L3` → `L2`
 * `L4` → `L3`, `L2`
-* `L5` → any layer
+* `L5` → any layer (reporting surface)
 
 Tooling SHOULD treat the following as suspicious (emit warning):
 
@@ -251,9 +255,14 @@ Tooling SHOULD treat the following as suspicious (emit warning):
 * `L3` → `L1`
     * Specifications should not depend on workflow control.
 * `L4` → `L1`
-    * Oracles validate specs; they are not governed semantically by phases.
+    * Proof obligations must not depend on process sequencing.
+    * Oracles define proof obligations.
+    * Phases/gates define workflow sequencing.
+    * An oracle must not depend on how the project is managed.
 * `L3` → `L4`
-    * Specifications must not depend on their own proof artifacts.
+    * A specification must define behavior independently of how it is tested.
+
+Strict mode MAY treat these as errors.
 
 #### No hard blocking
 
@@ -277,8 +286,6 @@ This keeps the system:
 * These are distinct mechanisms and must not be conflated.
 
 Layering is a **normative interpretation model**, not a rigid import system.
-
----
 
 ## 5. Reference extraction and validation
 
@@ -350,9 +357,9 @@ Unknown prose DOC_ID → warning.
 
 ---
 
-## 6. Rendering directives (deterministic layout)
+## 7. Rendering directives (deterministic layout)
 
-### 6.1 Vertical ordering
+### 7.1 Vertical ordering
 
 Renderers MUST group documents by computed `layer` in vertical order:
 
@@ -370,7 +377,7 @@ This grouping is layout-only; no explicit layer nodes are required.
 
 ---
 
-### 6.2 Layer grouping
+### 7.2 Layer grouping
 
 In Mermaid:
 
@@ -394,7 +401,7 @@ flowchart TD
 
 ---
 
-### 6.3 Edge styling
+### 7.3 Edge styling
 
 * YAML `references` → solid arrow
 * Prose references → dashed arrow
@@ -403,9 +410,9 @@ A legend MUST be included.
 
 ---
 
-## 7. Required outputs
+## 8. Required outputs
 
-### 7.1 Mermaid (required)
+### 8.1 Mermaid (required)
 
 Must include:
 
@@ -417,7 +424,7 @@ Must include:
 
 ---
 
-### 7.2 DOT (optional)
+### 8.2 DOT (optional)
 
 Edges:
 
@@ -426,9 +433,9 @@ Edges:
 
 ---
 
-## 8. Visualization rules
+## 9. Visualization rules
 
-### 8.1 Grouping (subgraphs / swimlanes)
+### 9.1 Grouping (subgraphs / swimlanes)
 
 Renderers SHOULD group nodes by `scope`:
 
@@ -437,7 +444,7 @@ Renderers SHOULD group nodes by `scope`:
 
 If grouping is not supported by the output format, grouping may be omitted, but node labels MUST still include `scope` in an inspectable way (tooltip/label suffix).
 
-### 8.2 Styling and legend (required)
+### 9.2 Styling and legend (required)
 
 Graph output MUST include a legend indicating:
 
@@ -451,7 +458,7 @@ Optional node styling by `kind`:
 
 (Exact colors/shapes are output-format-specific; the rule is that kinds must be distinguishable.)
 
-### 8.3 Filtering modes (required)
+### 9.3 Filtering modes (required)
 
 Tooling MUST support generating filtered graphs:
 
@@ -468,9 +475,9 @@ Optional filters:
 
 ---
 
-## 9. Validation and failure behavior
+## 10. Validation and failure behavior
 
-### 9.1 Hard failures (must BLOCK in strict mode)
+### 10.1 Hard failures (must BLOCK in strict mode)
 
 Must BLOCK:
 
@@ -480,12 +487,12 @@ Must BLOCK:
 * YAML `references` to unknown DOC_ID
 * Normative doc not classifiable to L0–L5
 
-### 9.2 Soft failures (warnings)
+### 10.2 Soft failures (warnings)
 
 * Unknown prose `@DOC_ID`
 * Cross-layer policy violation (unless strict mode)
 
-### 9.3 Output report (required)
+### 10.3 Output report (required)
 
 Tooling MUST emit a report summary including:
 
@@ -498,13 +505,13 @@ Tooling MUST emit a report summary including:
 
 ---
 
-## 10. Validation Report Format (Normative)
+## 11. Validation Report Format (Normative)
 
 Tooling MUST emit a structured validation report after graph extraction. The report MUST be deterministic and stable under file ordering. Output format MAY be JSON, Markdown, or both. JSON is recommended for CI; Markdown for human review.
 
 ---
 
-### 10.1 Required top-level sections
+### 11.1 Required top-level sections
 
 The report MUST contain:
 
@@ -518,7 +525,7 @@ The report MUST contain:
 
 ---
 
-### 10.2 Inventory Summary
+### 11.2 Inventory Summary
 
 Must include:
 
@@ -544,7 +551,7 @@ Example:
 
 ---
 
-### 10.3 Layer Assignment Summary
+### 11.3 Layer Assignment Summary
 
 Tooling MUST emit:
 
@@ -570,7 +577,7 @@ If any normative doc cannot be mapped → **Hard failure**.
 
 ---
 
-### 10.4 Normative Reference Matrix
+### 11.4 Normative Reference Matrix
 
 Tooling MUST compute a layer-to-layer matrix for YAML `references`. Matrix entry `[A][B]` = number of edges from layer A → layer B.
 
@@ -595,7 +602,7 @@ This matrix MUST be sorted and deterministic.
 
 ---
 
-### 10.5 Cross-Layer Diagnostics
+### 11.5 Cross-Layer Diagnostics
 
 For each YAML `references` edge:
 
@@ -623,7 +630,7 @@ These are **warnings**, not hard failures.
 
 ---
 
-### 10.6 Structural Failures (Hard Errors)
+### 11.6 Structural Failures (Hard Errors)
 
 The following MUST block in strict mode:
 
@@ -645,7 +652,7 @@ Each error MUST include:
 
 ---
 
-### 10.7 Prose Reference Diagnostics
+### 11.7 Prose Reference Diagnostics
 
 Tooling MUST emit:
 
@@ -668,7 +675,7 @@ These MUST NOT block.
 
 ---
 
-### 10.8 Determinism Check
+### 11.8 Determinism Check
 
 Tooling MUST ensure:
 
