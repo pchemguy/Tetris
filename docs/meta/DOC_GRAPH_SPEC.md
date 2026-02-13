@@ -403,59 +403,6 @@ A legend MUST be included.
 
 ---
 
-## 6. Rendering directives (deterministic layout)
-
-### 6.1 Vertical ordering
-
-Renderers MUST group documents by computed `layer` in vertical order:
-
-```
-REPOSITORY
-L0
-L1
-L2
-L3
-L4
-L5
-```
-
-This grouping is layout-only; no explicit layer nodes are required.
-
----
-
-### 6.2 Layer grouping
-
-In Mermaid:
-
-Use `subgraph` blocks for each layer.
-
-Example:
-
-```mermaid
-flowchart TD
-
-  subgraph L0["L0 — Documentation Infrastructure"]
-    DOC_SCHEMA
-    DOC_GRAPH_SPEC
-  end
-
-  subgraph L1["L1 — Governance"]
-    PHASES
-    ACCEPTANCE_GATES
-  end
-```
-
----
-
-### 6.3 Edge styling
-
-* YAML `references` → solid arrow
-* Prose references → dashed arrow
-
-A legend MUST be included.
-
----
-
 ## 7. Required outputs
 
 ### 7.1 Mermaid (required)
