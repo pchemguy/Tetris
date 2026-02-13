@@ -341,7 +341,7 @@ Extract the DOC_ID portion.
 
 #### Emission rule
 
-* Create `mentions` edges.
+* Create `prose` edges.
 * Do NOT treat as authoritative.
 * Do NOT override YAML references.
 
