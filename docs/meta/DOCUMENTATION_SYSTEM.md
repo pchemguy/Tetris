@@ -36,37 +36,97 @@ Every normative document declares a stable identifier (`doc_id`) in its YAML hea
 
 ### Overview
 
-Documentation in this repository is organized in a **layered structure**. Each document belongs to a defined layer serving a distinct purpose in constraining, guiding, or evaluating the development process. This layering model is **not** a “who references whom” model and it is not a statement about where work must start. It is a **normative interpretation and constraint model**:
+Documentation in this repository is organized in a **layered structure**. Each document belongs to a defined layer serving a distinct purpose in constraining, guiding, or evaluating the development process. This layering model is a **normative interpretation and constraint model** aligned with a structured compartmentalization of development concerns and effectively implementing high-level "separation of concerns". It is **not** a “who references whom” model and it is not a statement about where work must start. 
 
-* A higher layer defines the **terms of validity** for lower layers.
-* A lower layer provides **evidence** about whether higher-layer claims are satisfied in practice.
+Each layer corresponds to a distinct conceptual role in the lifecycle of system definition, validation, and evaluation. The ordering reflects increasing operational concreteness:
 
-There are therefore two opposed flows:
+* structural intent,
+* behavioral definition,
+* proof obligations,
+* recorded execution state.
 
-#### Constraint / validity flow (top → bottom)
+Layering therefore exists to:
+
+* separate **structure from behavior**,
+* separate **behavior from proof**,
+* separate **proof from recorded evidence**,
+* reduce cross-cutting coupling,
+* prevent circular semantic dependencies,
+* limit maintenance burden by enforcing responsibility boundaries at the documentation level.
+
+A higher layer defines the **terms of validity** for lower layers. A lower layer provides **evidence** about whether higher-layer claims are satisfied in practice.
+
+There are therefore two opposed flows.
+
+---
+
+### Constraint / validity flow (top → bottom)
 
 This is what the vertical arrows represent.
 
-* **L2 → L3**: Architecture and decomposition define what components exist and where responsibilities lie; specifications must conform to those structural boundaries.
-* **L3 → L4**: Specifications define what must be true; test oracles define what must be demonstrated to support those claims.
-* **L4 → L5**: Oracles define what counts as valid evidence; reports record evidence and outcomes in that oracle vocabulary.
+* **L2 → L3**
+    Architecture and decomposition define what components exist and where responsibilities lie; specifications must conform to those structural boundaries.
+* **L3 → L4**
+    Specifications define what must be true; test oracles define what must be demonstrated to support those claims.
+* **L4 → L5**
+    Oracles define what counts as valid evidence; reports record evidence and outcomes in that oracle vocabulary.
 
-#### Meaning / diagnosis flow (bottom → top)
+Constraint flows downward: higher layers constrain what lower layers are allowed to assert or record.
+
+---
+
+### Meaning / diagnosis flow (bottom → top)
 
 Interpretation flows in the opposite direction.
 
-* **L5 has meaning only through L4.** A report or log is uninterpreted until an oracle defines the questions it answers.
-* **L4 + L5 determine whether L3 is satisfied.** Oracles and results establish whether specifications hold.
-* **L3 satisfaction (or failure) reflects back to L2.** Persistent failures may indicate either implementation defects or structural flaws in architecture or decomposition.
+* **L5 has meaning only through L4.**
+    A report or log is uninterpreted until an oracle defines the questions it answers.
+* **L4 + L5 determine whether L3 is satisfied.**
+    Oracles and results establish whether specifications hold.
+* **L3 satisfaction (or failure) reflects back to L2.**
+    Persistent failures may indicate either implementation defects or structural flaws in architecture or decomposition.
 
-In short:
+Progression of work tends to move downward.
+Interpretation of results moves upward.
 
-* **Progression of work tends to move downward.**
-* **Interpretation of results moves upward.**
+---
+
+### Layering and semantic dependency control
+
+Because layers represent **distinct development compartments**, unrestricted cross-layer semantic dependencies would undermine the separation they are meant to provide. If architecture depends on governance, or specifications depend on their own proof artifacts, circularity and conceptual drift quickly emerge. For this reason, the repository defines a **diagnostic policy** governing YAML `references` edges between layers. This policy does not affect structural validity, but it surfaces suspicious semantic couplings that may indicate meta-leakage or circular dependency. The normative explanation of that policy is defined in `@CROSS_LAYER_DEPENDENCY`. The machine-readable enforcement rules are defined separately and applied during graph validation.
+
+Layering is therefore:
+
+* a conceptual hierarchy,
+* a maintenance boundary mechanism,
+* and a coupling-control strategy,
+
+not a rigid import system and not a development sequence mandate.
 
 ---
 
 ### Position of meta-layers
+
+#### L0 (Documentation Infrastructure)
+
+L0 operates at a different abstraction level.
+
+It serves two distinct roles:
+
+1. **Enablement and validation**
+   It provides the mechanism that makes the documentation system machine-checkable: stable identifiers, scope inventory, graph extraction, and validation rules. L0 is logically prior (tooling depends on it), but it is semantically external to L2–L4. Development layers do not depend on L0 for meaning.
+2. **System integration surface**
+   The main documentation document, `DOCUMENTATION_SYSTEM.md` (this file), integrates and explains the documentation base as a whole, including L0 itself.
+
+Consequences:
+
+* L0 artifacts are required for enforcement and automation.
+* A human can understand L2–L4 without knowing L0 exists, though it would be more difficult.
+* While not strictly required, L0 is even more important for tooling and agents.
+
+Development layers remain **meta-agnostic** by design.
+
+---
 
 #### L1 (Governance)
 
@@ -81,31 +141,6 @@ Therefore:
 * Governance (L1) is meaningful only insofar as it governs L2–L4.
 
 L1 is not “above” L2 in the semantic stack. It is above in the **control stack**. L2 does not depend on L1 for meaning; L1 depends on L2–L4 for substance.
-
----
-
-#### L0 (Documentation Infrastructure)
-
-L0 operates at a different abstraction level.
-
-It serves two distinct roles:
-
-1. **Enablement and validation**
-   It provides the mechanism that makes the documentation system machine-checkable: stable identifiers, scope inventory, graph extraction, and validation rules.
-
-   L0 is logically prior (tooling depends on it), but it is semantically external to L2–L4.
-   Development layers do not depend on L0 for meaning.
-
-2. **System integration surface**
-   The main documentation document, `DOCUMENTATION_SYSTEM.md`, integrates and explains the documentation base as a whole, including L0 itself.
-
-Consequences:
-
-* L0 artifacts are required for enforcement and automation.
-* A human can understand L2–L4 without knowing L0 exists, though it would be more difficult.
-* While not strictly required, L0 is even more important for tooling and agents.
-
-Development layers remain **meta-agnostic** by design.
 
 ---
 

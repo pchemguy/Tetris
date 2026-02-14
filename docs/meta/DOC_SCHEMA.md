@@ -140,6 +140,16 @@ Non-examples:
     - update `supersedes` / `superseded_by`,
     - mark the old document `deprecated` if appropriate.
 
+### 4.3 YAML references
+
+Document YAML frontmatter may include DOC_ID references in 
+
+- `supersedes`
+- `superseded_by`
+- `references`
+
+Because `supersedes` does not encode dependencies, these references may, in principle, include non-existing DOC_IDs. `superseded_by` and `references` do encode dependencies, so associated references must be valid. 
+
 ### 4.3 Uniqueness
 
 If two files declare the same `doc_id`, it is a **hard failure** (Gate 0).

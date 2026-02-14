@@ -200,10 +200,6 @@ Higher layers constrain lower layers.
 
 ---
 
-Here is the revised section with an explicit integration of `@YAML_REFERENCE_POLICY` as the authoritative machine-readable source of the rules, while keeping this section normative and explanatory.
-
----
-
 ### 4.3 Cross-layer reference validation (diagnostic only)
 
 This section defines a **recommended validation policy** for normative `references` edges. It does **not** change the fixed layer constraint chain. It applies only to explicit YAML `references`. The authoritative machine-readable policy is defined in `@YAML_REFERENCE_POLICY` (`YAML_REFERENCE_POLICY.json`). This section explains its intent and semantic rationale.
