@@ -69,7 +69,6 @@ Therefore:
 ```json
 {
   "format": "DOC_INVENTORY",
-  "version": 1,
   "generated_at": "2026-02-13T12:34:56Z",
   "repo": {
     "doc_system_doc_id": "DOCUMENTATION_SYSTEM",
@@ -82,7 +81,6 @@ Therefore:
 Rules:
 
 * `format` MUST be `"DOC_INVENTORY"`.
-* `version` MUST be an integer; current version is `1`.
 * `generated_at` is informational only.
 * `repo.*` is informational only and MUST NOT be used as authoritative identity.
 * `doc_system_doc_id` points to the root / main entry document via its `DOC_ID` (`@DOC_SCHEMA`)

@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "DOC_INVENTORY.schema.json",
+  "title": "Documentation Inventory Schema",
+  "type": "object",
+  "additionalProperties": false,
+
+  "required": ["format", "generated_at", "repo", "docs"],
+
+  "properties": {
+    "format": {
+      "type": "string",
+      "const": "DOC_INVENTORY"
+    },
+
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+
+    "repo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["doc_system_doc_id", "root"],
+      "properties": {
+        "doc_system_doc_id": {
+          "$ref": "#/$defs/doc_id"
+        },
+        "root": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+
+    "docs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/doc_entry" }
+    }
+  },
+
+  "$defs": {
+    "doc_id": {
+      "type": "string",
+      "pattern": "^[A-Z][0-9A-Z_]+$"
+    },
+
+    "layer": {
+      "type": "string",
+      "enum": ["L0", "L1", "L2", "L3", "L4", "L5", "OUT"]
+    },
+
+    "authority": {
+      "type": "string",
+      "enum": ["normative", "non_normative"]
+    },
+
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "deprecated"]
+    },
+
+    "kind": {
+      "type": "string",
+      "enum": [
+        "meta",
+        "control",
+        "architecture",
+        "spec",
+        "oracle",
+        "api",
+        "map",
+        "report",
+        "idea"
+      ]
+    },
+
+    "gate_or_phase_selector": {
+      "type": "string",
+      "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"
+    },
+
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "filename": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.-]+$"
+    },
+
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "minLength": 1
+    },
+
+    "doc_id_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/doc_id" }
+    },
+
+    "uri_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/uri" }
+    },
+
+    "doc_entry": {
+      "type": "object",
+      "additionalProperties": false,
+
+      "required": [
+        "doc_id",
+        "name",
+        "path",
+        "kind",
+        "layer",
+        "scope",
+        "status",
+        "authority",
+        "gate_applies_to",
+        "phase_applies_to"
+      ],
+
+      "not": { "required": ["url", "urls"] }
+
+      "properties": {
+        "doc_id": { "$ref": "#/$defs/doc_id" },
+        "name": { "$ref": "#/$defs/filename" },
+        "path": { "$ref": "#/$defs/path" },
+
+        "kind": { "$ref": "#/$defs/kind" },
+        "layer": { "$ref": "#/$defs/layer" },
+        "scope": { "$ref": "#/$defs/scope" },
+
+        "status": { "$ref": "#/$defs/status" },
+        "authority": { "$ref": "#/$defs/authority" },
+
+        "gate_applies_to": { "$ref": "#/$defs/gate_or_phase_selector" },
+        "phase_applies_to": { "$ref": "#/$defs/gate_or_phase_selector" },
+
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+
+        "url": { "$ref": "#/$defs/uri" },
+
+        "urls": { "$ref": "#/$defs/uri_array" },
+
+        "references": { "$ref": "#/$defs/doc_id_array" },
+
+        "supersedes": { "$ref": "#/$defs/doc_id_array" },
+
+        "superseded_by": { "$ref": "#/$defs/doc_id" }
+      },
+    }
+  }
+}
