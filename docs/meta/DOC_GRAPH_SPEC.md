@@ -15,6 +15,7 @@ references:
   - COMPONENT_REGISTRY
   - DOC_INVENTORY
   - CROSS_LAYER_DEPENDENCY
+  - DOC_LAYERS
 ---
 
 # Documentation Graph Visualization Specification (Normative)
@@ -153,21 +154,7 @@ Graph tooling MUST interpret `kind` using the `DOC_SCHEMA` enum.
 
 ## 3. Canonical layer mapping (normative)
 
-Layer assignment is derived solely from `kind` using a fixed mapping; paths and titles are non-authoritative.
-
-| `kind`         | Layer | Notes                                                              |
-| -------------- | ----- | ------------------------------------------------------------------ |
-| `meta`         | L0    | Documentation infrastructure (schemas/graph spec/etc.)             |
-| `map`          | L0    | Documentation inventory / authority maps                           |
-| `control`      | L1    | Governance (phases, gates, process constraints)                    |
-| `architecture` | L2    | System structure (architecture, decomposition, registry)           |
-| `spec`         | L3    | Behavioral contracts (core/shell specs)                            |
-| `api`          | L3    | Public adapter/API contracts; still behavioral, not infrastructure |
-| `oracle`       | L4    | Proof obligations / test oracle definitions                        |
-| `report`       | L5    | Execution state                                                    |
-| `idea`         | OUT   | Not in L0–L5; explicitly non-normative by default                  |
-
-`layer` is a **computed attribute**, not an independent node.
+Layer assignment is derived solely from `kind` using a fixed mapping defined in `@DOC_LAYERS`; paths and titles are non-authoritative. Therefore, `layer` is a **computed attribute**, not an independent node.
 
 If a normative document cannot be mapped to L0–L5, this is a **Gate 0 failure**.
 

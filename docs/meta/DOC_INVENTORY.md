@@ -12,7 +12,7 @@ description: Defines the canonical machine-readable documentation inventory form
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 references:
   - DOC_SCHEMA
-  - DOC_GRAPH_SPEC
+  - DOC_LAYERS
   - YAML_REFERENCE_POLICY
 ---
 
@@ -109,7 +109,7 @@ Each element in `docs[]` MUST include:
 Rules:
 
 * The above fields are REQUIRED for every participating artifact.
-* `layer` is **computed** from `kind` using the canonical mapping in `@DOC_GRAPH_SPEC`.
+* `layer` is **computed** from `kind` using the canonical mapping in `@DOC_LAYERS`.
 - `path`
     * is derived from filesystem location at generation time,
     * must be relative to project directory / repository root,
