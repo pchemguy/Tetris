@@ -13,6 +13,7 @@ url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 references:
   - DOC_SCHEMA
   - COMPONENT_REGISTRY
+  - DOC_INVENTORY
 ---
 
 # Documentation Graph Visualization Specification (Normative)
@@ -146,18 +147,6 @@ Multiple identical edges MUST NOT be emitted.
 ### 2.5 Canonical doc kinds
 
 Graph tooling MUST interpret `kind` using the `DOC_SCHEMA` enum.
-
-At minimum:
-
-* `meta`
-* `control`
-* `architecture`
-* `spec`
-* `api`
-* `oracle`
-* `report`
-* `map`
-* `idea`
 
 ---
 
@@ -357,114 +346,22 @@ Unknown prose DOC_ID → warning.
 
 ---
 
-## 6. Machine-readable documentation inventory (required)
+## 6. Machine-readable documentation inventory
 
-Tooling MUST be able to produce a machine-readable inventory artifact that captures the repository’s documentation graph inputs (doc nodes) in a deterministic form.
+The canonical machine-readable discovery artifact for the documentation system is defined in `@DOC_INVENTORY`.
 
-This inventory is the canonical target for “project discovery” calls in Gate 0 and agent workflows. Human-readable indices (e.g. `DOCUMENTATION_SYSTEM.md`) may exist, but they MUST NOT be required for discovery.
+Tooling conforming to this spec MUST:
 
----
+- consume `DOC_INVENTORY.json` as the authoritative inventory of participating documents and their metadata, and
+- derive all downstream graph renderings and diagnostics from that inventory.
 
-### 6.1 Output: `DOC_INVENTORY.json`
+This spec (`@DOC_GRAPH_SPEC`) defines how inventory content is interpreted for:
 
-Default location: `docs/meta/DOC_INVENTORY.json` (path may differ; the filename is normative).
+- layer computation from `kind`,
+- edge extraction semantics (`references` vs `mentions`),
+- rendering directives for visual graph outputs.
 
-The file MUST be valid JSON and MUST match the schema in `DOC_INVENTORY.schema.json`.
-
----
-
-### 6.2 Inventory content model
-
-`DOC_INVENTORY.json` MUST contain:
-
-* repository metadata (for determinism + provenance),
-* a list of documents (one entry per participating artifact),
-* derived fields needed by tooling (especially `layer`).
-
-#### Top-level shape
-
-```json
-{
-  "format": "DOC_INVENTORY",
-  "version": 1,
-  "generated_at": "2026-02-13T12:34:56Z",
-  "repo": {
-    "doc_system_doc_id": "DOCUMENTATION_SYSTEM",
-    "root": "."
-  },
-  "docs": [ /* sorted list */ ]
-}
-```
-
-Notes:
-
-* `generated_at` is informational. It MUST NOT affect sorting or validation.
-* `repo.root` is informational; tools MUST NOT assume it exists.
-
-#### Document entry shape
-
-Each entry in `docs[]` MUST include:
-
-```json
-{
-  "doc_id": "DOC_SCHEMA",
-  "name": "DOC_SCHEMA.md",
-  "path": "docs/meta/DOC_SCHEMA.md",
-  "kind": "meta",
-  "layer": "L0",
-  "scope": "global",
-  "status": "active",
-  "authority": "normative",
-  "gate_applies_to": "all",
-  "phase_applies_to": "all",
-
-  "description": "…",               // optional
-  "url": "https://…",               // optional
-  "urls": ["https://…", "..."],     // optional (only when needed)
-
-  "references": ["COMPONENT_REGISTRY"],  // optional: omitted if empty
-  "supersedes": ["OLD_DOC"],             // optional: omitted if empty
-  "superseded_by": "NEW_DOC"             // optional: omitted if null/absent
-}
-```
-
-Normative rules:
-
-1. `doc_id`, `name`, `path`, `kind`, `layer`, `scope`, `status`, `authority`, `gate_applies_to`, `phase_applies_to` are REQUIRED.
-2. `references`, `supersedes` MUST be **omitted** if empty (not present as `[]`).
-3. `superseded_by` MUST be **omitted** if not present / not applicable (not present as `null`).
-4. `url` MUST be **omitted** if not present. It MUST NOT be `null` or empty string.
-5. `urls` MUST be **omitted** unless it is present and non-empty.
-6. A doc MUST NOT contain both `url` and `urls`.
-
-(These rules match your “present or absent” preference and keep the inventory clean.)
-
----
-
-### 6.3 Source of truth and derivation rules
-
-* For Markdown docs: all fields except `path` and `layer` are derived from YAML front matter.
-* `path` is derived from filesystem location at generation time.
-* `layer` is derived from `kind` using the canonical mapping in this spec.
-* For JSON artifacts that participate (e.g., registries/schemas): the tool MAY include them as docs with synthetic entries, but the same required fields still apply.
-
----
-
-### 6.4 Determinism requirements
-
-To ensure stable diffs and stable agent behavior:
-
-* `docs[]` MUST be sorted by `doc_id` ascending (lexicographic).
-* Within a doc entry, arrays MUST be sorted ascending (`references`, `supersedes`, `urls`).
-* Tools MUST NOT emit duplicate doc entries.
-* Tools MUST NOT emit duplicate values inside arrays.
-
----
-
-### 6.5 Relationship to discovery and Gate 0
-
-* Gate 0 and agent discovery MUST refer to `DOC_INVENTORY.json` as the canonical “what documents exist” index.
-* Human-readable indices (e.g., `DOCUMENTATION_SYSTEM.md`) MUST NOT be required to enumerate all documents; they may summarize or explain, but discovery MUST be possible without them.
+`@DOC_GRAPH_SPEC` does not redefine the inventory format.
 
 ---
 
