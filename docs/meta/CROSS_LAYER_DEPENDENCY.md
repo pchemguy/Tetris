@@ -10,25 +10,37 @@ gate_applies_to: all
 phase_applies_to: all
 description: Diagnostic-only policy for validating cross-layer semantic dependencies declared via YAML references.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+supersedes:
+  - YAML_REFERENCE_POLICY
 references:
-  - DOC_SCHEMA
   - DOC_GRAPH_SPEC
+  - DOCUMENTATION_SYSTEM
 ---
 
 # Cross-Layer YAML Reference Dependency Policy (Normative)
 
 ## 1. Purpose
 
-This document defines a **diagnostic-only** policy for validating cross-layer *semantic dependencies* declared in YAML front matter via:
+The repository documentation system is organized into conceptual layers (L0–L5 defined in `@DOCUMENTATION_SYSTEM`) that compartmentalize:
 
-- `references: [...]`
+- structural intent,
+- behavioral definitions,
+- proof obligations,
+- and recorded execution state.
+
+Unrestricted semantic dependencies across these layers can introduce:
+
+- circular reasoning,
+- governance leakage into development layers,
+- coupling between specifications and their own proof artifacts,
+- and increased maintenance complexity.
+
+This document addresses this concern by defining a **diagnostic-only** policy for validating cross-layer _semantic dependencies_ declared in YAML front matter `references`. This policy classifies whether a particular YAML `references` edge is **expected** or **suspicious** under the layering model.
 
 It does **not** affect:
 
-- the fixed L0–L5 *constraint/validity* chain, or
+- the fixed L0–L5 _constraint/validity_ chain, or
 - graph construction determinism.
-
-It only classifies whether a particular YAML `references` edge is **expected** or **suspicious** under the repository’s layering model.
 
 This document is normative as a **documentation system policy**, but its enforcement output is **non-blocking by default**.
 

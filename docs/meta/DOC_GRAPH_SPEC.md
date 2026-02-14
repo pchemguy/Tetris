@@ -14,6 +14,7 @@ references:
   - DOC_SCHEMA
   - COMPONENT_REGISTRY
   - DOC_INVENTORY
+  - CROSS_LAYER_DEPENDENCY
 ---
 
 # Documentation Graph Visualization Specification (Normative)
@@ -202,75 +203,9 @@ Higher layers constrain lower layers.
 
 ### 4.3 Cross-layer reference validation (diagnostic only)
 
-This section defines a **recommended validation policy** for normative `references` edges. It does **not** change the fixed layer constraint chain. It applies only to explicit YAML `references`. The authoritative machine-readable policy is defined in `@YAML_REFERENCE_POLICY` (`YAML_REFERENCE_POLICY.json`). This section explains its intent and semantic rationale.
+Cross-layer validation of YAML `references` edges is **diagnostic-only** and MUST NOT affect graph construction. The normative policy is defined in `@CROSS_LAYER_DEPENDENCY`. The authoritative machine-readable policy instance is `YAML_REFERENCE_POLICY.json` (validated by `YAML_REFERENCE_POLICY.schema.json`).
 
-Let:
-
-* `layer(A)` be the layer of the referencing document
-* `layer(B)` be the layer of the referenced document
-
-#### Intended semantic dependency direction
-
-The layered model distinguishes between:
-
-* **Constraint flow (L0 → L5)** — fixed structural validity chain
-* **Semantic dependency flow** — explicit YAML `references`
-
-Semantic dependencies should generally follow this principle:
-
-> A document may depend on documents that define its meaning or governance, but should not depend on documents that merely validate or record it.
-
-#### Recommended allowed reference directions
-
-Tooling SHOULD treat the following as normal:
-
-* `L0` → any layer (integration/meta surface)
-* `L1` → `L2`, `L3`, `L4`, `L0`
-* `L2` → `L2`
-* `L3` → `L2`
-* `L4` → `L3`, `L2`
-* `L5` → any layer (reporting surface)
-
-Tooling SHOULD treat the following as suspicious (emit warning):
-
-* `L2–L4` → `L0`
-    * Development layers should remain meta-agnostic.
-* `L2` → `L1`
-    * Architecture should not depend on governance rules.
-* `L3` → `L1`
-    * Specifications should not depend on workflow control.
-* `L4` → `L1`
-    * Proof obligations must not depend on process sequencing.
-    * Oracles define proof obligations.
-    * Phases/gates define workflow sequencing.
-    * An oracle must not depend on how the project is managed.
-* `L3` → `L4`
-    * A specification must define behavior independently of how it is tested.
-
-Strict mode MAY treat these as errors.
-
-#### No hard blocking
-
-Violations of these patterns:
-
-* MUST NOT block graph construction.
-* MUST NOT be treated as schema failures.
-* MUST be emitted in the validation report under:
-  `Cross-layer reference warnings`
-
-This keeps the system:
-
-* structurally deterministic,
-* semantically expressive,
-* non-dogmatic.
-
-#### Rationale
-
-* The **constraint chain** expresses validity conditions.
-* The **reference edges** express semantic dependence.
-* These are distinct mechanisms and must not be conflated.
-
-Layering is a **normative interpretation model**, not a rigid import system.
+---
 
 ## 5. Reference extraction and validation
 
