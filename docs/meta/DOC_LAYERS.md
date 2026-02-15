@@ -195,15 +195,15 @@ If two documents conflict:
 
 ## Layer index
 
-| Layer | Question                           | Directory            |
-| ----- | ---------------------------------- | -------------------- |
-| L0    | How the project is documented      | `docs/meta/`         |
-| L1    | When work is allowed and evaluated | `docs/control/`      |
-| L2    | What exists, how it is structured  | `docs/architecture/` |
-| L3    | What behavior is defined           | `docs/specs/`        |
-| L4    | How correctness is proven          | `docs/oracles/`      |
-| L5    | What has actually happened         | `docs/reports/`      |
-| –     | What may be researched or tried    | `docs/ideas/`        |
+| Layer | Question                           | Directory               |
+| ----- | ---------------------------------- | ----------------------- |
+| L0    | How the project is documented      | `docs/meta/`            |
+| L1    | When work is allowed and evaluated | `docs/control/`         |
+| L2    | What exists, how it is structured  | `docs/architecture/`    |
+| L3    | What behavior is defined           | `docs/specs/`           |
+| L4    | How correctness is proven          | `docs/testing/oracles/` |
+| L5    | What has actually happened         | `docs/reports/`         |
+| –     | What may be researched or tried    | `docs/ideas/`           |
 
 ## Canonical layer mapping
 
