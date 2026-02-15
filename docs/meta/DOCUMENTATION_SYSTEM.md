@@ -44,15 +44,20 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 **Directory**: `docs/meta/`
 
-
-| Title                                           | Filename                  | Function / Role                                                     |
-| ----------------------------------------------- | ------------------------- | ------------------------------------------------------------------- |
-| Documentation Infrastructure System (this file) | `DOCUMENTATION_SYSTEM.md` | Defines the documentation infrastructure                            |
-| Documentation Metadata Schema (Spec)            | `DOC_SCHEMA.md`           | Normative specification of documentation metadata semantics.        |
-| Documentation Metadata Schema (JSON)            | `DOC_SCHEMA.json`         | Machine-validated schema for YAML front matter in Markdown docs.    |
-| Documentation Graph Specification               | `DOC_GRAPH_SPEC.md`       | Rules for extracting and rendering documentation dependency graphs. |
-| Documentation Authority Map                     | `DOCS_AUTHORITY_MAP.md`   | Hierarchy and conflict-resolution rules among normative documents.  |
-
+| Title                                               | Filename                            | Function / Role                                                                 |
+| --------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------- |
+| Documentation Infrastructure System (this file)     | `DOCUMENTATION_SYSTEM.md`           | Defines the documentation infrastructure                                        |
+| Documentation Layers and Classification             | `DOC_LAYERS.md`                     | Defines the L0–L5 layering meaning, motivation, and classification model        |
+| Documentation Metadata Schema (Spec)                | `DOC_SCHEMA.md`                     | Normative specification of documentation metadata semantics                     |
+| Documentation Metadata Schema (JSON)                | `DOC_SCHEMA.json`                   | Machine-validated schema for YAML front matter in Markdown docs                 |
+| Documentation Graph Specification                   | `DOC_GRAPH_SPEC.md`                 | Rules for extracting and rendering documentation dependency graphs              |
+| Documentation Inventory (Spec)                      | `DOC_INVENTORY.md`                  | Defines the machine-readable inventory artifact and required invariants         |
+| Documentation Inventory                             | `DOC_INVENTORY.json`                | Generated machine inventory (tool output / discovery input)                     |
+| Documentation Inventory (Schema)                    | `DOC_INVENTORY.schema.json`         | JSON Schema validating `DOC_INVENTORY.json`                                     |
+| Cross-Layer YAML Reference Dependency Policy (Spec) | `CROSS_LAYER_DEPENDENCY.md`         | Normative rationale/interpretation for diagnostic cross-layer YAML dependencies |
+| YAML Reference Policy                               | `YAML_REFERENCE_POLICY.json`        | Machine-readable cross-layer validation policy (diagnostic by default)          |
+| YAML Reference Policy (Schema)                      | `YAML_REFERENCE_POLICY.schema.json` | JSON Schema validating `YAML_REFERENCE_POLICY.json`                             |
+| Documentation Authority Map                         | `DOCS_AUTHORITY_MAP.md`             | Hierarchy and conflict-resolution rules among normative documents               |
 
 ---
 
