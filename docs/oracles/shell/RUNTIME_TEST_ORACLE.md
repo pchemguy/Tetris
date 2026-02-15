@@ -1,6 +1,18 @@
 ---
+doc_id: RUNTIME_TEST_ORACLE
 name: RUNTIME_TEST_ORACLE.md
-URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+title: Runtime Test Oracle
+kind: oracle
+scope: shell:runtime
+status: active
+authority: normative
+gate_applies_to: 11
+phase_applies_to: 2-5
+description: Defines deterministic execution and orchestration tests for scripted runtime mode.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - RUNTIME_SPEC
+  - RUNTIME_API
 ---
 
 # RUNTIME TEST ORACLE

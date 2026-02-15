@@ -1,6 +1,17 @@
 ---
+doc_id: CONFIG_TEST_ORACLE
 name: CONFIG_TEST_ORACLE.md
-URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+title: Configuration Test Oracle
+kind: oracle
+scope: shell:persistence
+status: draft
+authority: normative
+gate_applies_to: none
+phase_applies_to: none
+description: Defines validation requirements for configuration model and parsing behavior.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - CONFIG_API
 ---
 
 # CONFIG TEST ORACLE

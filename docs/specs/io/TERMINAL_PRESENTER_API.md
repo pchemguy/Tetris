@@ -1,7 +1,17 @@
 ---
+doc_id: TERMINAL_PRESENTER_API
 name: TERMINAL_PRESENTER_API.md
-description: Defines the Presenter API and its strict responsibility boundaries.
-URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+title: Terminal Presenter API
+kind: api
+scope: shell:presenter
+status: active
+authority: normative
+gate_applies_to: 10-12
+phase_applies_to: 2-5
+description: Defines presenter interface and output responsibility boundaries.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - RENDERING_SPEC
 ---
 
 # Terminal Presenter API

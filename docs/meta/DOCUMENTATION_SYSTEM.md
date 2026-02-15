@@ -8,8 +8,8 @@ status: active
 authority: normative
 gate_applies_to: all
 phase_applies_to: all
-references:
 description: Defines the structure, authority rules, and roles of the repository's documentation infrastructure.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
 
 # Documentation Infrastructure System (Normative)
@@ -152,7 +152,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 | Runtime Test Oracle   | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
 | CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
 | Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
-| Config Test Oracle    | `CONFIG_TEST_ORACLE.md`    | *(TODO)*                                            |
+| Config Test Oracle    | `CONFIG_TEST_ORACLE.md`    | Mandatory automated configuration handling tests    |
 
 ---
 

@@ -1,7 +1,17 @@
 ---
+doc_id: INPUT_DRIVER_API
 name: INPUT_DRIVER_API.md
-description: Defines the Input Driver API and its strict responsibility boundaries.
-URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+title: Input Driver API
+kind: api
+scope: shell:input_driver
+status: active
+authority: normative
+gate_applies_to: 11
+phase_applies_to: 2-5
+description: Defines input driver interface and strict responsibility boundaries.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - INPUT_MODEL
 ---
 
 # Input Driver API

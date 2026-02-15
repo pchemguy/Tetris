@@ -1,6 +1,17 @@
 ---
+doc_id: RUNTIME_API
 name: RUNTIME_API.md
-URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+title: Runtime API
+kind: api
+scope: shell:runtime
+status: active
+authority: normative
+gate_applies_to: 11
+phase_applies_to: 2-5
+description: Defines the runtime interface responsible for orchestrating core execution.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - RUNTIME_SPEC
 ---
 
 # Runtime Interface Specification

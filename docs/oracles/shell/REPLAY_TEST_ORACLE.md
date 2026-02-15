@@ -1,6 +1,18 @@
 ---
+doc_id: REPLAY_TEST_ORACLE
 name: REPLAY_TEST_ORACLE.md
-URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+title: Replay Test Oracle
+kind: oracle
+scope: shell:persistence
+status: active
+authority: normative
+gate_applies_to: 13
+phase_applies_to: 2-5
+description: Defines deterministic replay validation and execution correctness requirements.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - REPLAY_SPEC
+  - RUNTIME_SPEC
 ---
 
 # REPLAY TEST ORACLE

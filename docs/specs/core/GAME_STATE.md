@@ -1,6 +1,17 @@
 ---
+doc_id: GAME_STATE
 name: GAME_STATE.md
-URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+title: Game State Model
+kind: spec
+scope: core:core
+status: active
+authority: normative
+gate_applies_to: 1-6
+phase_applies_to: all
+description: Deterministic state machine definition and step semantics for the pure core.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+references:
+  - GAME_RULES
 ---
 
 # GAME STATE
