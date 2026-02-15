@@ -134,7 +134,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 #### Core test oracle
 
-**Directory**: `docs/oracles/core/`
+**Directory**: `docs/testing/oracles/core/`
 
 | Title            | Filename              | Function / Role                               |
 | ---------------- | --------------------- | --------------------------------------------- |
@@ -144,7 +144,7 @@ This section provides a **synoptic index** of all normative documents grouped by
 
 #### Shell-level test oracles
 
-**Directory**: `docs/oracles/shell/`
+**Directory**: `docs/testing/oracles/shell/`
 
 | Title                 | Filename                   | Function / Role                                     |
 | --------------------- | -------------------------- | --------------------------------------------------- |
