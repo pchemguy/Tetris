@@ -151,40 +151,19 @@ Examples:
 
 Each translation module must begin with:
 
-- Reference to oracle spec file path
-- ORACLE_ID(s)
-- Brief mapping note
+- Reference to oracle spec file DOC_ID
 
 Example:
 
 ```
-
 Implements:
 
-* docs/testing/oracles/ROTATION_TEST_ORACLE.md
-* ORACLE_ROTATION_001
-
+RUNTIME_TEST_ORACLE
 ```
 
 ---
 
-## 4.2 Case Mapping
-
-Each test function or parametrized test must reference its CASE_ID in a comment.
-
-Example:
-
-```
-
-# CASE_ROTATION_I_CLOCKWISE_001
-
-```
-
-If parametrized, include CASE_ID in parameter metadata or comment.
-
----
-
-## 4.3 Parametrization Policy
+## 4.2 Parametrization Policy
 
 Use pytest parametrization when:
 
@@ -192,36 +171,34 @@ Use pytest parametrization when:
 - Inputs vary but invariant logic is identical
 
 Avoid:
+
 - Deep nested parametrization that hides intent
-- Dynamic test generation that obscures CASE_ID traceability
 
 ---
 
-# 5. Determinism Rules (Critical for Tetris)
-
-Tetris contains inherently stateful and time-sensitive logic.
-
-To avoid flakiness:
+# 5. Determinism Rules
 
 ## 5.1 Randomness
 
 - All randomness must be seeded in tests.
 - No unseeded RNG allowed.
 - If random piece generation is tested:
-  - Inject deterministic generator
-  - Or mock generator
+    - Inject deterministic generator or
+    - Mock generator
 
 ---
 
 ## 5.2 Time / Frame Stepping
 
 Tests must:
+
 - Use deterministic step functions
 - Avoid real-time delays
 - Avoid sleep()
 - Avoid frame-based race conditions
 
 If the engine supports `advance_time(ms)` or equivalent:
+
 - Tests must use it.
 
 ---
@@ -229,12 +206,13 @@ If the engine supports `advance_time(ms)` or equivalent:
 ## 5.3 Floating Point
 
 If floats are used:
+
 - Use tolerance-based comparison at integration layer.
 - Exact equality only at unit layer where deterministic.
 
 ---
 
-# 6. What Tests Must NOT Do (Tetris-specific)
+# 6. What Tests Must NOT Do
 
 - Assert on internal private attributes unless documented invariant.
 - Assert exact board representation formatting (string layout) unless explicitly specified in oracle.
@@ -251,11 +229,11 @@ If floats are used:
 
 - Provide small board fixtures for minimal cases.
 - Provide standard test boards:
-  - Empty board
-  - Nearly full board
-  - Wall-adjacent board
-  - One-line-clear setup
-  - Multi-line-clear setup
+    - Empty board
+    - Nearly full board
+    - Wall-adjacent board
+    - One-line-clear setup
+    - Multi-line-clear setup
 
 Keep fixtures simple and local to test modules unless shared across domains.
 
@@ -273,18 +251,19 @@ Keep fixtures simple and local to test modules unless shared across domains.
 
 When a bug is fixed:
 
-- Add or update a focused test referencing the appropriate CASE_ID.
+- Add or update a focused test.
 - If the bug reveals missing coverage:
-  - Add a new CASE_ID to oracle spec.
-  - Then translate into pytest.
+    - Add a new case to oracle spec.
+    - Then translate into pytest.
 
 Do NOT:
-- Modify existing CASE_ID semantics silently.
+
+- Modify existing test semantics silently.
 - Merge multiple semantic bugs into one test.
 
 ---
 
-# 9. Run Report Expectations (Tetris)
+# 9. Run Report Expectations
 
 Each full suite execution must produce a run report containing:
 
@@ -292,10 +271,11 @@ Each full suite execution must produce a run report containing:
 - Python version
 - pytest version
 - Pass/fail counts
-- Failing tests listed with CASE_ID references
+- Failing tests listed
 - Failure grouping
 
-Failure grouping should reflect Tetris domains:
+Failure grouping should reflect core domains:
+
 - Rotation failures
 - Collision failures
 - Scoring failures
@@ -303,15 +283,15 @@ Failure grouping should reflect Tetris domains:
 
 ---
 
-# 10. Example Domain Mapping (Tetris)
+# 10. Example Domain Mapping
 
-| Domain | Oracle File | Pytest Module |
-|--------|------------|--------------|
-| Rotation | ROTATION_TEST_ORACLE.md | test_rotation_from_oracle.py |
-| Collision | COLLISION_TEST_ORACLE.md | test_collision_from_oracle.py |
-| Line Clear | LINE_CLEAR_TEST_ORACLE.md | test_line_clear_from_oracle.py |
-| Scoring | SCORING_TEST_ORACLE.md | test_scoring_from_oracle.py |
-| State Machine | STATE_MACHINE_TEST_ORACLE.md | test_state_machine_from_oracle.py |
+| Domain        | Oracle File                  |
+| ------------- | ---------------------------- |
+| Rotation      | ROTATION_TEST_ORACLE.md      |
+| Collision     | COLLISION_TEST_ORACLE.md     |
+| Line Clear    | LINE_CLEAR_TEST_ORACLE.md    |
+| Scoring       | SCORING_TEST_ORACLE.md       |
+| State Machine | STATE_MACHINE_TEST_ORACLE.md |
 
 ---
 
@@ -326,20 +306,6 @@ Failure grouping should reflect Tetris domains:
 
 ---
 
-# 12. Golden Rule (Pin This)
+# 12. Golden Rule
 
-> In Tetris, engine correctness is defined by oracle specs.  
-> Tests enforce invariants, not implementation details.  
-> Determinism is mandatory.  
-> Flaky tests are structural defects.
-
----
-```
-
----
-
-If you want next, I can:
-
-* Add a **Tetris-specific Oracle Validity Checklist**
-* Or produce a **concrete ROTATION_TEST_ORACLE.md example**
-* Or generate a **sample test_rotation_from_oracle.py implementation** with CASE_ID mapping
+> Core engine correctness is defined by oracle specs. Tests enforce invariants, not implementation details. Determinism is mandatory. Flaky tests are structural defects.
