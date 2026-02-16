@@ -218,12 +218,15 @@ Each oracle spec should have a corresponding pytest module:
 → `tetris/tests/test_<domain>_from_oracle.py`
 
 ### 7.2 Traceability rule (mandatory)
+
 Every pytest translation module must:
+
 - reference the oracle spec path(s) it implements,
 - list `ORACLE_ID(s)`,
 - ensure each test case references the corresponding `CASE_ID`.
 
 ### 7.3 Assertion rule
+
 Pytest translations must not assert behavior beyond the oracle spec,
 except minimal harness constraints required to execute the test.
 
@@ -236,6 +239,7 @@ Each full-suite execution by S7 or bug-fixer must produce a run report artifact:
 - `artifacts/test_runs/TEST_RUN_REPORT_<timestamp>.md` (or repo-equivalent)
 
 Run reports must include:
+
 - command(s) executed
 - scope (full vs focused)
 - environment snapshot (Python + pytest versions)
@@ -253,20 +257,27 @@ Run reports must not define expected behavior.
 When a pytest test fails, the failure must be classified into exactly one primary bucket:
 
 ### A) Code violates oracle spec
+
 - Oracle spec is valid and grounded in authority.
 - Pytest translation is faithful.
+
 → Fix code.
 
 ### B) Pytest translation violates oracle spec / is brittle
+
 - Oracle spec is valid.
 - Test asserts extra behavior or is incorrectly implemented.
+
 → Fix pytest translation (keep oracle spec unchanged).
 
 ### C) Oracle spec is outdated or wrong
+
 - Requires high-bar evidence that authoritative intent changed.
+
 → Update oracle spec, then update pytest translation.
 
 ### Global prohibitions
+
 - “Just-to-pass” changes in code or tests.
 - Any failure suppression (xfail/skip, warning filters, broad try/except).
 - Aliases/stubs/shims/compat exports created to satisfy tests.
@@ -277,53 +288,69 @@ When a pytest test fails, the failure must be classified into exactly one primar
 ## 10. Skill responsibilities and I/O contracts
 
 ### S4 — Test Strategy Designer
+
 **Inputs**
+
 - `PROJECT.md`, `ARCHITECTURE.md`, `DECOMPOSITION.md`
 - `PHASES.md`, `ACCEPTANCE_GATES.md` (when present)
 - current test tree and configs
 
 **Outputs**
+
 - this file (`TEST_STRATEGY.md`) and optional conventions docs
 
 **Constraints**
+
 - no code/test mutation
 
 ### S6 — Test Author
+
 **Inputs**
+
 - `TEST_STRATEGY.md`
 - authoritative behavior specs and docstrings
 - relevant `*_TEST_ORACLE.md` files (existing or to be created)
 
 **Outputs**
+
 - new/updated `*_TEST_ORACLE.md` files
 - pytest translations in `tetris/tests/`
 - short authoring notes (where repo policy expects)
 
 **Constraints**
+
 - no invention of correctness without authority
 
 ### S7 — Test Runner & Failure Triage
+
 **Inputs**
+
 - repo state + requested scope
 - triage references
 
 **Outputs**
+
 - run report artifact(s)
 
 **Constraints**
+
 - strictly no mutation
 
 ### bug-fixer
+
 **Inputs**
+
 - full-suite failures + run report
 - `TEST_STRATEGY.md` + relevant oracle specs
 - triage doc for fixing
 
 **Outputs**
+
 - minimal fixes to code/tests (strict constraints)
 - focused re-runs + final full-suite pass report
 
 **Constraints**
+
 - does not fix config/environment failures; diagnoses only
 - no aliasing/stubbing/suppression
 
