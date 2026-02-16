@@ -25,7 +25,7 @@ This documentation system also aims to maintain modular, focused (single-respons
 ---
 ## 2. Layer model
 
-The documentation base is organized into conceptual layers, L0 (highest level) through L5 (lowest level).
+The documentation base is organized into conceptual layers, L0 (highest level) through L5 (lowest level). 
 
 | Layer | Responsibility                         | Top Layer Directory  | Main Entry            | `kind`         |
 | ----- | -------------------------------------- | -------------------- | --------------------- | -------------- |
@@ -37,10 +37,6 @@ The documentation base is organized into conceptual layers, L0 (highest level) t
 | L5    | Execution state (reports)              | `docs/reports/`      | `L5_REPORTS.md`       | `report`       |
 | OUT   | Collection of ideas                    | `docs/ideas/`        | -                     | `idea`         |
 
-
-
-An additional external layer (LR) may exist conceptually (regulatory/standards), but is outside repository scope.
-
 These layers are a semantic model that separates concerns so that
 
 - higher-level contracts constrain lower-level artifacts,
@@ -50,11 +46,24 @@ The essential idea is simple: higher layers define **validity conditions** for l
 
 This creates two opposed flows.
 
-There is a _constraint flow_ from L0 down to L5: rules about documentation constrain governance; governance constrains what may be attempted; architecture constrains what exists; specs constrain behavior; oracles constrain what counts as proof; reports record what actually occurred.
-
-There is also a _diagnosis flow_ from L5 up to L0: reports are meaningless without the oracles that interpret them; oracles exist to evaluate specs; repeated failure against a spec may force reconsideration of structural assumptions; and governance determines when such reconsideration is permitted.
+- **Constraint flow - L1 to L5**: governance constrains what may be attempted; architecture constrains what exists; specs constrain behavior; oracles constrain what counts as proof; reports record what actually occurred.
+- **Diagnosis flow - L5 to L1**: reports are meaningless without the oracles that interpret them; oracles exist to evaluate specs; repeated failure against a spec may force reconsideration of structural assumptions; and governance determines when such reconsideration is permitted.
 
 This bidirectional relationship is why the layer model matters: it prevents the common failure mode where tests start defining behavior, or a report starts acting like a spec, or an "idea" becomes an implicit requirement.
+
+### Model generalization
+
+In fact, this layered structure may be applicable conceptually to a broad range of technical problems.
+
+0. Documentation - how the project is documented
+1. Governance / Process Control
+2. Solution architecture and decomposition analysis
+3. Behavioral specs - how the end product components, defined in decomposition analysis, should behave
+4. Testing specification - how to validate that the product and its components meet behavioral specs.
+5. What information from testing and checks needs to be included in reports.
+
+In fact, there exist one more important layer, not relevant for the present project, which is concerned with documentation external with respect to the project. This is regulatory and legal information, standards, etc. Let's call this layer LR. This layer, in fact, may constraint all of the above defined layers.
+
 
 ---
 
