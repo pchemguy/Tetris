@@ -126,12 +126,12 @@ To understand how to operate inside this system, read the layer entry documents 
 If you want, I can now rewrite `L0_DOCUMENTATION.md` … `L5_REPORTS.md` in the same narrative style (each with a small, non-dominant index section), so the whole system reads like a coherent book rather than a checklist.
 
 
-| Layer | Responsibility               | `kind`         | Layer interpretation                    |
-| ----- | ---------------------------- | -------------- | --------------------------------------- |
-| L0    | Documentation infrastructure | `meta`, `map`  | L0 (documentation infrastructure)       |
-| L1    | Governance                   | `control`      | L1 (governance)                         |
-| L2    |                              | `architecture` | L2 (system structure)                   |
-| L3    |                              | `spec`, `api`  | L3 (behavior contracts)                 |
-| L4    |                              | `oracle`       | L4 (proof obligations)                  |
-| L5    |                              | `report`       | L5 (execution state)                    |
-| OUT   |                              | `idea`         | outside L0–L5; explicitly non-normative |
+| Layer | Responsibility                         | Top Layer Directory  | Main Entry            | `kind`         |
+| ----- | -------------------------------------- | -------------------- | --------------------- | -------------- |
+| L0    | Documentation infrastructure           | `docs/meta/`         | `L0_DOCUMENTATION.md` | `meta`         |
+| L1    | Governance (process control)           | `docs/control/`      | `L1_GOVERNANCE.md`    | `control`      |
+| L2    | System structure (global contracts)    | `docs/architecture/` | `L2_STRUCTURE.md`     | `architecture` |
+| L3    | Behavioral specs (component contracts) | `docs/specs/`        | `L3_BEHAVIOR.md`      | `spec`, `api`  |
+| L4    | Testing (proof obligations)            | `docs/testing/`      | `L4_TESTING.md`       | `testing`      |
+| L5    | Execution state (reports)              | `docs/reports/`      | `L5_REPORTS.md`       | `report`       |
+| OUT   |                                        | `docs/ideas/`        | -                     | `idea`         |

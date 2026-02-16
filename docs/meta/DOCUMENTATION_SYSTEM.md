@@ -22,6 +22,42 @@ The documentation base adopts a hierarchical, layered structure. At the top are 
 
 This documentation system also aims to maintain modular, focused (single-responsibility) documents with weak, well-defined couplings. More specific documents may reference more general or abstract documents on which they depend, but not the other way around. "Spurious" or circular references are explicitly discouraged.
 
+---
+## 2. Layer model
+
+The documentation base is organized into conceptual layers, L0 (highest level) through L5 (lowest level).
+
+| Layer | Responsibility                         | Top Layer Directory  | Main Entry            | `kind`         |
+| ----- | -------------------------------------- | -------------------- | --------------------- | -------------- |
+| L0    | Documentation infrastructure           | `docs/meta/`         | `L0_DOCUMENTATION.md` | `meta`         |
+| L1    | Governance (process control)           | `docs/control/`      | `L1_GOVERNANCE.md`    | `control`      |
+| L2    | System structure (global contracts)    | `docs/architecture/` | `L2_STRUCTURE.md`     | `architecture` |
+| L3    | Behavioral specs (component contracts) | `docs/specs/`        | `L3_BEHAVIOR.md`      | `spec`, `api`  |
+| L4    | Testing (proof obligations)            | `docs/testing/`      | `L4_TESTING.md`       | `testing`      |
+| L5    | Execution state (reports)              | `docs/reports/`      | `L5_REPORTS.md`       | `report`       |
+| OUT   | Collection of ideas                    | `docs/ideas/`        | -                     | `idea`         |
+
+
+
+An additional external layer (LR) may exist conceptually (regulatory/standards), but is outside repository scope.
+
+These layers are a semantic model that separates concerns so that
+
+- higher-level contracts constrain lower-level artifacts,
+- lower-level evidence can be interpreted against higher-level intent without circularity.
+
+The essential idea is simple: higher layers define **validity conditions** for lower layers. Lower layers produce **evidence** that those validity conditions are or are not being met.
+
+This creates two opposed flows.
+
+There is a _constraint flow_ from L0 down to L5: rules about documentation constrain governance; governance constrains what may be attempted; architecture constrains what exists; specs constrain behavior; oracles constrain what counts as proof; reports record what actually occurred.
+
+There is also a _diagnosis flow_ from L5 up to L0: reports are meaningless without the oracles that interpret them; oracles exist to evaluate specs; repeated failure against a spec may force reconsideration of structural assumptions; and governance determines when such reconsideration is permitted.
+
+This bidirectional relationship is why the layer model matters: it prevents the common failure mode where tests start defining behavior, or a report starts acting like a spec, or an "idea" becomes an implicit requirement.
+
+---
+
 Whenever practical:
 
 - Refactor documents to minimize repetition (DRY) and circular semantic dependencies.
