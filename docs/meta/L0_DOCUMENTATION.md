@@ -17,7 +17,9 @@ references:
   - CROSS_LAYER_DEPENDENCY
 ---
 
-## L0 — Documentation Infrastructure
+# L0 — Documentation Infrastructure
+
+## Position of meta-layer
 
 The L0 layer serves two distinct roles:
 
