@@ -14,7 +14,7 @@ references:
   - DOC_SCHEMA
   - DOC_INVENTORY
   - CROSS_LAYER_DEPENDENCY
-  - DOC_LAYERS
+  - DOCUMENTATION_SYSTEM
 ---
 
 # Documentation Graph Visualization Specification (Normative)
@@ -153,7 +153,7 @@ Graph tooling MUST interpret `kind` using the `DOC_SCHEMA.md` `kind` enum.
 
 ## 3. Canonical layer mapping (normative)
 
-Layer assignment is derived solely from `kind` using a fixed mapping defined in `DOC_LAYERS.md`; paths and titles are non-authoritative. Therefore, `layer` is a **computed attribute**, not an independent node.
+Layer assignment is derived from `kind` or path using a the mapping table in `DOCUMENTATION_SYSTEM.md`. Therefore, `layer` is a **computed attribute**, not an independent node.
 
 If a normative document cannot be mapped to L0–L5, this is a **Gate 0 failure**.
 

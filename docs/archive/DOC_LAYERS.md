@@ -4,7 +4,7 @@ name: DOC_LAYERS.md
 title: Layered Documentation Classification and Semantics
 kind: meta
 scope: global
-status: active
+status: deprecated
 authority: normative
 gate_applies_to: all
 phase_applies_to: all

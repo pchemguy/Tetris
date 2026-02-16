@@ -1,10 +1,10 @@
 ---
-doc_id: DOCUMENTATION_SYSTEM
-name: DOCUMENTATION_SYSTEM.md
+doc_id: DOCUMENTATION_SYSTEM_OLD
+name: DOCUMENTATION_SYSTEM_OLD.md
 title: Documentation Infrastructure System
 kind: meta
 scope: global
-status: active
+status: deprecated
 authority: normative
 gate_applies_to: all
 phase_applies_to: all

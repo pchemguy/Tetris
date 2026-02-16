@@ -14,14 +14,13 @@ supersedes:
   - YAML_REFERENCE_POLICY
 references:
   - DOCUMENTATION_SYSTEM
-  - DOC_LAYERS
 ---
 
 # Cross-Layer YAML Reference Dependency Policy (Normative)
 
 ## 1. Purpose
 
-The repository documentation system is organized into conceptual layers (L0–L5 defined in `@DOCUMENTATION_SYSTEM`) that compartmentalize:
+The repository documentation system is organized into conceptual layers (L0–L5 defined in `DOCUMENTATION_SYSTEM.md`) that compartmentalize:
 
 - structural intent,
 - behavioral definitions,
@@ -58,8 +57,8 @@ and validated by:
 
 Tooling MUST evaluate each YAML `references` edge `A → B` by computing:
 
-- `layer(A)` from the canonical mapping in `DOC_LAYERS.md`,
-- `layer(B)` from the canonical mapping in `DOC_LAYERS.md`,
+- `layer(A)` from the mapping table in `DOCUMENTATION_SYSTEM.md`,
+- `layer(B)` from the mapping table in `DOCUMENTATION_SYSTEM.md`,
 
 and then checking:
 

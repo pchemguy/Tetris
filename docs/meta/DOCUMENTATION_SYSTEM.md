@@ -20,7 +20,7 @@ Documentation is an essential first-class subsystem of any technical project, no
 
 ## 1. Layer Model
 
-The documentation base is organized into conceptual layers, from **L0 (highest level)** to **L5 (lowest level)**. Layer assignment for individual documents is derived  from the `kind` field in YAML metadata as defined in `DOC_SCHEMA.md` or, equivalently, from the document's path according to the table below.
+The documentation base is organized into conceptual layers, from **L0 (highest level)** to **L5 (lowest level)**. Layer assignment for individual documents is derived  according to the mapping table below from the `kind` field (`DOC_SCHEMA.md`) or, equivalently, from the document's path.
 
 | Layer | Responsibility                         | Top Layer Directory  | Main Entry            | `kind`         |
 | ----- | -------------------------------------- | -------------------- | --------------------- | -------------- |
