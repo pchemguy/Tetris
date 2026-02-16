@@ -14,56 +14,134 @@ url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 
 # Documentation Infrastructure System (Normative)
 
-## 1. Overview
+Documentation is an essential first-class subsystem of any technical project, not just of the code itself. This project attempts to adapt a number of software engineering principles and apply them directly to the documentation system to facilitate documentation development and maintenance and discovery by both humans and AI agents. 
 
-Documentation is an essential first-class subsystem of any technical project, not just of the code itself. This project attempts to adapt a number of software engineering principles and apply them directly to the documentation system.
+---
 
-The documentation base adopts a hierarchical, layered structure. At the top are the most abstract, system-wide documents (meta documents) that define the structure, organization, and conventions used throughout the documentation system. Lower-level documents become progressively more specific and focused, building upon the foundations established by higher-level documents.
+## 1. Layer Model
+
+The documentation base is organized into conceptual layers, from **L0 (highest level)** to **L5 (lowest level)**. Layer assignment for individual documents is derived  from the `kind` field in YAML metadata as defined in `DOC_SCHEMA.md` or, equivalently, from the document's path according to the table below.
+
+|Layer|Responsibility|Top Layer Directory|Main Entry|`kind`|
+|---|---|---|---|---|
+|L0|Documentation infrastructure|`docs/meta/`|`L0_DOCUMENTATION.md`|`meta`|
+|L1|Governance (process control)|`docs/control/`|`L1_GOVERNANCE.md`|`control`|
+|L2|System structure (global contracts)|`docs/architecture/`|`L2_STRUCTURE.md`|`architecture`|
+|L3|Behavioral specs (component contracts)|`docs/specs/`|`L3_BEHAVIOR.md`|`spec`, `api`|
+|L4|Testing (proof obligations)|`docs/testing/`|`L4_TESTING.md`|`oracle`|
+|L5|Execution state (reports)|`docs/reports/`|`L5_REPORTS.md`|`report`|
+|OUT|Collection of ideas|`docs/ideas/`|–|`idea`|
+
+These layers form a semantic model that separates concerns so that:
+
+- higher-level contracts constrain lower-level artifacts, and    
+- lower-level evidence can be interpreted against higher-level intent without circularity.
+
+The core idea is straightforward: **higher layers define validity conditions** for lower layers. Lower layers produce **evidence** that those validity conditions are either satisfied or violated.
+
+This creates two opposing but complementary flows.
+
+### Constraint flow
+
+This is what the vertical arrows represent.
+
+* **L2 → L3**
+    Architecture and decomposition define what components exist and where responsibilities lie; specifications must conform to those structural boundaries.
+* **L3 → L4**
+    Specifications define what must be true; test oracles define what must be demonstrated to support those claims.
+* **L4 → L5**
+    Oracles define what counts as valid evidence; reports record evidence and outcomes in that oracle vocabulary.
+
+Constraint flows downward: higher layers constrain what lower layers are allowed to assert or record.
+
+### Diagnosis flow
+
+Interpretation flows in the opposite direction.
+
+* **L5 has meaning only through L4.**
+    A report or log is uninterpreted until an oracle defines the questions it answers.
+* **L4 + L5 determine whether L3 is satisfied.**
+    Oracles and results establish whether specifications hold.
+* **L3 satisfaction (or failure) reflects back to L2.**
+    Persistent failures may indicate either implementation defects or structural flaws in architecture or decomposition.
+
+Progression of work tends to move downward. Interpretation of results moves upward.
+
+---
+
+### Model Generalization
+
+This layered structure is not unique to this project. It can be generalized to many technical systems:
+
+0. Documentation — how the project is described and organized
+1. Governance / Process Control — when and how work is allowed
+2. Architecture and Decomposition — what exists and how it is structured
+3. Behavioral Specifications — how defined components must behave
+4. Testing Specifications — how correctness is validated
+5. Reporting — what evidence must be recorded and preserved
+
+One additional conceptual layer often exists and covers external regulatory, legal, or standards documentation. Call this layer **LR** (Regulatory Layer). LR, when present, constrains all internal layers. It may impose requirements on documentation, governance, architecture, specifications, testing practices, and reporting.
+
+---
+
+## 2. Design principles
+
+### 2.1 Document metadata
+
+Automated document discovery is facilitated via YAML front matter that conforms to `DOC_SCHEMA.json` described in `DOC_SCHEMA.md`. The YAML header is included in each participating document as the authoritative metadata record for that document. This header should declare a stable identifier (`doc_id`). Documents may reference one another in prose using `@DOC_ID` markers as a convenience mechanism (for example, `@DOC_SCHEMA`). `@DOC_ID` references should reduce the risk of agents resolving filename-only references to non-sibling documents incorrectly (such as creating new empty files locally or substituting similar names). At the same time, conventional filename-only "same directory" references are still fine. YAML metadata remains authoritative, and `@DOC_ID` markers are validated against the repository’s declared identifiers. Tooling may use YAML metadata and `@DOC_ID` markers to validate references and construct a deterministic documentation graph.
+
+### 2.2 Layered abstraction
+
+Development and maintenance of the documentation base is facilitated through adoption of a hierarchical, layered structure. At the top are the most abstract, system-wide documents (meta documents) that define the structure, organization, and conventions used throughout the documentation system. Lower-level documents become progressively more specific and focused, building upon the foundations established by higher-level documents.
+
+Higher layers define terms of validity for lower layers. Lower layers provide evidence or realization of higher-layer claims. Constraint flows downward. Interpretation flows upward.
+
+### 2.3 Single responsibility weakly coupled documents and reference discipline
 
 This documentation system also aims to maintain modular, focused (single-responsibility) documents with weak, well-defined couplings. More specific documents may reference more general or abstract documents on which they depend, but not the other way around. "Spurious" or circular references are explicitly discouraged.
 
----
-## 2. Layer model
+Each document must:
 
-The documentation base is organized into conceptual layers, L0 (highest level) through L5 (lowest level). 
+- serve a narrowly defined purpose,
+    
+- avoid embedding responsibilities of other documents,
+    
+- reference upstream contracts instead of duplicating them.
+    
 
-| Layer | Responsibility                         | Top Layer Directory  | Main Entry            | `kind`         |
-| ----- | -------------------------------------- | -------------------- | --------------------- | -------------- |
-| L0    | Documentation infrastructure           | `docs/meta/`         | `L0_DOCUMENTATION.md` | `meta`         |
-| L1    | Governance (process control)           | `docs/control/`      | `L1_GOVERNANCE.md`    | `control`      |
-| L2    | System structure (global contracts)    | `docs/architecture/` | `L2_STRUCTURE.md`     | `architecture` |
-| L3    | Behavioral specs (component contracts) | `docs/specs/`        | `L3_BEHAVIOR.md`      | `spec`, `api`  |
-| L4    | Testing (proof obligations)            | `docs/testing/`      | `L4_TESTING.md`       | `testing`      |
-| L5    | Execution state (reports)              | `docs/reports/`      | `L5_REPORTS.md`       | `report`       |
-| OUT   | Collection of ideas                    | `docs/ideas/`        | -                     | `idea`         |
+### 2.3 Machine-checkable structure
 
-These layers are a semantic model that separates concerns so that
+Whenever practical:
 
-- higher-level contracts constrain lower-level artifacts,
-- lower-level evidence can be interpreted against higher-level intent without circularity.
+- Concepts must be expressible as structured artifacts (JSON/YAML).
+    
+- Structured artifacts must be validated via JSON Schema.
+    
+- Markdown descriptors must explain structured artifacts without embedding enforcement logic.
+    
 
-The essential idea is simple: higher layers define **validity conditions** for lower layers. Lower layers produce **evidence** that those validity conditions are or are not being met.
+Example separation:
 
-This creates two opposed flows.
+- `DOC_SCHEMA.md` defines metadata semantics.
+    
+- `DOC_SCHEMA.json` validates metadata structure.
+    
+- `DOC_INVENTORY.md` defines discovery rules.
+    
+- `DOC_INVENTORY.json` lists actual repository documents.
+    
+- Neither collapses into the other.
+    
 
-- **Constraint flow - L1 to L5**: governance constrains what may be attempted; architecture constrains what exists; specs constrain behavior; oracles constrain what counts as proof; reports record what actually occurred.
-- **Diagnosis flow - L5 to L1**: reports are meaningless without the oracles that interpret them; oracles exist to evaluate specs; repeated failure against a spec may force reconsideration of structural assumptions; and governance determines when such reconsideration is permitted.
+### 2.4 Weak coupling and reference discipline
 
-This bidirectional relationship is why the layer model matters: it prevents the common failure mode where tests start defining behavior, or a report starts acting like a spec, or an "idea" becomes an implicit requirement.
+More specific documents may reference more general ones.  
+General documents must not depend semantically on specific ones.
 
-### Model generalization
+Circular semantic dependency is prohibited.
 
-In fact, this layered structure may be applicable conceptually to a broad range of technical problems.
-
-0. Documentation - how the project is documented
-1. Governance / Process Control
-2. Solution architecture and decomposition analysis
-3. Behavioral specs - how the end product components, defined in decomposition analysis, should behave
-4. Testing specification - how to validate that the product and its components meet behavioral specs.
-5. What information from testing and checks needs to be included in reports.
-
-In fact, there exist one more important layer, not relevant for the present project, which is concerned with documentation external with respect to the project. This is regulatory and legal information, standards, etc. Let's call this layer LR. This layer, in fact, may constraint all of the above defined layers.
-
+Diagnostic policies for YAML `references` are defined in:  
+`CROSS_LAYER_DEPENDENCY.md`.
 
 ---
 
