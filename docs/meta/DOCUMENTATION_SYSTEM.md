@@ -98,17 +98,11 @@ Higher layers define terms of validity for lower layers. Lower layers provide ev
 
 ### 2.3 Single responsibility weakly coupled documents and reference discipline
 
-This documentation system also aims to maintain modular, focused (single-responsibility) documents with weak, well-defined couplings. More specific documents may reference more general or abstract documents on which they depend, but not the other way around. "Spurious" or circular references are explicitly discouraged.
+This documentation system also aims to maintain modular structure, with each document serving a narrowly defined purpose and having weak, well-defined couplings to other documents. Generally, documents should not embed responsibilities of other documents beyond their scope, as mixed-up responsibilities  encourage or cause awkward interwind dependencies, complicates discovery, interpretation, and development of documents.
 
-Each document must:
+Because layers represent **distinct development compartments**, unrestricted cross-layer semantic dependencies would undermine the separation they are meant to provide. If architecture depends on governance, or specifications depend on their own proof artifacts, circularity and conceptual drift quickly emerge. In other words, more specific documents may reference more general/abstract documents on which they depend. Documents must not depend semantically on more specific ones. "Spurious" references and circular semantic dependencies are explicitly discouraged. For this reason, the repository defines a **diagnostic policy** governing YAML `references` edges between layers. This policy does not affect structural validity, but it surfaces suspicious semantic couplings that may indicate meta-leakage or semantic circular dependency. The normative explanation of that policy is defined in `CROSS_LAYER_DEPENDENCY.md`.
 
-- serve a narrowly defined purpose,
-    
-- avoid embedding responsibilities of other documents,
-    
-- reference upstream contracts instead of duplicating them.
-    
-
+and should not embed responsibilities of other documents beyond their scope
 ### 2.3 Machine-checkable structure
 
 Whenever practical:
@@ -133,15 +127,7 @@ Example separation:
 - Neither collapses into the other.
     
 
-### 2.4 Weak coupling and reference discipline
 
-More specific documents may reference more general ones.  
-General documents must not depend semantically on specific ones.
-
-Circular semantic dependency is prohibited.
-
-Diagnostic policies for YAML `references` are defined in:  
-`CROSS_LAYER_DEPENDENCY.md`.
 
 ---
 
