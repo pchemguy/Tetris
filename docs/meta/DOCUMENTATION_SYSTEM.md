@@ -22,15 +22,15 @@ Documentation is an essential first-class subsystem of any technical project, no
 
 The documentation base is organized into conceptual layers, from **L0 (highest level)** to **L5 (lowest level)**. Layer assignment for individual documents is derived  from the `kind` field in YAML metadata as defined in `DOC_SCHEMA.md` or, equivalently, from the document's path according to the table below.
 
-|Layer|Responsibility|Top Layer Directory|Main Entry|`kind`|
-|---|---|---|---|---|
-|L0|Documentation infrastructure|`docs/meta/`|`L0_DOCUMENTATION.md`|`meta`|
-|L1|Governance (process control)|`docs/control/`|`L1_GOVERNANCE.md`|`control`|
-|L2|System structure (global contracts)|`docs/architecture/`|`L2_STRUCTURE.md`|`architecture`|
-|L3|Behavioral specs (component contracts)|`docs/specs/`|`L3_BEHAVIOR.md`|`spec`, `api`|
-|L4|Testing (proof obligations)|`docs/testing/`|`L4_TESTING.md`|`oracle`|
-|L5|Execution state (reports)|`docs/reports/`|`L5_REPORTS.md`|`report`|
-|OUT|Collection of ideas|`docs/ideas/`|–|`idea`|
+| Layer | Responsibility                         | Top Layer Directory  | Main Entry            | `kind`         |
+| ----- | -------------------------------------- | -------------------- | --------------------- | -------------- |
+| L0    | Documentation infrastructure           | `docs/meta/`         | `L0_DOCUMENTATION.md` | `meta`         |
+| L1    | Governance (process control)           | `docs/control/`      | `L1_GOVERNANCE.md`    | `control`      |
+| L2    | System structure (global contracts)    | `docs/architecture/` | `L2_STRUCTURE.md`     | `architecture` |
+| L3    | Behavioral specs (component contracts) | `docs/specs/`        | `L3_BEHAVIOR.md`      | `spec`, `api`  |
+| L4    | Testing (proof obligations)            | `docs/testing/`      | `L4_TESTING.md`       | `oracle`       |
+| L5    | Execution state (reports)              | `docs/reports/`      | `L5_REPORTS.md`       | `report`       |
+| OUT   | Collection of ideas                    | `docs/ideas/`        | –                     | `idea`         |
 
 These layers form a semantic model that separates concerns so that:
 
@@ -40,6 +40,8 @@ These layers form a semantic model that separates concerns so that:
 The core idea is straightforward: **higher layers define validity conditions** for lower layers. Lower layers produce **evidence** that those validity conditions are either satisfied or violated.
 
 This creates two opposing but complementary flows.
+
+---
 
 ### Constraint flow
 
@@ -53,6 +55,8 @@ This is what the vertical arrows represent.
     Oracles define what counts as valid evidence; reports record evidence and outcomes in that oracle vocabulary.
 
 Constraint flows downward: higher layers constrain what lower layers are allowed to assert or record.
+
+---
 
 ### Diagnosis flow
 
@@ -90,61 +94,63 @@ One additional conceptual layer often exists and covers external regulatory, leg
 
 Automated document discovery is facilitated via YAML front matter that conforms to `DOC_SCHEMA.json` described in `DOC_SCHEMA.md`. The YAML header is included in each participating document as the authoritative metadata record for that document. This header should declare a stable identifier (`doc_id`). Documents may reference one another in prose using `@DOC_ID` markers as a convenience mechanism (for example, `@DOC_SCHEMA`). `@DOC_ID` references should reduce the risk of agents resolving filename-only references to non-sibling documents incorrectly (such as creating new empty files locally or substituting similar names). At the same time, conventional filename-only "same directory" references are still fine. YAML metadata remains authoritative, and `@DOC_ID` markers are validated against the repository’s declared identifiers. Tooling may use YAML metadata and `@DOC_ID` markers to validate references and construct a deterministic documentation graph.
 
+---
+
 ### 2.2 Layered abstraction
 
-Development and maintenance of the documentation base is facilitated through adoption of a hierarchical, layered structure. At the top are the most abstract, system-wide documents (meta documents) that define the structure, organization, and conventions used throughout the documentation system. Lower-level documents become progressively more specific and focused, building upon the foundations established by higher-level documents.
-
-Higher layers define terms of validity for lower layers. Lower layers provide evidence or realization of higher-layer claims. Constraint flows downward. Interpretation flows upward.
-
-### 2.3 Single responsibility documents with weakly coupling and reference discipline
-
-This documentation system also aims to maintain modular structure, with each document serving a narrowly defined purpose and having weak, well-defined couplings to other documents. Generally, documents should not embed responsibilities of other documents beyond their scope, as mixed-up responsibilities  encourage or cause complex interwoven dependencies, complicating discovery, interpretation, and development of documents.
-
-Because layers represent **distinct development compartments**, unrestricted cross-layer semantic dependencies would undermine the separation they are meant to provide. If architecture depends on governance, or specifications depend on their own proof artifacts, circularity and conceptual drift quickly emerge. In other words, more specific documents may reference more general/abstract documents on which they depend. Documents must not depend semantically on more specific ones. "Spurious" references and circular semantic dependencies are explicitly discouraged. For this reason, the repository defines a **diagnostic policy** governing YAML `references` edges between layers. This policy does not affect structural validity, but it surfaces suspicious semantic couplings that may indicate meta-leakage or semantic circular dependency. The normative explanation of that policy is defined in `CROSS_LAYER_DEPENDENCY.md`.
-
-### 2.3 Machine-checkable structure
-
-Whenever practical:
-
-- Concepts must be expressible as structured artifacts (JSON/YAML).
-    
-- Structured artifacts must be validated via JSON Schema.
-    
-- Markdown descriptors must explain structured artifacts without embedding enforcement logic.
-    
-
-Example separation:
-
-- `DOC_SCHEMA.md` defines metadata semantics.
-    
-- `DOC_SCHEMA.json` validates metadata structure.
-    
-- `DOC_INVENTORY.md` defines discovery rules.
-    
-- `DOC_INVENTORY.json` lists actual repository documents.
-    
-- Neither collapses into the other.
-    
-
-
+Development and maintenance of the documentation base is facilitated through adoption of a hierarchical, layered structure. At the top are the most abstract, system-wide documents (meta documents) that define the structure, organization, and conventions used throughout the documentation system. Lower-level documents become progressively more specific and focused, building upon the foundations established by higher-level documents. Higher layers define terms of validity for lower layers. Lower layers provide evidence or realization of higher-layer claims. Constraint flows downward. Interpretation flows upward.
 
 ---
 
-Whenever practical:
+### 2.3 Single responsibility documents
 
-- Refactor documents to minimize repetition (DRY) and circular semantic dependencies.
-- Develop conventions that can be readily
-    - Encoded as machine readable structured artifacts (such as, JSON and YAML documents).
-    - Accompanied by machine readable validation artifacts (such as, JSON schema).
-- Describe each important non-Markdown artifact, such as document metadata validation schema, in a Markdown document having identical name part of filename, so that purpose/meaning/organization of the artifact could be easily discovered. Then reference this artifact descriptor where relevant (this is preferable to having back references within the artifact descriptor, as it will likely create increase document couplings and created circular references).
-  
-  For example, the documentation prescribes that each document should include a `YAML` metadata described in `DOC_SCHEMA.md` and validated by accompanied `DOC_SCHEMA.json`. `DOC_SCHEMA.md` should
-    - provide context/motivation,
-    - describe the metadata,
-    - indicate that `DOC_SCHEMA.json` should be used for validating metadata,
-    - possibly suggest how this metadata might be used, while avoiding **prescribing** or **referencing** any such use.
-  
-  Then more general documents may reference `DOC_SCHEMA.md`. For example, `DOC_INVENTORY.json` and `DOC_INVENTORY.schema.json` are concerned about providing a machine readable document index as described in associated `DOC_INVENTORY.md`. While `DOC_INVENTORY.json` might include not just paths, but also `YAML` metadata from individual documents, providing essentially a metadata cache, specific metadata format in individual documents is clearly out of scope for `DOC_INVENTORY.json`. Therefore, `DOC_INVENTORY.md` must only define explicitly only metadata related to repository discovery (such as file paths/names), while referencing `DOC_SCHEMA.md` for other metadata. Similarly, file location / index is clearly out of scope for `DOC_SCHEMA.md`, which is concerned about document's metadata irrespective of document's location. Hence, the two artifacts should not be collapsed. 
+This documentation system also aims to maintain modular structure, with each document serving a narrowly defined purpose and having weak, well-defined couplings to other documents. Generally, documents should not embed responsibilities of other documents beyond their scope. Mixed-up responsibilities  encourage or cause complex interwoven dependencies, complicating discovery, interpretation, and development of documents.
+
+---
+
+### 2.4 Weak coupling and dependency control
+
+Because layers represent **distinct development compartments**, unrestricted cross-layer semantic dependencies would undermine the separation they are meant to provide. If architecture depends on governance, or specifications depend on their own proof artifacts, circularity and conceptual drift quickly emerge. In other words, more specific documents may reference more general/abstract documents on which they depend. Documents must not depend semantically on more specific ones. "Spurious" references and circular semantic dependencies are explicitly discouraged. For this reason, the repository defines a **diagnostic policy** governing YAML `references` edges between layers. This policy does not affect structural validity, but it surfaces suspicious semantic couplings that may indicate meta-leakage or semantic circular dependency. The normative explanation of that policy is defined in `CROSS_LAYER_DEPENDENCY.md`.
+
+---
+
+### 2.5 Machine-checkable structure
+
+Whenever practical, the documentation system should adopt conventions that are:
+
+- expressible as machine-readable structured artifacts (for example, JSON or YAML documents), and    
+- accompanied by corresponding machine-readable validation artifacts (for example, JSON Schema definitions).
+
+Every important non-Markdown artifact should have a companion Markdown document with the same base filename (e.g., `X.md` describing `X.json` or `X.schema.json`). This Markdown document should explain artifact's
+
+- purpose,
+- conceptual structure,
+- intended usage boundaries.
+
+`X.md` may include suggested uses for the associated artifact, it should not prescribe or define any such uses - usage is generally out of scope of `X.md`, unless the use case is closely related and can be completely defined within `X.md`. This scope limitation generally improves clarity, minimizes coupling, and reduces the risk of circular semantic dependencies.
+
+For example:
+
+The documentation system prescribes that each document include a YAML metadata header defined in `DOC_SCHEMA.md` and validated by `DOC_SCHEMA.json`.
+
+`DOC_SCHEMA.md` should:
+
+- provide context and motivation for the metadata system,
+- describe each metadata field and its semantics,
+- specify that `DOC_SCHEMA.json` is the validation authority,
+- optionally suggest how metadata may be used by tooling,
+
+while deliberately avoiding prescribing specific tooling implementations.
+
+More general documents may then reference `DOC_SCHEMA.md` when they depend on metadata semantics. Consider `DOC_INVENTORY.json` and `DOC_INVENTORY.schema.json`. These artifacts define a machine-readable document index, as described in `DOC_INVENTORY.md`. Although `DOC_INVENTORY.json` may include cached YAML metadata extracted from individual documents, the format and semantics of that metadata are not defined by the inventory artifact itself. Those semantics belong exclusively to `DOC_SCHEMA.md`.
+
+Accordingly:
+
+- `DOC_INVENTORY.md` defines repository discovery structure (e.g., paths, file identities, indexing rules),
+- `DOC_SCHEMA.md` defines document metadata structure,
+- neither artifact should subsume the other’s responsibilities.
+
+File location and indexing are out of scope for `DOC_SCHEMA.md`, just as metadata structure is out of scope for `DOC_INVENTORY.md`. These concerns must remain separated to preserve modularity and avoid unnecessary coupling.
 
 ---
 
