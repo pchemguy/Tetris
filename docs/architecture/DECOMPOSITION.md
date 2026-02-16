@@ -22,7 +22,7 @@ references:
 
 ## 1. Purpose
 
-This document builds on prior developed tentative `@ARCHITECTURE` and defines the **authoritative decomposition** of the Tetris application into components and assigns **explicit responsibility boundaries** to each.
+This document builds on prior developed tentative `ARCHITECTURE.md` and defines the **authoritative decomposition** of the Tetris application into components and assigns **explicit responsibility boundaries** to each.
 
 It exists to:
 

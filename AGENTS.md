@@ -213,9 +213,9 @@ Protocol violation:
 
 Before attempting any gate beyond 0, the agent must confirm:
 
-- All normative documents referenced in `PROJECT.md` are resolved.
-- `Documentation system and discovery` (`PROJECT.md`) is fully operationalized and all 
-- Import boundaries defined in `DECOMPOSITION.md` are understood.
+- `Documentation system and discovery` (`PROJECT.md`) is fully operationalized.
+- All normative documents referenced in or discoverable per `PROJECT.md` are resolved.
+- Responsibility boundaries defined in `DECOMPOSITION.md` are understood.
 - Applicable test oracle documents are identified.
 - Current phase permits the target gate.
 
