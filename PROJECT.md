@@ -104,7 +104,7 @@ To resolve document references deterministically, agents and tooling must operat
 1. **Standard docs traversal**:
    recursively traverse `docs/`, parse YAML metadata headers, and build an in-memory DOC_ID index; or
 2. **Inventory file (preferred)**:
-   load the precomputed inventory:
+   load the precomputed inventory (described in `DOC_INVENTORY.md`):
     - `docs/meta/DOC_INVENTORY.json`
 
 Because this repository intentionally mixes filename-local references and repository-wide DOC_ID references, agents must **not** attempt to “follow references” by filesystem guessing alone.

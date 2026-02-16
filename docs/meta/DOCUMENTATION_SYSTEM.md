@@ -30,7 +30,7 @@ Every normative document declares a stable identifier (`doc_id`) in its YAML hea
 
 ## 3. Layered organization
 
-The repository documentation system is organized into conceptual layers **L0–L5**. The normative definition of the layering model (meaning, constraint/validity vs diagnosis flows, meta-layer positioning, conflict resolution, and the layer index) is specified in `@DOC_LAYERS`. Tooling uses this layer model to classify documents deterministically (via `kind`) and to support diagnostic validation of cross-layer semantic coupling.
+The repository documentation system is organized into conceptual layers **L0–L5**. The normative definition of the layering model (meaning, constraint/validity vs diagnosis flows, meta-layer positioning, conflict resolution, and the layer index) is specified in `DOC_LAYERS.md`. Tooling uses this layer model to classify documents deterministically (via `kind`) and to support diagnostic validation of cross-layer semantic coupling.
 
 ## 4. Technical documentation index
 

@@ -77,10 +77,14 @@ Any of the above constitutes a **protocol violation** and must result in a halt.
 Before writing, modifying, or deleting **any files**, the agent must:
 
 1. Read and operationalize:
-    - `AGENTS.md`
-    - `PROJECT.md`
-    - `README.md`
-2. Resolve and read all documents referenced by those files.
+    - documents:
+        - `AGENTS.md`
+        - `PROJECT.md`
+        - `README.md`
+    - project `Documentation system and discovery` as described in `PROJECT.md`
+2. Resolve and read all documents
+    - referenced by those files,
+    - discovered according to `Documentation system and discovery` (`PROJECT.md`).
 3. Discover available agent skills:
     - Enumerate `.agent/skills/`.
     - Analyze all discovered skills.
@@ -210,6 +214,7 @@ Protocol violation:
 Before attempting any gate beyond 0, the agent must confirm:
 
 - All normative documents referenced in `PROJECT.md` are resolved.
+- `Documentation system and discovery` (`PROJECT.md`) is fully operationalized and all 
 - Import boundaries defined in `DECOMPOSITION.md` are understood.
 - Applicable test oracle documents are identified.
 - Current phase permits the target gate.

@@ -13,8 +13,8 @@ url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 supersedes:
   - YAML_REFERENCE_POLICY
 references:
-  - DOC_GRAPH_SPEC
   - DOCUMENTATION_SYSTEM
+  - DOC_LAYERS
 ---
 
 # Cross-Layer YAML Reference Dependency Policy (Normative)
@@ -58,8 +58,8 @@ and validated by:
 
 Tooling MUST evaluate each YAML `references` edge `A → B` by computing:
 
-- `layer(A)` from the canonical mapping in `@DOC_GRAPH_SPEC`,
-- `layer(B)` from the canonical mapping in `@DOC_GRAPH_SPEC`,
+- `layer(A)` from the canonical mapping in `DOC_LAYERS.md`,
+- `layer(B)` from the canonical mapping in `DOC_LAYERS.md`,
 
 and then checking:
 

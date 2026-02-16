@@ -12,7 +12,6 @@ description: Defines how to extract and render a documentation dependency graph 
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 references:
   - DOC_SCHEMA
-  - COMPONENT_REGISTRY
   - DOC_INVENTORY
   - CROSS_LAYER_DEPENDENCY
   - DOC_LAYERS
@@ -53,10 +52,10 @@ Represents a single Markdown or JSON artifact that participates in the documenta
 
 * `doc_id` (string; unique)
 * `name` (filename; string)
-* `kind` (enum; from `DOC_SCHEMA`)
+* `kind` (enum; from `DOC_SCHEMA.md` and `DOC_SCHEMA.json`)
 * `authority` (`normative` | `non_normative`)
 * `status` (`draft` | `active` | `deprecated`)
-* `scope` (enum token from registry/schema)
+* `scope` (enum token from `DOC_SCHEMA.md` and `DOC_SCHEMA.json`)
 * `layer` (enum; **computed**, not authored; see §3)
 
 **Optional attributes**
@@ -148,13 +147,13 @@ Multiple identical edges MUST NOT be emitted.
 
 ### 2.5 Canonical doc kinds
 
-Graph tooling MUST interpret `kind` using the `DOC_SCHEMA` enum.
+Graph tooling MUST interpret `kind` using the `DOC_SCHEMA.md` `kind` enum.
 
 ---
 
 ## 3. Canonical layer mapping (normative)
 
-Layer assignment is derived solely from `kind` using a fixed mapping defined in `@DOC_LAYERS`; paths and titles are non-authoritative. Therefore, `layer` is a **computed attribute**, not an independent node.
+Layer assignment is derived solely from `kind` using a fixed mapping defined in `DOC_LAYERS.md`; paths and titles are non-authoritative. Therefore, `layer` is a **computed attribute**, not an independent node.
 
 If a normative document cannot be mapped to L0–L5, this is a **Gate 0 failure**.
 
@@ -190,7 +189,7 @@ Higher layers constrain lower layers.
 
 ### 4.3 Cross-layer reference validation (diagnostic only)
 
-Cross-layer validation of YAML `references` edges is **diagnostic-only** and MUST NOT affect graph construction. The normative policy is defined in `@CROSS_LAYER_DEPENDENCY`. The authoritative machine-readable policy instance is `YAML_REFERENCE_POLICY.json` (validated by `YAML_REFERENCE_POLICY.schema.json`).
+Cross-layer validation of YAML `references` edges is **diagnostic-only** and MUST NOT affect graph construction. The normative policy is defined in `CROSS_LAYER_DEPENDENCY.md`. The authoritative machine-readable policy instance is `YAML_REFERENCE_POLICY.json` (validated by `YAML_REFERENCE_POLICY.schema.json`).
 
 ---
 
@@ -266,20 +265,20 @@ Unknown prose DOC_ID → warning.
 
 ## 6. Machine-readable documentation inventory
 
-The canonical machine-readable discovery artifact for the documentation system is defined in `@DOC_INVENTORY`.
+The canonical machine-readable discovery artifact for the documentation system is defined in `DOC_INVENTORY.md`.
 
 Tooling conforming to this spec MUST:
 
 - consume `DOC_INVENTORY.json` as the authoritative inventory of participating documents and their metadata, and
 - derive all downstream graph renderings and diagnostics from that inventory.
 
-This spec (`@DOC_GRAPH_SPEC`) defines how inventory content is interpreted for:
+This spec (`DOC_GRAPH_SPEC.md`) defines how inventory content is interpreted for:
 
 - layer computation from `kind`,
 - edge extraction semantics (`references` vs `mentions`),
 - rendering directives for visual graph outputs.
 
-`@DOC_GRAPH_SPEC` does not redefine the inventory format.
+`DOC_GRAPH_SPEC.md` does not redefine the inventory format.
 
 ---
 

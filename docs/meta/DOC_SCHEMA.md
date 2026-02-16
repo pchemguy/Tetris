@@ -194,7 +194,7 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
 ## 6. Field semantics (normative)
 
 - `name`
-    - The expected filename (redundant but convenient).
+    - The expected filename.
     - This is not authoritative identity; it supports review and auditing.
 - `title`
     - Human-readable title.
