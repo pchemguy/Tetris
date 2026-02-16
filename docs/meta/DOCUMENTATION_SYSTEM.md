@@ -16,11 +16,15 @@ url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/6987211
 
 ## 1. Overview
 
-Documentation is an essential first-class subsystem of any technical project (not just coding. This project attempts to adapt a number of software engineering concepts and apply them to this documentation system. The documentation base adopts hierarchical layered structure. At its top are the most abstract system-wide documents (meta documents) that establish structure, organization, and conventions employed by the documentation system itself. The lower level documents become progressively more specific and focused, gradually developing foundation established by higher level documents. This documentation system also attempts do develop modular focused (single responsibility) documents with weak well-defined couplings (more specific/focused documents reference more general/abstract documents, on which the former are based, not the other way around or "spurious" references).
+Documentation is an essential first-class subsystem of any technical project, not just of the code itself. This project attempts to adapt a number of software engineering principles and apply them directly to the documentation system.
+
+The documentation base adopts a hierarchical, layered structure. At the top are the most abstract, system-wide documents (meta documents) that define the structure, organization, and conventions used throughout the documentation system. Lower-level documents become progressively more specific and focused, building upon the foundations established by higher-level documents.
+
+This documentation system also aims to maintain modular, focused (single-responsibility) documents with weak, well-defined couplings. More specific documents may reference more general or abstract documents on which they depend, but not the other way around. "Spurious" or circular references are explicitly discouraged.
 
 Whenever practical:
 
-- Refactor documents to minimize repetition (DRY) and circular references.
+- Refactor documents to minimize repetition (DRY) and circular semantic dependencies.
 - Develop conventions that can be readily
     - Encoded as machine readable structured artifacts (such as, JSON and YAML documents).
     - Accompanied by machine readable validation artifacts (such as, JSON schema).
@@ -52,3 +56,136 @@ Every document should include a `YAML` frontmatter header defined in `DOC_SCHEMA
 
 The repository documentation system is organized into conceptual layers **L0–L5**. The normative definition of the layering model (meaning, constraint/validity vs diagnosis flows, meta-layer positioning, conflict resolution, and the layer index) is specified in `DOC_LAYERS.md`. Tooling uses this layer model to classify documents deterministically (via `kind`) and to support diagnostic validation of cross-layer semantic coupling.
 
+Documentation in this repository is organized in a **layered structure**. Each document belongs to a defined layer serving a distinct purpose in constraining, guiding, or evaluating the development process. This layering model is a **normative interpretation and constraint model** aligned with a structured compartmentalization of development concerns. 
+
+```
+                    ┌───────────────────────────────────────────┐
+                    │               REPOSITORY                  │
+                    │ (code + docs + tests + agent workflows)   │
+                    └───────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────┐
+│ L0 — Documentation Infrastructure (Meta-layer)                                 │
+│    Defines how docs are identified, scoped, linked, and validated.             │
+│                                                                                │
+│      - DOC_SCHEMA.md / DOC_SCHEMA.json                                         │
+│      - DOC_GRAPH_SPEC.md                                                       │
+└────────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     │ constrains + validates
+                                     v
+┌────────────────────────────────────────────────────────────────────────────────┐
+│ L1 — Governance (Process Control)                                              │
+│      - PHASES.md                                                               │
+│      - ACCEPTANCE_GATES.md                                                     │
+└────────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     │ constrains system structure
+                                     v
+┌────────────────────────────────────────────────────────────────────────────────┐
+│ L2 — System Structure (Global Contracts)                                       │
+│      - ARCHITECTURE.md                                                         │
+│      - DECOMPOSITION.md                                                        │
+│      - COMPONENT_REGISTRY.md / COMPONENT_REGISTRY.json                         │
+└────────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     │ constrains behavior
+                                     v
+┌────────────────────────────────────────────────────────────────────────────────┐
+│ L3 — Behavioral Specifications (Component Contracts)                           │
+│      - Core specs                                                              │
+│      - Shell specs                                                             │
+│      - Shell APIs                                                              │
+└────────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     │ defines required proof
+                                     v
+┌────────────────────────────────────────────────────────────────────────────────┐
+│ L4 — Test Oracles (Proof Obligations)                                          │
+└────────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     │ records execution history (state)
+                                     v
+┌────────────────────────────────────────────────────────────────────────────────┐
+│ L5 — Execution State (Reports)                                                 │
+└────────────────────────────────────────────────────────────────────────────────┘
+```
+
+Each layer corresponds to a distinct conceptual role in the lifecycle of system definition, validation, and evaluation. In fact, this layered structure may be applicable conceptually to a broad range of technical problems.
+
+0. Documentation - how the project is documented
+1. Governance / Process Control
+2. Solution architecture and decomposition analysis
+3. Behavioral specs - how the end product components, defined in decomposition analysis, should behave
+4. Testing specification - how to validate that the product and its components meet behavioral specs.
+5. What information from testing and checks needs to be included in reports.
+
+In fact, there exist one more important layer, not relevant for the present project, which is concerned with documentation external with respect to the project. This is regulatory and legal information, standards, etc. Let's call this layer LR. This layer, in fact, may constraint all of the above defined layers.
+
+In the diagram above, a higher layer defines the **terms of validity** for lower layers. A lower layer provides **evidence** about whether higher-layer claims are satisfied in practice. If two documents conflict:
+
+1. Resolve by **authority** (`normative` over `non_normative`).
+2. Resolve by explicit `supersedes` / `superseded_by`.
+3. Resolve by **layer precedence** (L0 → L5), meaning higher-layer validity conditions override lower-layer artifacts.
+
+
+There are therefore two opposed flows.
+
+- Constraint / validity flow (top → bottom)
+  This is what the vertical arrows represent. Constraint flows downward: higher layers constrain what lower layers are allowed to assert or record.
+    * **L2 → L3**
+        Architecture and decomposition define what components exist and where responsibilities lie; specifications must conform to those structural boundaries.
+    * **L3 → L4**
+        Specifications define what must be true; test oracles define what must be demonstrated to support those claims.
+    * **L4 → L5**
+        Oracles define what counts as valid evidence; reports record evidence and outcomes in that oracle vocabulary.
+- Meaning / diagnosis flow (bottom → top)
+  Interpretation flows in the opposite direction. Progression of work tends to move downward. Interpretation of results moves upward.
+    * **L5 has meaning only through L4.**
+        A report or log is uninterpreted until an oracle defines the questions it answers.
+    * **L4 + L5 determine whether L3 is satisfied.**
+        Oracles and results establish whether specifications hold.
+    * **L3 satisfaction (or failure) reflects back to L2.**
+        Persistent failures may indicate either implementation defects or structural flaws in architecture or decomposition.
+
+### Layering and semantic dependency control
+
+Because layers represent **distinct development compartments**, unrestricted cross-layer semantic dependencies would undermine the separation they are meant to provide. If architecture depends on governance, or specifications depend on their own proof artifacts, circularity and conceptual drift quickly emerge. For this reason, the repository defines a **diagnostic policy** governing YAML `references` edges between layers. This policy does not affect structural validity, but it surfaces suspicious semantic couplings that may indicate meta-leakage or circular dependency. The normative explanation of that policy is defined in `CROSS_LAYER_DEPENDENCY.md`.
+
+Layering is therefore:
+
+* a conceptual hierarchy,
+* a maintenance boundary mechanism,
+* and a coupling-control strategy,
+
+not a rigid import system and not a development sequence mandate.
+
+### Canonical layer mapping
+
+Layer assignment is derived solely from the `kind` field in YAML metadata as defined in using a fixed mapping; paths and titles are non-authoritative.
+
+| `kind`         | Layer | Notes                                                              |
+| -------------- | ----- | ------------------------------------------------------------------ |
+| `meta`         | L0    | Documentation infrastructure (schemas/graph spec/etc.)             |
+| `map`          | L0    | Documentation inventory / authority maps                           |
+| `control`      | L1    | Governance (phases, gates, process constraints)                    |
+| `architecture` | L2    | System structure (architecture, decomposition, registry)           |
+| `spec`         | L3    | Behavioral contracts (core/shell specs)                            |
+| `api`          | L3    | Public adapter/API contracts; still behavioral, not infrastructure |
+| `oracle`       | L4    | Proof obligations / test oracle definitions                        |
+| `report`       | L5    | Execution state                                                    |
+| `idea`         | OUT   | Not in L0–L5; explicitly non-normative by default                  |
+
+### Layer index
+
+Layers also map directly to high-level `docs/` organization.
+
+| Layer | Question                           | Directory            | Main Entry            |
+| ----- | ---------------------------------- | -------------------- | --------------------- |
+| L0    | How the project is documented      | `docs/meta/`         | `L0_DOCUMENTATION.md` |
+| L1    | When work is allowed and evaluated | `docs/control/`      | `L1_GOVERNANCE.md`    |
+| L2    | What exists, how it is structured  | `docs/architecture/` | `L2_STRUCTURE.md`     |
+| L3    | What behavior is defined           | `docs/specs/`        | `L3_BEHAVIOR.md`      |
+| L4    | How correctness is proven          | `docs/testing/`      | `L4_TESTING.md`       |
+| L5    | What has actually happened         | `docs/reports/`      | `L5_REPORTS.md`       |
+| -     | What may be researched or tried    | `docs/ideas/`        | -                     |

@@ -78,9 +78,8 @@
         "control",
         "architecture",
         "spec",
-        "oracle",
+        "testing",
         "api",
-        "map",
         "report",
         "idea"
       ]

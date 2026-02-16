@@ -2,7 +2,7 @@
 doc_id: REPLAY_TEST_ORACLE
 name: REPLAY_TEST_ORACLE.md
 title: Replay Test Oracle
-kind: oracle
+kind: testing
 scope: shell:persistence
 status: active
 authority: normative

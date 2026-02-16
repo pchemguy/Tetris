@@ -200,7 +200,7 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
     - Human-readable title.
 - `kind`
     - Classification of document role:
-        - `meta`, `control`, `architecture`, `spec`, `oracle`, `api`, `map`, `report`, `idea`.
+        - `meta`, `control`, `architecture`, `spec`, `testing`, `api`, `report`, `idea`.
 - `scope`
     - An explicit scope token enumerated in `DOC_SCHEMA.json`.
     - Scope tokens correspond to architectural component identities and global classifications declared in `COMPONENT_REGISTRY.json`
@@ -225,6 +225,17 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
 - `references`
     - Array of DOC_IDs this document depends on (normative dependency list).
     - This is the **authoritative dependency graph** (not filenames).
+
+| `kind`         | Notes                                                              |
+| -------------- | ------------------------------------------------------------------ |
+| `meta`         | Documentation infrastructure (schemas/graph spec/etc.)             |
+| `control`      | Governance (phases, gates, process constraints)                    |
+| `architecture` | System structure (architecture, decomposition, registry)           |
+| `spec`         | Behavioral contracts (core/shell specs)                            |
+| `api`          | Public adapter/API contracts; still behavioral, not infrastructure |
+| `testing`      | Proof obligations / test oracle definitions                        |
+| `report`       | Execution state                                                    |
+| `idea`         | Development ideas                                                  |
 
 ---
 

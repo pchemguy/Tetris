@@ -2,7 +2,7 @@
 doc_id: CONFIG_TEST_ORACLE
 name: CONFIG_TEST_ORACLE.md
 title: Configuration Test Oracle
-kind: oracle
+kind: testing
 scope: shell:persistence
 status: draft
 authority: normative

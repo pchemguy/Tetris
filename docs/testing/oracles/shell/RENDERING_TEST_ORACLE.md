@@ -2,7 +2,7 @@
 doc_id: RENDERING_TEST_ORACLE
 name: RENDERING_TEST_ORACLE.md
 title: Rendering Test Oracle
-kind: oracle
+kind: testing
 scope: shell:renderer
 status: active
 authority: normative

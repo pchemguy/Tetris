@@ -2,7 +2,7 @@
 doc_id: RUNTIME_TEST_ORACLE
 name: RUNTIME_TEST_ORACLE.md
 title: Runtime Test Oracle
-kind: oracle
+kind: testing
 scope: shell:runtime
 status: active
 authority: normative

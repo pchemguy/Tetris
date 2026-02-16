@@ -2,7 +2,7 @@
 doc_id: CLI_TEST_ORACLE
 name: CLI_TEST_ORACLE.md
 title: CLI Test Oracle
-kind: oracle
+kind: testing
 scope: shell:cli
 status: active
 authority: normative

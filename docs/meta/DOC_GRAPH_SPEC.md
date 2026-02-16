@@ -379,7 +379,7 @@ Graph output MUST include a legend indicating:
 Optional node styling by `kind`:
 
 * `control`: distinct shape/class
-* `spec`, `oracle`, `api`, `map`, `report`, `idea`: distinct classes
+* `spec`, `testing`, `api`, `report`, `idea`: distinct classes
 
 (Exact colors/shapes are output-format-specific; the rule is that kinds must be distinguishable.)
 

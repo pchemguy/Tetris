@@ -2,7 +2,7 @@
 doc_id: CORE_TEST_ORACLE
 name: CORE_TEST_ORACLE.md
 title: Core Test Oracle
-kind: oracle
+kind: testing
 scope: core:core
 status: active
 authority: normative
