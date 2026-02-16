@@ -9,12 +9,9 @@ authority: normative
 gate_applies_to: all
 phase_applies_to: all
 description: Defines repository evolution phases, acceptance gates, and scope-control rules governing when work is permitted and evaluated.
-supersedes: []
-superseded_by: null
-references: [
-  PHASES,
-  ACCEPTANCE_GATES
-]
+references:
+  - PHASES
+  - ACCEPTANCE_GATES
 ---
 
 # L1 — Governance
@@ -37,7 +34,7 @@ L1 is not “above” L2 in the semantic stack. It is above in the **control sta
 
 ## Document Index
 
-Directory**: `docs/control/`
+**Directory**: `docs/control/`
 
 | Title                       | Filename              | Function / Role                                             |
 | --------------------------- | --------------------- | ----------------------------------------------------------- |
