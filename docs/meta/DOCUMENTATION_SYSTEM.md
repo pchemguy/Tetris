@@ -28,7 +28,7 @@ The documentation base is organized into conceptual layers, from **L0 (highest l
 | L1    | Governance (process control)           | `docs/control/`      | `L1_GOVERNANCE.md`    | `control`      |
 | L2    | System structure (global contracts)    | `docs/architecture/` | `L2_STRUCTURE.md`     | `architecture` |
 | L3    | Behavioral specs (component contracts) | `docs/specs/`        | `L3_BEHAVIOR.md`      | `spec`, `api`  |
-| L4    | Testing (proof obligations)            | `docs/testing/`      | `L4_TESTING.md`       | `oracle`       |
+| L4    | Testing (proof obligations)            | `docs/testing/`      | `L4_TESTING.md`       | `testing`      |
 | L5    | Execution state (reports)              | `docs/reports/`      | `L5_REPORTS.md`       | `report`       |
 | OUT   | Collection of ideas                    | `docs/ideas/`        | –                     | `idea`         |
 
