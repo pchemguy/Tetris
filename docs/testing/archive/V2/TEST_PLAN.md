@@ -11,6 +11,7 @@ references:
   - PHASES
   - TEST_STRATEGY
   - TESTING_CONVENTIONS
+url: https://chatgpt.com/c/698975ae-3688-8397-92a7-8c7fbe698b2e
 ---
 
 # TEST_PLAN
