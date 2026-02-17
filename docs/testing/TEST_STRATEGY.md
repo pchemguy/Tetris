@@ -2,7 +2,7 @@
 doc_id: TEST_STRATEGY
 name: TEST_STRATEGY.md
 title: Test Strategy
-kind: strategy
+kind: testing
 scope: global
 status: active
 authority: normative

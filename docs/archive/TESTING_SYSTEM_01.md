@@ -1,5 +1,5 @@
 ---
-name: TESTING_SYSTEM.md
+name: TESTING_SYSTEM_01.md
 description: Canonical, AI-oriented testing system specification for this repository. Defines governance (TEST_STRATEGY.md), normative oracle specs (*_TEST_ORACLE.md), executable implementations (pytest), and observational run reports (TEST_RUN_REPORT.md), plus how skills S4/S6/S7 and bug-fixer interact with these layers.
 URL: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/698975ae-3688-8397-92a7-8c7fbe698b2e
 ---
