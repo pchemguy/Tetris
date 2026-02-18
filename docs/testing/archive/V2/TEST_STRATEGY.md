@@ -9,13 +9,16 @@ authority: normative
 phase_applies_to: all
 gate_applies_to: all
 url: https://chatgpt.com/c/698975ae-3688-8397-92a7-8c7fbe698b2e
+references:
+  - DOCUMENTATION_SYSTEM
+  - DOC_INVENTORY
 ---
 
 # TEST_STRATEGY
 
 ## 1. Purpose
 
-This document defines the governance rules for testing in the this repository.
+This document defines the governance rules for testing in this repository.
 
 The purpose of testing in this project is not merely to detect defects, but to:
 
@@ -25,7 +28,7 @@ The purpose of testing in this project is not merely to detect defects, but to:
 - provide auditable evaluation signals for AI agents,
 - prevent specification drift and guesswork.
 
-This document defines **what correctness claims are allowed and how they are governed**.
+This document defines which correctness claims are legitimate and how they are governed.
 
 It does not define repository layout, naming patterns, or pytest mechanics.  
 Those are defined in `TESTING_CONVENTIONS.md`.
@@ -38,8 +41,8 @@ Testing must ensure:
 
 1. The Core remains deterministic and pure.
 2. Architectural boundaries defined in `ARCHITECTURE.md` and `DECOMPOSITION.md` are respected.
-3. All correctness claims are grounded in authoritative documentation.
-4. No behavior is silently invented or altered.
+3. All correctness claims are grounded exclusively in authoritative documentation.
+4. No undocumented behavior may be introduced, inferred, or silently altered.
 5. AI agent contributions remain auditable and non-speculative.
 
 ---
@@ -105,21 +108,23 @@ Prohibited:
 
 ### 4.1 Definition
 
-An oracle is a normative correctness claim derived from authoritative documentation.
+An oracle is a normative correctness claim derived exclusively from documentation with `authority: normative`.
 
 ### 4.2 Authority Sources
 
-Correctness authority derives from:
+Correctness authority derives exclusively from documents whose metadata declares:
 
-- PROJECT.md
-- GAME_RULES.md
-- GAME_STATE.md
-- SHAPES_AND_ROTATIONS.md
-- CORE_API.md
-- ARCHITECTURE.md
-- DECOMPOSITION.md
+- `authority: normative`
 
-Tests must not invent behavior beyond these documents.
+The specific set of such documents is determined dynamically by repository discovery (see `@DOCUMENTATION_SYSTEM` and `@DOC_INVENTORY`).
+
+Tests must not derive correctness claims from:
+
+- non-normative documents,
+- draft documents,
+- idea documents,
+- reports,
+- or implementation artifacts.
 
 ---
 
@@ -141,13 +146,13 @@ Formal oracle specifications are required for:
 - Deterministic replay equivalence
 - State transition mapping
 
-Golden-master snapshot tests are discouraged unless explicitly authorized.
+Golden-master (snapshot) tests are discouraged unless explicitly authorized by a normative specification that defines byte-level stability as part of the contract.
 
 ---
 
 ## 5. Determinism Policy
 
-The core simulation must be fully deterministic.
+The core simulation must be fully deterministic. Determinism is a structural requirement, not an optimization target.
 
 Tests must:
 
@@ -207,7 +212,7 @@ Oracle changes require documentation updates before implementation.
 
 - Full suite must pass before declaring any gate complete.
 - Targeted suites may be used during development but are not substitutes for full validation.
-- All failures must be classified before mutation.
+- All failures must be classified (spec violation, architectural violation, oracle defect, or implementation defect) before code or test mutation.
 
 ---
 
