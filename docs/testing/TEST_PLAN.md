@@ -473,6 +473,6 @@ Any determinism violation fails the entire suite.
 - `TEST_STRATEGY.md` defines correctness semantics.
 - `TESTING_CONVENTIONS.md` defines encoding mechanics.
 - `TEST_PLAN.md` defines execution grouping and sequencing.
-- `ACCEPTANCE_GATES.md` defines progression criteria.
+- `@ACCEPTANCE_GATES` defines progression criteria.
 
 This document must not duplicate oracle definitions or correctness policy.

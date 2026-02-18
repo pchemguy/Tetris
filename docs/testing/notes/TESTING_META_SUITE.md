@@ -5,7 +5,7 @@ title: Testing Meta Suite
 kind: testing
 scope: global
 status: active
-authority: normative
+authority: non-normative
 gate_applies_to: all
 phase_applies_to: all
 description: Describes testing meta suite
