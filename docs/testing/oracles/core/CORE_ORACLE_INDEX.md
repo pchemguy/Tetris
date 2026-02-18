@@ -100,9 +100,70 @@ by updating this index and/or introducing an oracle.
 
 ---
 
-## 3. Oracle → Spec traceability map (normative)
+## 3. Machine-readable traceability artifacts
 
-### 3.1 ORACLE_CORE_COLLISION
+This oracle index has **two parallel representations**:
+
+- `CORE_ORACLE_INDEX.md` (this file) — human-readable normative index.
+- `CORE_ORACLE_INDEX.json` — the **machine-readable traceability matrix** containing the same oracle↔spec linkage content in structured form.
+- `CORE_ORACLE_INDEX.schema.json` — the JSON Schema used to validate `CORE_ORACLE_INDEX.json`.
+
+### 3.1 Normative relationship
+
+- This Markdown document defines the **normative meaning** of the index (what each field represents and how to interpret it).
+- The JSON instance is the **normative machine artifact** used for tooling, validation, and automated checks.
+- The schema is **normative for validation**, not for semantics: it constrains structure, not intent.
+
+If a conflict is detected:
+
+1. Treat `CORE_ORACLE_INDEX.json` as the authoritative machine source for automation.
+2. Treat this document as the authoritative human source for interpretation.
+3. Resolve conflicts by updating one so that both match; do not “work around” mismatches in tooling.
+
+### 3.2 Required invariants (tooling expectations)
+
+Tooling that consumes the index must enforce:
+
+- **Oracle file existence**: every oracle referenced in `CORE_ORACLE_INDEX.json` must correspond to a real `ORACLE_*.md` document with a YAML `doc_id` matching the referenced oracle id.
+- **Spec target existence**: every referenced spec (`doc_id`) must exist as a YAML `doc_id` in the repository.
+- **Section traceability**: each mapping must include:
+  - a `spec_doc_id`, and
+  - a `spec_section` (a stable section identifier, e.g. `§6 Rotation` or an explicit anchor token).
+- **Gate applicability consistency**: if the JSON declares oracle applicability to gates/phases, it must not contradict the oracle document’s YAML header fields (`gate_applies_to`, `phase_applies_to`).
+
+### 3.3 Round-trip constraint
+
+`CORE_ORACLE_INDEX.json` must be a **faithful structured representation** of this index:
+
+- No oracle/spec relationships may exist only in JSON or only in Markdown.
+- Any update to oracle coverage must update both representations in the same change.
+
+### 3.4 Intended use
+
+The JSON index enables:
+
+- generation of coverage reports (spec section → oracle coverage),
+- detection of orphan specs (no oracle),
+- detection of orphan oracles (not referenced by index),
+- CI checks that block merges when traceability is incomplete.
+
+### 3.5 Schema semantics boundary
+
+`CORE_ORACLE_INDEX.schema.json` validates the **structural correctness** of the machine-readable index (field presence, types, required keys, uniqueness constraints). It does **not** define semantic meaning, coverage adequacy, or cross-document correctness.
+
+Semantic validity — including whether mappings are conceptually correct, complete, or consistent with the referenced specification sections — is governed by this document and by the referenced spec documents themselves.
+
+Tooling must therefore distinguish:
+
+- **Structural validity** (schema validation),
+- **Traceability completeness** (index coverage checks),
+- **Normative correctness** (spec↔oracle alignment).
+
+---
+
+## 4. Oracle → Spec traceability map (normative)
+
+### 4.1 ORACLE_CORE_COLLISION
 
 Validates:
 
@@ -119,7 +180,7 @@ Validates:
 - `@CORE_API` §5.3 (blocks_for must return in-bounds positions given valid state)
 - `@CORE_API` §7.1 (strict state validation expectations)
 
-### 3.2 ORACLE_CORE_SPAWN
+### 4.2 ORACLE_CORE_SPAWN
 
 Validates:
 
@@ -131,7 +192,7 @@ Validates:
 - `@CORE_API` §4.1 (GameState fields: next_piece defined)
 - `@ERROR_HANDLING` §4.1 (next_piece always defined; defensive behavior)
 
-### 3.3 ORACLE_CORE_GEOMETRY
+### 4.3 ORACLE_CORE_GEOMETRY
 
 Validates:
 
@@ -143,7 +204,7 @@ Validates:
 - `@GAME_STATE` §3.3 (blocks(active_piece) = exactly 4 blocks)
 - `@CORE_API` §5.3 (blocks_for uses enumerations; deterministic ordering)
 
-### 3.4 ORACLE_CORE_GRAVITY_AND_LOCKING
+### 4.4 ORACLE_CORE_GRAVITY_AND_LOCKING
 
 Validates:
 
@@ -156,7 +217,7 @@ Validates:
 - `@INPUT_MODEL` §4 (ordering relative to gravity; hard drop skips gravity)
 - `@CORE_API` §5.4 (gravity_ticks_per_cell formula + errors)
 
-### 3.5 ORACLE_CORE_LINE_CLEAR
+### 4.5 ORACLE_CORE_LINE_CLEAR
 
 Validates:
 
@@ -164,7 +225,7 @@ Validates:
 - `@GAME_STATE` §6.5 (line clear resolution)
 - `@ERROR_HANDLING` §4.1 (board invariants remain valid post-clear)
 
-### 3.6 ORACLE_CORE_SCORING
+### 4.6 ORACLE_CORE_SCORING
 
 Validates:
 
@@ -173,7 +234,7 @@ Validates:
 - `@GAME_STATE` §6.6 (score/level update semantics)
 - `@ERROR_HANDLING` §4.1 (score non-negative, level >= 1)
 
-### 3.7 ORACLE_CORE_RNG_7BAG
+### 4.7 ORACLE_CORE_RNG_7BAG
 
 Validates:
 
@@ -183,7 +244,7 @@ Validates:
 - `@CORE_API` §5.1 (new_game initializes RNG)
 - `@CORE_API` §9 (compatibility notes: determinism under seed)
 
-### 3.8 ORACLE_CORE_GAME_OVER
+### 4.8 ORACLE_CORE_GAME_OVER
 
 Validates:
 
@@ -193,7 +254,7 @@ Validates:
 - `@ERROR_HANDLING` §4.2 (active validity conditional on game over)
 - `@CORE_API` §5.2 (game-over short circuit semantics)
 
-### 3.9 ORACLE_CORE_INVARIANTS
+### 4.9 ORACLE_CORE_INVARIANTS
 
 Validates:
 
@@ -202,7 +263,7 @@ Validates:
 - `@CORE_API` §4.2 (immutability requirement)
 - `@CORE_API` §7.1 (strict validation behavior)
 
-### 3.10 ORACLE_CORE_HOLD
+### 4.10 ORACLE_CORE_HOLD
 
 Validates (only if hold is enabled):
 
@@ -214,7 +275,7 @@ Validates (only if hold is enabled):
 
 ---
 
-## 4. Tooling contract (normative expectations)
+## 5. Tooling contract (normative expectations)
 
 Tooling that consumes this document may:
 
