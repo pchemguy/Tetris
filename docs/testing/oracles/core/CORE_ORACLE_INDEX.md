@@ -127,8 +127,8 @@ Tooling that consumes the index must enforce:
 - **Oracle file existence**: every oracle referenced in `CORE_ORACLE_INDEX.json` must correspond to a real `ORACLE_*.md` document with a YAML `doc_id` matching the referenced oracle id.
 - **Spec target existence**: every referenced spec (`doc_id`) must exist as a YAML `doc_id` in the repository.
 - **Section traceability**: each mapping must include:
-  - a `spec_doc_id`, and
-  - a `spec_section` (a stable section identifier, e.g. `§6 Rotation` or an explicit anchor token).
+    - a `spec_doc_id`, and
+    - a `spec_section` (a stable section identifier, e.g. `§6 Rotation` or an explicit anchor token).
 - **Gate applicability consistency**: if the JSON declares oracle applicability to gates/phases, it must not contradict the oracle document’s YAML header fields (`gate_applies_to`, `phase_applies_to`).
 
 ### 3.3 Round-trip constraint

@@ -9,14 +9,13 @@ authority: normative
 gate_applies_to: all
 phase_applies_to: all
 description: Defines mandatory correctness proofs and component-specific test oracles mapped to acceptance gates.
-references: [
-  CORE_TEST_ORACLE,
-  RENDERING_TEST_ORACLE,
-  RUNTIME_TEST_ORACLE,
-  CLI_TEST_ORACLE,
-  REPLAY_TEST_ORACLE,
-  CONFIG_TEST_ORACLE
-]
+references:
+  - ORACLE_CORE
+  - ORACLE_SHELL_RENDERING
+  - ORACLE_SHELL_RUNTIME
+  - ORACLE_SHELL_CLI
+  - ORACLE_SHELL_REPLAY
+  - ORACLE_SHELL_CONFIG
 ---
 
 # L4 — Testing
@@ -27,9 +26,9 @@ references: [
 
 **Directory**: `docs/testing/oracles/core/`
 
-| Title            | Filename              | Function / Role                               |
-| ---------------- | --------------------- | --------------------------------------------- |
-| Core Test Oracle | `CORE_TEST_ORACLE.md` | Mandatory correctness tests for the pure core |
+| Title                                | Filename         | Function / Role                                                       |
+| ------------------------------------ | ---------------- | --------------------------------------------------------------------- |
+| Composite Mandatory Core Test Oracle | `ORACLE_CORE.md` | Describes ORACLE_CORE decomposition and lists associated oracle files |
 
 ---
 
@@ -37,13 +36,13 @@ references: [
 
 **Directory**: `docs/testing/oracles/shell/`
 
-| Title                 | Filename                   | Function / Role                                     |
-| --------------------- | -------------------------- | --------------------------------------------------- |
-| Rendering Test Oracle | `RENDERING_TEST_ORACLE.md` | Mandatory snapshot tests for ASCII rendering        |
-| Runtime Test Oracle   | `RUNTIME_TEST_ORACLE.md`   | Deterministic execution tests for scripted runtime  |
-| CLI Test Oracle       | `CLI_TEST_ORACLE.md`       | Mandatory behavioral tests for CLI commands         |
-| Replay Test Oracle    | `REPLAY_TEST_ORACLE.md`    | Deterministic replay validation and execution tests |
-| Config Test Oracle    | `CONFIG_TEST_ORACLE.md`    | Mandatory automated configuration handling tests    |
+| Title                 | Filename                    | Function / Role                                     |
+| --------------------- | --------------------------- | --------------------------------------------------- |
+| Rendering Test Oracle | `ORACLE_SHELL_RENDERING.md` | Mandatory snapshot tests for ASCII rendering        |
+| Runtime Test Oracle   | `ORACLE_SHELL_RUNTIME.md`   | Deterministic execution tests for scripted runtime  |
+| CLI Test Oracle       | `ORACLE_SHELL_CLI.md`       | Mandatory behavioral tests for CLI commands         |
+| Replay Test Oracle    | `ORACLE_SHELL_REPLAY.md`    | Deterministic replay validation and execution tests |
+| Config Test Oracle    | `ORACLE_SHELL_CONFIG.md`    | Mandatory automated configuration handling tests    |
 
 ---
 

@@ -82,24 +82,24 @@ Those concerns are governed by shell-level testing documents.
 
 The core oracle is decomposed into modular documents:
 
-| Concern | Oracle Document |
-|----------|----------------|
-| Collision & rejection | `ORACLE_CORE_COLLISION` |
-| Spawn semantics | `ORACLE_CORE_SPAWN` |
-| Geometry & rotations | `ORACLE_CORE_GEOMETRY` |
-| Gravity & locking | `ORACLE_CORE_GRAVITY_AND_LOCKING` |
-| Line clearing | `ORACLE_CORE_LINE_CLEAR` |
-| Scoring & level progression | `ORACLE_CORE_SCORING` |
-| RNG (7-bag) | `ORACLE_CORE_RNG_7BAG` |
-| Game over semantics | `ORACLE_CORE_GAME_OVER` |
-| Hold mechanics | `ORACLE_CORE_HOLD` |
-| Global invariants | `ORACLE_CORE_INVARIANTS` |
+| Concern                     | Oracle Document                      |
+| --------------------------- | ------------------------------------ |
+| Collision & rejection       | `ORACLE_CORE_COLLISION.md`           |
+| Spawn semantics             | `ORACLE_CORE_SPAWN.md`               |
+| Geometry & rotations        | `ORACLE_CORE_GEOMETRY.md`            |
+| Gravity & locking           | `ORACLE_CORE_GRAVITY_AND_LOCKING.md` |
+| Line clearing               | `ORACLE_CORE_LINE_CLEAR.md`          |
+| Scoring & level progression | `ORACLE_CORE_SCORING.md`             |
+| RNG (7-bag)                 | `ORACLE_CORE_RNG_7BAG.md`            |
+| Game over semantics         | `ORACLE_CORE_GAME_OVER.md`           |
+| Hold mechanics              | `ORACLE_CORE_HOLD.md`                |
+| Global invariants           | `ORACLE_CORE_INVARIANTS.md`          |
 
 Each modular oracle defines its own precise obligations.
 
 This document defines the **minimum composite gate obligations**.
 
-Traceability between oracles and spec clauses is defined in `CORE_ORACLE_INDEX`.
+Traceability between oracles and spec clauses is defined in `CORE_ORACLE_INDEX.md`.
 
 ---
 
