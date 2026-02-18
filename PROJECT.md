@@ -64,20 +64,17 @@ Code exists to satisfy the docs — not the other way around.
 
 ---
 
-## 3. Intended development workflow (summary)
+## 3. Intended development workflow
 
-The workflow below assumes full understanding of the documentation authority model described in the next section.
+This repository is operated as a **governed loop**:
 
-1. Build or load a documentation inventory (docs traversal or `DOC_INVENTORY.json`).
-2. Read all normative documents required for the target gate (per inventory and authority rules).
-3. **Read `IMPLEMENTATION_REPORTS.md`** to determine current state.
-4. Determine the current repository **phase** (`PHASES.md`).
-5. Confirm the current **acceptance gate** (`ACCEPTANCE_GATES.md`).
-6. Implement incrementally, gate by gate.
-7. Write tests mapped to the applicable `*_TEST_ORACLE.md` document(s).
-8. Append results to `IMPLEMENTATION_REPORTS.md`.
-9. Stop and escalate on ambiguity.
-10. Extend behavior **only by updating documentation first**.
+1. **Establish authoritative context**: load `DOC_INVENTORY.json` (preferred) or build an inventory by traversing `docs/`, then resolve the **reference closure** for the target work.    
+2. **Establish permission and target**: determine the current **phase** and the target **acceptance gate**.
+3. **Establish current state**: read `IMPLEMENTATION_REPORTS.md` before making any changes.
+4. **Implement only what is authorized** by the resolved document set, then **prove correctness** using the gate-applicable oracle(s), and **append results** to `IMPLEMENTATION_REPORTS.md`.
+5. If any normative requirement is missing/ambiguous/conflicting, **stop and escalate**; do not guess.
+
+The normative, step-by-step operating procedure (including how required documents are computed per gate, and how suites/oracles map to execution) is defined in `docs/control/WORKFLOW.md`.
 
 ---
 
