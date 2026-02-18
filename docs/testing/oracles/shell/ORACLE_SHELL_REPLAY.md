@@ -1,6 +1,6 @@
 ---
-doc_id: REPLAY_TEST_ORACLE
-name: REPLAY_TEST_ORACLE.md
+doc_id: ORACLE_SHELL_REPLAY
+name: ORACLE_SHELL_REPLAY.md
 title: Replay Test Oracle
 kind: testing
 scope: shell:persistence

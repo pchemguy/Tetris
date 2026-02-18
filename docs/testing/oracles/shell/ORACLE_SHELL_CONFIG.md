@@ -1,6 +1,6 @@
 ---
-doc_id: CONFIG_TEST_ORACLE
-name: CONFIG_TEST_ORACLE.md
+doc_id: ORACLE_SHELL_CONFIG
+name: ORACLE_SHELL_CONFIG.md
 title: Configuration Test Oracle
 kind: testing
 scope: shell:persistence

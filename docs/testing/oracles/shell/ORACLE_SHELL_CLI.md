@@ -1,6 +1,6 @@
 ---
-doc_id: CLI_TEST_ORACLE
-name: CLI_TEST_ORACLE.md
+doc_id: ORACLE_SHELL_CLI
+name: ORACLE_SHELL_CLI.md
 title: CLI Test Oracle
 kind: testing
 scope: shell:cli

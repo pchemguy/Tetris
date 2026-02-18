@@ -1,6 +1,6 @@
 ---
-doc_id: RUNTIME_TEST_ORACLE
-name: RUNTIME_TEST_ORACLE.md
+doc_id: ORACLE_SHELL_RUNTIME
+name: ORACLE_SHELL_RUNTIME.md
 title: Runtime Test Oracle
 kind: testing
 scope: shell:runtime

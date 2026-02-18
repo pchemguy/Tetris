@@ -1,6 +1,6 @@
 ---
-doc_id: RENDERING_TEST_ORACLE
-name: RENDERING_TEST_ORACLE.md
+doc_id: ORACLE_SHELL_RENDERING
+name: ORACLE_SHELL_RENDERING.md
 title: Rendering Test Oracle
 kind: testing
 scope: shell:renderer
