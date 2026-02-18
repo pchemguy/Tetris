@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "CORE_ORACLE_INDEX.schema.json",
+  "title": "Core Oracle Index Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "index_id",
+    "project_id",
+    "generated_from",
+    "applies_to",
+    "spec_documents",
+    "oracle_documents",
+    "traceability"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "index_id": { "$ref": "#/$defs/doc_id" },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[A-Z][0-9A-Z_]*$"
+    },
+    "generated_from": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["doc_id", "name"],
+      "properties": {
+        "doc_id": { "$ref": "#/$defs/doc_id" },
+        "name": { "type": "string", "pattern": "^[A-Z][0-9A-Z_]*\\.md$" }
+      }
+    },
+    "applies_to": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_applies_to", "phase_applies_to", "scope"],
+      "properties": {
+        "gate_applies_to": { "$ref": "#/$defs/range_token" },
+        "phase_applies_to": { "$ref": "#/$defs/range_token" },
+        "scope": { "$ref": "#/$defs/doc_scope_token" }
+      }
+    },
+    "spec_documents": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/doc_id" }
+    },
+    "oracle_documents": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/doc_id" }
+    },
+    "traceability": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/oracle_entry" }
+    }
+  },
+  "$defs": {
+    "doc_id": {
+      "type": "string",
+      "pattern": "^[A-Z][0-9A-Z_]*$"
+    },
+    "range_token": {
+      "type": "string",
+      "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"
+    },
+    "doc_scope_token": {
+      "type": "string",
+      "enum": [
+        "global",
+        "core",
+        "shell",
+        "testing",
+        "core:core",
+        "shell:renderer",
+        "shell:presenter",
+        "shell:input_driver",
+        "shell:input_controller",
+        "shell:runtime",
+        "shell:cli",
+        "shell:persistence",
+        "shell:telemetry",
+        "testing:testing"
+      ]
+    },
+    "section_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["doc_id", "section"],
+      "properties": {
+        "doc_id": { "$ref": "#/$defs/doc_id" },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "equals"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "equals": { "type": ["string", "number", "boolean", "null"] }
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["only_if"],
+      "properties": {
+        "only_if": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/condition" }
+        }
+      }
+    },
+    "oracle_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracle_id", "validates"],
+      "properties": {
+        "oracle_id": { "$ref": "#/$defs/doc_id" },
+        "validates": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/section_ref" }
+        },
+        "conditions": { "$ref": "#/$defs/conditions" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "oracle_id": { "const": "ORACLE_CORE_HOLD" } },
+            "required": ["oracle_id"]
+          },
+          "then": { "required": ["conditions"] }
+        }
+      ]
+    }
+  }
+}

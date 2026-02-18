@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "1.0.0",
+  "index_id": "CORE_ORACLE_INDEX",
+  "project_id": "TETRIS",
+  "generated_from": {
+    "doc_id": "CORE_ORACLE_INDEX",
+    "name": "CORE_ORACLE_INDEX.md"
+  },
+  "applies_to": {
+    "gate_applies_to": "1-6",
+    "phase_applies_to": "all",
+    "scope": "core:core"
+  },
+  "spec_documents": [
+    "GAME_RULES",
+    "GAME_STATE",
+    "INPUT_MODEL",
+    "ERROR_HANDLING",
+    "SHAPES_AND_ROTATIONS",
+    "CORE_API"
+  ],
+  "oracle_documents": [
+    "ORACLE_CORE_COLLISION",
+    "ORACLE_CORE_SPAWN",
+    "ORACLE_CORE_GEOMETRY",
+    "ORACLE_CORE_GRAVITY_AND_LOCKING",
+    "ORACLE_CORE_LINE_CLEAR",
+    "ORACLE_CORE_SCORING",
+    "ORACLE_CORE_RNG_7BAG",
+    "ORACLE_CORE_GAME_OVER",
+    "ORACLE_CORE_INVARIANTS",
+    "ORACLE_CORE_HOLD"
+  ],
+  "traceability": [
+    {
+      "oracle_id": "ORACLE_CORE_COLLISION",
+      "validates": [
+        { "doc_id": "GAME_RULES", "section": "§2.1" },
+        { "doc_id": "GAME_RULES", "section": "§2.2" },
+        { "doc_id": "GAME_RULES", "section": "§6.3" },
+        { "doc_id": "GAME_RULES", "section": "§4.2" },
+        { "doc_id": "GAME_STATE", "section": "§2" },
+        { "doc_id": "GAME_STATE", "section": "§6.1" },
+        { "doc_id": "GAME_STATE", "section": "§6.2" },
+        { "doc_id": "GAME_STATE", "section": "§6.3" },
+        { "doc_id": "INPUT_MODEL", "section": "§3.3" },
+        { "doc_id": "ERROR_HANDLING", "section": "§2.1" },
+        { "doc_id": "ERROR_HANDLING", "section": "§4.2" },
+        { "doc_id": "CORE_API", "section": "§5.3" },
+        { "doc_id": "CORE_API", "section": "§7.1" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_SPAWN",
+      "validates": [
+        { "doc_id": "GAME_RULES", "section": "§5.1" },
+        { "doc_id": "GAME_RULES", "section": "§5.2" },
+        { "doc_id": "GAME_STATE", "section": "§6.7" },
+        { "doc_id": "GAME_STATE", "section": "§5.2" },
+        { "doc_id": "CORE_API", "section": "§5.1" },
+        { "doc_id": "CORE_API", "section": "§4.1" },
+        { "doc_id": "ERROR_HANDLING", "section": "§4.1" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_GEOMETRY",
+      "validates": [
+        { "doc_id": "SHAPES_AND_ROTATIONS", "section": "§2.1" },
+        { "doc_id": "SHAPES_AND_ROTATIONS", "section": "§2.2" },
+        { "doc_id": "SHAPES_AND_ROTATIONS", "section": "§3.*" },
+        { "doc_id": "SHAPES_AND_ROTATIONS", "section": "§4" },
+        { "doc_id": "GAME_RULES", "section": "§3.2" },
+        { "doc_id": "GAME_STATE", "section": "§3.3" },
+        { "doc_id": "CORE_API", "section": "§5.3" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_GRAVITY_AND_LOCKING",
+      "validates": [
+        { "doc_id": "GAME_RULES", "section": "§6.1" },
+        { "doc_id": "GAME_RULES", "section": "§7.1" },
+        { "doc_id": "GAME_RULES", "section": "§7.2" },
+        { "doc_id": "GAME_RULES", "section": "§9.3" },
+        { "doc_id": "GAME_STATE", "section": "§4.2" },
+        { "doc_id": "GAME_STATE", "section": "§5.2" },
+        { "doc_id": "GAME_STATE", "section": "§6.4" },
+        { "doc_id": "INPUT_MODEL", "section": "§4" },
+        { "doc_id": "CORE_API", "section": "§5.4" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_LINE_CLEAR",
+      "validates": [
+        { "doc_id": "GAME_RULES", "section": "§8.1" },
+        { "doc_id": "GAME_RULES", "section": "§8.2" },
+        { "doc_id": "GAME_STATE", "section": "§6.5" },
+        { "doc_id": "ERROR_HANDLING", "section": "§4.1" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_SCORING",
+      "validates": [
+        { "doc_id": "GAME_RULES", "section": "§9.1" },
+        { "doc_id": "GAME_RULES", "section": "§9.2" },
+        { "doc_id": "GAME_STATE", "section": "§6.6" },
+        { "doc_id": "ERROR_HANDLING", "section": "§4.1" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_RNG_7BAG",
+      "validates": [
+        { "doc_id": "GAME_RULES", "section": "§10.1" },
+        { "doc_id": "GAME_RULES", "section": "§10.2" },
+        { "doc_id": "GAME_STATE", "section": "§3.5" },
+        { "doc_id": "CORE_API", "section": "§3.2" },
+        { "doc_id": "CORE_API", "section": "§5.1" },
+        { "doc_id": "CORE_API", "section": "§9" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_GAME_OVER",
+      "validates": [
+        { "doc_id": "GAME_RULES", "section": "§11" },
+        { "doc_id": "GAME_STATE", "section": "§5.2" },
+        { "doc_id": "GAME_STATE", "section": "§6.7" },
+        { "doc_id": "ERROR_HANDLING", "section": "§4.2" },
+        { "doc_id": "CORE_API", "section": "§5.2" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_INVARIANTS",
+      "validates": [
+        { "doc_id": "GAME_STATE", "section": "§8" },
+        { "doc_id": "ERROR_HANDLING", "section": "§4.1" },
+        { "doc_id": "ERROR_HANDLING", "section": "§4.2" },
+        { "doc_id": "CORE_API", "section": "§4.2" },
+        { "doc_id": "CORE_API", "section": "§7.1" }
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_HOLD",
+      "validates": [
+        { "doc_id": "GAME_RULES", "section": "§12.2" },
+        { "doc_id": "GAME_STATE", "section": "§3.7" },
+        { "doc_id": "GAME_STATE", "section": "§6.8" },
+        { "doc_id": "INPUT_MODEL", "section": "§6" },
+        { "doc_id": "CORE_API", "section": "§3.2" },
+        { "doc_id": "CORE_API", "section": "§4.1" }
+      ],
+      "conditions": {
+        "only_if": [{ "key": "enable_hold", "equals": true }]
+      }
+    }
+  ]
+}
