@@ -243,3 +243,160 @@ Determinism failure invalidates gate completion.
 * Resolves escalations.
 
 ---
+
+# 12. Repository evolution state machine
+
+This is a *governance* state machine: it models the allowed progression of work and the hard stop conditions that force escalation.
+
+## State definitions
+
+* **DISCOVERY**: build doc context, determine current phase/gate state, compute closure.
+* **PLAN_GATE_WORK**: select exactly one target gate and compute the normative closure needed to work on it.
+* **IMPLEMENT**: code changes constrained by phase + spec closure.
+* **TRANSLATE_ORACLES**: ensure oracle → pytest mapping exists with traceability.
+* **RUN_SUITES**: run required suites for the target gate.
+* **REPORT**: append execution record (what happened, what passed/failed, what’s next).
+* **ADVANCE_GATE**: the gate is now satisfied and becomes the new baseline.
+* **ESCALATE**: ambiguity/conflict/blocked; requires human resolution before proceeding.
+
+## Mermaid diagram
+
+```mermaid
+stateDiagram-v2
+  [*] --> DISCOVERY
+
+  DISCOVERY --> ESCALATE: missing docs / ambiguous current state\nor inventory unavailable
+  DISCOVERY --> PLAN_GATE_WORK: phase+gate resolved\nand inventory ready
+
+  PLAN_GATE_WORK --> ESCALATE: target gate unclear\nor references conflict
+  PLAN_GATE_WORK --> IMPLEMENT: target gate fixed\nand spec/oracle closure computed
+
+  IMPLEMENT --> ESCALATE: spec ambiguity\nor forbidden-by-phase work required
+  IMPLEMENT --> TRANSLATE_ORACLES: code changes complete\nfor this iteration
+
+  TRANSLATE_ORACLES --> ESCALATE: oracle cannot be translated\nwithout changing norms
+  TRANSLATE_ORACLES --> RUN_SUITES: tests exist + traceable
+
+  RUN_SUITES --> IMPLEMENT: failures classified as implementation defects
+  RUN_SUITES --> TRANSLATE_ORACLES: failures classified as test encoding defects
+  RUN_SUITES --> ESCALATE: failures indicate spec/oracle conflict\nor missing normative definition
+  RUN_SUITES --> REPORT: required suites pass
+
+  REPORT --> ADVANCE_GATE: report appended\nand gate completion asserted
+  ADVANCE_GATE --> DISCOVERY: next iteration (new target gate)
+
+  ESCALATE --> DISCOVERY: human resolves + updates docs\nthen restart discovery
+```
+
+**Normative interpretation**:
+
+* There is **no direct edge** from `RUN_SUITES` to `ADVANCE_GATE` without `REPORT`.
+* `ESCALATE` is not a “failure” state; it is an enforcement state.
+* The loop `RUN_SUITES → IMPLEMENT` is allowed only when failure classification does **not** imply a normative document problem.
+
+---
+
+# Agent gate-loop pseudocode
+
+This is the “single-gate evolution loop” expressed as deterministic procedure. It is intentionally explicit about where an agent must stop.
+
+## Data model assumptions
+
+* `inventory`: doc inventory (either built by traversal or loaded).
+* `phase`: current phase (resolved from authoritative sources).
+* `gate`: target acceptance gate (single integer).
+* `closure`: the set of normative docs required to implement + validate the gate.
+* `required_suites`: suite names required for the gate.
+
+## Pseudocode
+
+```text
+procedure EVOLVE_REPO_ONE_GATE(target_gate=None):
+
+  # 0) DISCOVERY (mandatory)
+  inventory = LOAD_OR_BUILD_INVENTORY()
+  if inventory is None:
+      ESCALATE("No documentation inventory; deterministic reference resolution impossible")
+
+  current_state = READ_IMPLEMENTATION_STATE(inventory)
+  if current_state is ambiguous:
+      ESCALATE("Cannot determine current phase/gate baseline from reports")
+
+  phase = RESOLVE_CURRENT_PHASE(inventory, current_state)
+  if phase is ambiguous:
+      ESCALATE("Cannot resolve current phase")
+
+  gate_baseline = RESOLVE_HIGHEST_PASSED_GATE(current_state)
+  if gate_baseline is ambiguous:
+      ESCALATE("Cannot resolve highest passed gate")
+
+  if target_gate is None:
+      target_gate = gate_baseline + 1
+
+  if target_gate != gate_baseline + 1:
+      ESCALATE("Non-sequential gate selection is prohibited")
+
+  # 1) SELECT + CLOSE (plan the work boundary)
+  gate_def = LOAD_GATE_DEFINITION(inventory, target_gate)
+  if gate_def is None:
+      ESCALATE("Target gate definition missing")
+
+  if PHASE_FORBIDS_GATE(phase, target_gate):
+      ESCALATE("Current phase forbids attempting this gate")
+
+  closure = COMPUTE_NORMATIVE_CLOSURE(inventory, gate_def)
+  if closure contains conflicts:
+      ESCALATE("Normative conflict detected in closure; cannot proceed without resolution")
+
+  required_suites = RESOLVE_REQUIRED_SUITES_FOR_GATE(inventory, target_gate)
+  if required_suites is empty:
+      ESCALATE("No required suites resolved for gate; validation boundary undefined")
+
+  # 2) IMPLEMENTATION LOOP (bounded and iterative)
+  loop:
+      APPLY_MINIMAL_CODE_CHANGES(closure, target_gate)
+      APPLY_MINIMAL_TEST_CHANGES(closure, target_gate)
+        # Tests must be traceable to oracles (CASE_ID discipline) if oracles require it.
+
+      result = RUN(required_suites)
+
+      if result.passed:
+          break
+
+      classification = CLASSIFY_FAILURES(result)
+        # classification ∈ {implementation_defect, test_encoding_defect, normative_gap_or_conflict}
+
+      if classification == implementation_defect:
+          continue loop
+
+      if classification == test_encoding_defect:
+          continue loop
+
+      if classification == normative_gap_or_conflict:
+          ESCALATE("Failures indicate missing/ambiguous spec or oracle conflict")
+
+  # 3) REPORT + ADVANCE (mandatory)
+  APPEND_IMPLEMENTATION_REPORT(
+      target_gate=target_gate,
+      phase=phase,
+      suites=required_suites,
+      outcome="PASS",
+      notes="..."
+  )
+
+  MARK_GATE_AS_BASELINE(current_state, target_gate)
+
+  return "GATE_COMPLETE"
+```
+
+## Required stop conditions (normative)
+
+The procedure must call `ESCALATE(...)` and stop immediately if **any** of these occur:
+
+* Target gate requires behavior not defined in the spec closure.
+* Phase forbids the target gate’s work class.
+* Oracle requirements cannot be satisfied without changing normative docs.
+* Conflicts are detected among normative docs in the closure.
+* Determinism cannot be achieved while obeying the specs.
+
+---
