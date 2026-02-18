@@ -399,6 +399,8 @@ If markers are used, they must reflect architectural scope only:
 - `@pytest.mark.runtime`
 - `@pytest.mark.rendering`
 - `@pytest.mark.replay`
+- `@pytest.mark.cli`
+- `@pytest.mark.config`
 
 Markers must not encode policy or gate status.
 
