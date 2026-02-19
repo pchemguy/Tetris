@@ -60,16 +60,8 @@ KIND_TO_LAYER = {
     "idea": "OUT",
 }
 
-REQUIRED_ENTRY_FIELDS = {
-    "doc_id",
-    "name",
-    "kind",
-    "scope",
-    "status",
-    "authority",
-    "gate_applies_to",
-    "phase_applies_to",
-}
+# NOTE: Required entry fields and property ordering MUST come from
+# docs/meta/DOC_INVENTORY.schema.json (not hard-coded).
 
 
 # ----------------------------
@@ -214,6 +206,9 @@ def _load_json(path: Path) -> Any:
 
     Schemas are required to be valid JSON. If the file contains trailing commas,
     comments, or other non-JSON constructs, fail with a precise location.
+
+    NOTE: Error messages use "\n" escape sequences inside single-line string literals
+    (no string literal spans multiple physical lines).
     """
 
     try:
@@ -357,38 +352,96 @@ def _find_repo_root_by_convention(script_path: Path) -> Path:
 # ----------------------------
 
 
+def _resolve_json_pointer(doc: Any, pointer: str) -> Any:
+    """Resolve a minimal JSON Pointer of the form '#/a/b/0/c'.
+
+    Only supports internal pointers starting with '#/'.
+    """
+
+    if pointer == "#":
+        return doc
+    if not pointer.startswith("#/"):
+        raise ValueError(
+            f"Unsupported $ref (only internal '#/' refs supported): {pointer}"
+        )
+
+    cur: Any = doc
+    parts = pointer[2:].split("/")
+    for raw in parts:
+        part = raw.replace("~1", "/").replace("~0", "~")
+        if isinstance(cur, list):
+            cur = cur[int(part)]
+        else:
+            cur = cur[part]
+    return cur
+
+
+def _resolve_schema_ref(
+    root_schema: dict[str, Any], schema: dict[str, Any]
+) -> dict[str, Any]:
+    """Resolve a schema dict that may contain a top-level '$ref'."""
+
+    if "$ref" not in schema:
+        return schema
+
+    target = _resolve_json_pointer(root_schema, str(schema["$ref"]))
+    if not isinstance(target, dict):
+        raise ValueError(f"Resolved $ref is not an object schema: {schema['$ref']}")
+    return target
+
+
+def _doc_entry_schema_info(
+    inventory_schema: dict[str, Any],
+) -> tuple[list[str], set[str]]:
+    """Return (properties_order, required_set) for docs[] entry objects.
+
+    Required list and property order are sourced from DOC_INVENTORY.schema.json.
+    """
+
+    inv = inventory_schema
+    inv_props = inv.get("properties")
+    if not isinstance(inv_props, dict):
+        raise SystemExit("DOC_INVENTORY.schema.json missing top-level 'properties'.")
+
+    docs_schema = inv_props.get("docs")
+    if not isinstance(docs_schema, dict):
+        raise SystemExit("DOC_INVENTORY.schema.json missing 'properties.docs'.")
+
+    items_schema = docs_schema.get("items")
+    if not isinstance(items_schema, dict):
+        raise SystemExit("DOC_INVENTORY.schema.json missing 'properties.docs.items'.")
+
+    entry_schema = _resolve_schema_ref(inv, items_schema)
+    entry_props = entry_schema.get("properties")
+    if not isinstance(entry_props, dict):
+        raise SystemExit(
+            "DOC_INVENTORY.schema.json docs[].items schema missing 'properties'."
+        )
+
+    # Python dict preserves JSON insertion order; this is our canonical field order.
+    properties_order = list(entry_props.keys())
+    required_raw = entry_schema.get("required", [])
+    if not isinstance(required_raw, list) or not all(
+        isinstance(x, str) for x in required_raw
+    ):
+        raise SystemExit(
+            "DOC_INVENTORY.schema.json docs[].items schema 'required' must be a list of strings."
+        )
+
+    return properties_order, set(required_raw)
+
+
 @dataclass(frozen=True)
 class DocRecord:
-    doc_id: str
-    name: str
-    path: str
-    kind: str
-    layer: str
-    scope: str
-    status: str
-    authority: str
-    gate_applies_to: str
-    phase_applies_to: str
-    optional_fields: dict[str, Any]
+    fields: dict[str, Any]
+    properties_order: list[str]
 
     def to_json_obj(self) -> dict[str, Any]:
-        # Emit a stable key order: required fields first, then optional.
-        obj: dict[str, Any] = {
-            "doc_id": self.doc_id,
-            "name": self.name,
-            "path": self.path,
-            "kind": self.kind,
-            "layer": self.layer,
-            "scope": self.scope,
-            "status": self.status,
-            "authority": self.authority,
-            "gate_applies_to": self.gate_applies_to,
-            "phase_applies_to": self.phase_applies_to,
-        }
-
-        for k in sorted(self.optional_fields.keys()):
-            obj[k] = self.optional_fields[k]
-
+        # Emit keys in the exact order of docs[].items.properties.
+        obj: dict[str, Any] = {}
+        for k in self.properties_order:
+            if k in self.fields:
+                obj[k] = self.fields[k]
         return obj
 
 
@@ -410,8 +463,13 @@ def _doc_entry_from_yaml(
     yaml_data: dict[str, Any],
     md_path: Path,
     repo_root: Path,
+    required_fields: set[str],
+    properties_order: list[str],
 ) -> DocRecord:
-    missing = [k for k in REQUIRED_ENTRY_FIELDS if k not in yaml_data]
+    missing = [
+        k for k in required_fields if k not in yaml_data and k not in {"path", "layer"}
+    ]
+    # 'path' and 'layer' are computed, not sourced from YAML.
     if missing:
         raise ValueError(f"Missing required YAML fields: {sorted(missing)}")
 
@@ -433,25 +491,16 @@ def _doc_entry_from_yaml(
         # Include trailing slash for directories to match typical examples.
         rel_dir_str = _posix_rel(rel_dir) + "/"
 
-    optional: dict[str, Any] = {}
-
-    # Optional fields per DOC_SCHEMA.md are allowed, but we do not attempt
-    # to enumerate them exhaustively here. We apply normalization rules:
-    # - omit empty values
-    # - sort+dedupe arrays for known array fields
-    # - a doc MUST NOT contain both 'url' and 'urls'
-
     if "url" in yaml_data and "urls" in yaml_data:
         raise ValueError("Doc YAML must not contain both 'url' and 'urls'.")
 
     array_fields = {"references", "supersedes", "urls"}
 
-    for k, v in yaml_data.items():
-        if k in REQUIRED_ENTRY_FIELDS:
-            continue
+    fields: dict[str, Any] = {}
 
+    # Start from YAML, then inject computed fields.
+    for k, v in yaml_data.items():
         if k == "layer":
-            # Not allowed in YAML; computed.
             continue
 
         if v is None:
@@ -466,24 +515,32 @@ def _doc_entry_from_yaml(
         if k in array_fields:
             norm = _sorted_unique_str_list(v)
             if norm:
-                optional[k] = norm
+                fields[k] = norm
             continue
 
-        optional[k] = v
+        fields[k] = v
 
-    return DocRecord(
-        doc_id=str(yaml_data["doc_id"]),
-        name=name,
-        path=rel_dir_str,
-        kind=kind,
-        layer=layer,
-        scope=str(yaml_data["scope"]),
-        status=str(yaml_data["status"]),
-        authority=authority,
-        gate_applies_to=str(yaml_data["gate_applies_to"]),
-        phase_applies_to=str(yaml_data["phase_applies_to"]),
-        optional_fields=optional,
-    )
+    # Inject computed fields (schema-required, but not YAML sourced).
+    fields["path"] = rel_dir_str
+    fields["layer"] = layer
+
+    # Normalize required scalar fields based on schema-driven required_fields.
+    for k in required_fields:
+        if k in fields and not isinstance(fields[k], str):
+            fields[k] = str(fields[k])
+
+    # Emit ONLY keys that are defined in the inventory entry schema properties.
+    allowed = set(properties_order)
+    fields = {k: v for k, v in fields.items() if k in allowed}
+
+    # Ensure computed required fields exist.
+    for req in required_fields:
+        if req not in fields:
+            raise ValueError(
+                f"Missing required inventory field after normalization: {req}"
+            )
+
+    return DocRecord(fields=fields, properties_order=properties_order)
 
 
 def _validate_yaml_schema(
@@ -523,7 +580,10 @@ def _build_inventory(
     repo_root: Path,
     docs: list[DocRecord],
 ) -> dict[str, Any]:
-    docs_sorted = sorted(docs, key=lambda d: (d.path, d.doc_id))
+    docs_sorted = sorted(
+        docs,
+        key=lambda d: (str(d.fields.get("path", "")), str(d.fields.get("doc_id", ""))),
+    )
 
     return {
         "format": "DOC_INVENTORY",
@@ -605,14 +665,15 @@ def main() -> int:
     yaml_validation_failures: list[str] = []
     records: list[DocRecord] = []
 
+    entry_properties_order, entry_required_fields = _doc_entry_schema_info(
+        inventory_schema
+    )
+
     for md_path in _iter_md_files(repo_root, docs_dir):
         yaml_data = _extract_yaml_front_matter(md_path, yaml_mod)
         if yaml_data is None:
             continue
 
-        # Skip files that do not declare a doc_id in YAML front matter.
-        # Only participating documentation artifacts (those with doc_id)
-        # are included in schema validation and inventory construction.
         if "doc_id" not in yaml_data:
             continue
 
@@ -625,10 +686,13 @@ def main() -> int:
                 yaml_validation_failures.append(f"{rel}: {e}")
             continue
 
-        # Convert to inventory record.
         try:
             rec = _doc_entry_from_yaml(
-                yaml_data=yaml_data, md_path=md_path, repo_root=repo_root
+                yaml_data=yaml_data,
+                md_path=md_path,
+                repo_root=repo_root,
+                required_fields=entry_required_fields,
+                properties_order=entry_properties_order,
             )
         except Exception as exc:
             rel = _posix_rel(md_path.relative_to(repo_root))
@@ -644,10 +708,12 @@ def main() -> int:
         )
         raise SystemExit(msg)
 
-    # Hard failure: duplicate doc_id
     doc_id_to_paths: dict[str, list[str]] = {}
     for r in records:
-        doc_id_to_paths.setdefault(r.doc_id, []).append(r.path + r.name)
+        doc_id = str(r.fields.get("doc_id"))
+        path = str(r.fields.get("path"))
+        name = str(r.fields.get("name"))
+        doc_id_to_paths.setdefault(doc_id, []).append(path + name)
 
     dupes = {k: v for k, v in doc_id_to_paths.items() if len(v) > 1}
     if dupes:
@@ -656,16 +722,15 @@ def main() -> int:
             parts.append(f"  - {doc_id}: {sorted(dupes[doc_id])}")
         raise SystemExit("\n".join(parts))
 
-    # Hard failure: references target missing from inventory
-    all_doc_ids = {r.doc_id for r in records}
+    all_doc_ids = {str(r.fields.get("doc_id")) for r in records}
     missing_refs: list[str] = []
     for r in records:
-        refs = r.optional_fields.get("references")
+        refs = r.fields.get("references")
         if not isinstance(refs, list):
             continue
         for ref in refs:
             if ref not in all_doc_ids:
-                missing_refs.append(f"{r.doc_id} -> {ref}")
+                missing_refs.append(f"{str(r.fields.get('doc_id'))} -> {ref}")
 
     if missing_refs:
         missing_refs.sort()
@@ -676,7 +741,6 @@ def main() -> int:
 
     inventory = _build_inventory(repo_root=repo_root, docs=records)
 
-    # Validate inventory JSON against schema.
     inv_errors = _validate_json_schema(
         jsonschema_mod=jsonschema_mod, schema=inventory_schema, instance=inventory
     )
