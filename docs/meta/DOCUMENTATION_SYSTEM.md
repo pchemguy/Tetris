@@ -88,6 +88,153 @@ One additional conceptual layer often exists and covers external regulatory, leg
 
 ---
 
+### Orthogonal Decomposition Axes
+
+The layered model described above defines a **vertical decomposition of authority**. However, the system also contains a second, orthogonal form of decomposition that must be understood clearly.
+
+Layers L2 and L3 decompose the system along **structural and behavioral boundaries**:
+
+* **L2 (Architecture)** defines what exists and how it is partitioned.
+* **L3 (Specifications)** defines what each structural element must do.
+
+This is a decomposition of the system itself.
+
+Layer L4, by contrast, does not decompose the system structurally. It decomposes the **proof of correctness**. In other words:
+
+* L2/L3 answer: *What is the system and how must it behave?*
+* L4 answers: *What must be demonstrated to prove that behavior is satisfied?*
+
+The oracle decomposition in L4 therefore forms a second axis that cuts across L2/L3 contracts. An oracle may depend on multiple behavioral specifications, and a single specification may be validated by multiple oracles. This is intentional.
+
+These two decompositions are not redundant; they represent different concerns:
+
+* **Contract decomposition** (L2/L3) — system structure and semantics.
+* **Validation decomposition** (L4) — correctness obligations and evidence.
+
+Maintaining this separation prevents common failure modes such as:
+
+* tests silently redefining behavior,
+* architectural boundaries eroding under implementation pressure,
+* implementation order being dictated accidentally by file layout rather than correctness obligations.
+
+The documentation system therefore models:
+
+1. Vertical authority flow (L0 → L5),
+2. Structural decomposition (architecture → components),
+3. Behavioral decomposition (specification contracts),
+4. Orthogonal validation decomposition (oracle domains).
+
+This multi-axis structure is deliberate and generalizable beyond this project. It allows both humans and agents to reason about implementation order, correctness boundaries, and diagnostic signals without collapsing architecture into tests or tests into architecture.
+
+---
+
+### Implementation Order Derivation Model
+
+The documentation system defines *what is true* and *what must be proven*. It does not directly prescribe implementation order. However, implementation order must be derived in a disciplined way from the existing axes.
+
+#### 1. Structural prerequisite rule (L2 → L3)
+
+Implementation must respect structural authority first.
+
+- If a component does not exist in L2 (Architecture / Decomposition), it must not be implemented.
+- If a contract is not defined in L3, behavior must not be invented.
+
+Therefore:
+
+* Implementation begins from **defined structural components**.
+* Within each component, behavior is governed exclusively by its specification documents.
+
+This prevents speculative implementation.
+
+---
+
+#### 2. Oracle-driven sequencing rule (L4 → L3 realization)
+
+While contracts define behavior, **oracles define proof obligations**. Oracles are not structural units; they are correctness partitions. Because oracles often span multiple specifications, satisfying a given oracle may require:
+
+* implementing parts of multiple behavioral contracts,
+* completing certain state transitions before others,
+* deferring some spec sections until prerequisite invariants exist.
+
+Therefore:
+
+> Implementation sequencing should be guided primarily by oracle decomposition, not by specification file order.
+
+Example pattern:
+
+* `ORACLE_CORE_COLLISION` depends on geometry + board bounds + rejection semantics.
+* That implies geometry must exist before collision is testable.
+* Therefore geometry is implemented before or alongside collision logic, even if the specification document order differs.
+
+This rule makes validation drive sequencing.
+
+---
+
+#### 3. Minimal-satisfiable slice principle
+
+At any given gate:
+
+* Identify the oracle(s) required for that gate.
+* Determine the minimal subset of behavioral contracts necessary to satisfy that oracle.
+* Implement only that subset.
+* Run tests immediately.
+* Stop when the oracle passes.
+
+This produces incremental, non-speculative development.
+
+It also aligns directly with acceptance gates.
+
+---
+
+#### 4. Bidirectional diagnostic feedback
+
+If an oracle cannot be satisfied:
+
+1. First suspect implementation.
+2. Then re-check specification clarity.
+3. Only then escalate to architecture reconsideration (L2).
+
+Structural reconsideration must never be triggered by convenience — only by persistent oracle failure.
+
+This maintains authority direction.
+
+---
+
+#### 5. What this model prevents
+
+Without this model, common failure modes include:
+
+* Implementing entire spec documents before validating any behavior.
+* Writing code in spec file order rather than correctness dependency order.
+* Letting test structure silently redefine architecture.
+* Over-implementing features not required by current gate.
+
+This model ensures:
+
+* Contracts define boundaries.
+* Oracles define stopping points.
+* Gates define scope.
+* Phases define permission.
+
+---
+
+### Resulting Implementation Heuristic
+
+When asked to “implement the next piece”:
+
+1. Determine current Phase and Gate (L1).
+2. Identify required oracle(s) (L4).
+3. Identify dependent behavioral contracts (L3).
+4. Confirm structural legitimacy (L2).
+5. Implement minimal code required to satisfy oracle.
+6. Validate.
+7. Record in L5.
+8. Stop.
+
+That is the complete loop.
+
+---
+
 ## 2. Design principles
 
 ### 2.1 Document metadata
