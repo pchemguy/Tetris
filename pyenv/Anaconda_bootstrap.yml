@@ -1,0 +1,14 @@
+name: tetris
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python
+  - conda
+  - mamba
+  - micromamba=2.3.0.*
+  - uv
+  - git
+  - hatch
+  - ruff
+  - mypy
