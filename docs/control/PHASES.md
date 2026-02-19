@@ -1,6 +1,6 @@
 ---
-doc_id: PHASES.md
-name: PHASES
+doc_id: PHASES
+name: PHASES.md
 title: Repository Evolution Phases
 kind: control
 scope: global

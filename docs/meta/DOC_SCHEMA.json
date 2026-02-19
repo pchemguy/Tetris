@@ -98,13 +98,17 @@
     },
 
     "gate_applies_to": {
-      "type": "string",
-      "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"
+      "oneOf": [
+        {"type": "string", "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"},
+        {"type": "number"}
+      ]
     },
 
     "phase_applies_to": {
-      "type": "string",
-      "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"
+      "oneOf": [
+        {"type": "string", "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"},
+        {"type": "number"}
+      ]
     },
 
     "supersedes": {

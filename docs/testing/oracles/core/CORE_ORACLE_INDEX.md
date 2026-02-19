@@ -2,7 +2,7 @@
 doc_id: CORE_ORACLE_INDEX
 name: CORE_ORACLE_INDEX.md
 title: Core Oracle Index
-kind: map
+kind: meta
 scope: core:core
 status: active
 authority: normative
