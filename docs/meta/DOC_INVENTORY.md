@@ -106,8 +106,8 @@ Each element in `docs[]` MUST include:
 Rules:
 
 * The above fields are REQUIRED for every participating artifact.
-* `layer` is **computed** from `kind` or path using a the mapping table in `DOCUMENTATION_SYSTEM.md`.
-- `path`
+* `layer` is **computed** from `kind` or path using the mapping table in `DOCUMENTATION_SYSTEM.md`.
+* `path`
     * is derived from filesystem location at generation time,
     * must be relative to project directory / repository root,
     * must not include filename (the `name` field).
