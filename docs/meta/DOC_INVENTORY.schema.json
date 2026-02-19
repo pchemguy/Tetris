@@ -133,7 +133,7 @@
         "phase_applies_to"
       ],
 
-      "not": { "required": ["url", "urls"] }
+      "not": { "required": ["url", "urls"] },
 
       "properties": {
         "doc_id": { "$ref": "#/$defs/doc_id" },
@@ -164,7 +164,7 @@
         "supersedes": { "$ref": "#/$defs/doc_id_array" },
 
         "superseded_by": { "$ref": "#/$defs/doc_id" }
-      },
+      }
     }
   }
 }

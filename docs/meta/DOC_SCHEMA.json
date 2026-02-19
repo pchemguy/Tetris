@@ -120,7 +120,7 @@
       "oneOf": [
         { "$ref": "#/definitions/doc_id_type" },
         { "type": "null" }
-      ],
+      ]
     },
 
     "references": {

@@ -2,7 +2,7 @@
 doc_id: PROJECT
 name: PROJECT.md
 title: Project Entry Point
-kind: map
+kind: meta
 scope: global
 status: active
 authority: normative
