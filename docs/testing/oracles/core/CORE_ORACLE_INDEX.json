@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "index_id": "CORE_ORACLE_INDEX",
   "project_id": "TETRIS",
   "generated_from": {
@@ -32,124 +32,536 @@
     "ORACLE_CORE_INVARIANTS",
     "ORACLE_CORE_HOLD"
   ],
+  "oracle_dependency_policy": {
+    "meaning": "Dependencies are semantic prerequisites for making an oracle testable and for interpreting failures without inventing behavior. Dependencies are not 'code modules'; they are obligations that must be implemented (or explicitly stubbed if allowed by gate/phase) before the dependent oracle can be treated as authoritative pass/fail.",
+    "rule": "An oracle MUST NOT be declared 'satisfied' unless all its declared dependencies are satisfied (or explicitly waived by an allowed condition).",
+    "default": {
+      "requires_all_depends_on": true,
+      "allows_waive": false
+    }
+  },
+  "recommended_implementation_sequence": [
+    "ORACLE_CORE_GEOMETRY",
+    "ORACLE_CORE_COLLISION",
+    "ORACLE_CORE_SPAWN",
+    "ORACLE_CORE_GRAVITY_AND_LOCKING",
+    "ORACLE_CORE_LINE_CLEAR",
+    "ORACLE_CORE_SCORING",
+    "ORACLE_CORE_RNG_7BAG",
+    "ORACLE_CORE_GAME_OVER",
+    "ORACLE_CORE_INVARIANTS",
+    "ORACLE_CORE_HOLD"
+  ],
+  "sequence_rationale": [
+    {
+      "step": 1,
+      "oracle_id": "ORACLE_CORE_GEOMETRY",
+      "why_first": "All collision, spawn, locking, and rendering fixtures require deterministic block coordinates. Geometry is the lowest-level 'physics truth table'."
+    },
+    {
+      "step": 2,
+      "oracle_id": "ORACLE_CORE_COLLISION",
+      "why_next": "Collision/rejection predicates are prerequisites for movement, rotation rejection, gravity blocking, spawn collision, and lock triggering."
+    },
+    {
+      "step": 3,
+      "oracle_id": "ORACLE_CORE_SPAWN",
+      "why_next": "Spawn semantics require both geometry (to know the footprint) and collision (to detect spawn collision)."
+    },
+    {
+      "step": 4,
+      "oracle_id": "ORACLE_CORE_GRAVITY_AND_LOCKING",
+      "why_next": "Gravity and locking require collision to decide downward move success/failure and spawn to define post-lock active/next behavior."
+    },
+    {
+      "step": 5,
+      "oracle_id": "ORACLE_CORE_LINE_CLEAR",
+      "why_next": "Line clearing is defined to occur after a lock materializes blocks onto the board; therefore it depends on locking."
+    },
+    {
+      "step": 6,
+      "oracle_id": "ORACLE_CORE_SCORING",
+      "why_next": "Scoring depends on the number of lines cleared in a lock resolution; therefore it depends on line clear."
+    },
+    {
+      "step": 7,
+      "oracle_id": "ORACLE_CORE_RNG_7BAG",
+      "why_next": "RNG behavior is observable through spawn/next transitions; therefore it depends on spawn and the existence of deterministic state evolution."
+    },
+    {
+      "step": 8,
+      "oracle_id": "ORACLE_CORE_GAME_OVER",
+      "why_next": "Game-over conditions include spawn collision and post-lock top-row occupation checks (after clears); therefore it depends on spawn and line clear/locking ordering."
+    },
+    {
+      "step": 9,
+      "oracle_id": "ORACLE_CORE_INVARIANTS",
+      "why_next": "Invariants are cross-cutting; asserting them prematurely forces invented behavior. This oracle becomes fully meaningful only after core mechanics exist."
+    },
+    {
+      "step": 10,
+      "oracle_id": "ORACLE_CORE_HOLD",
+      "why_last": "Hold semantics depend on spawn/next handling, input ordering/validation, and (often) collision-like checks during swap. It is optional and should not gate earlier correctness."
+    }
+  ],
+  "oracle_metadata": [
+    {
+      "oracle_id": "ORACLE_CORE_GEOMETRY",
+      "status": "active",
+      "depends_on": [],
+      "blocks": [],
+      "notes": [
+        "Defines the canonical mapping from tetromino type + rotation + origin to absolute block coordinates.",
+        "Must be completed before any collision-based oracle can be interpreted."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_COLLISION",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_GEOMETRY"
+      ],
+      "blocks": [],
+      "notes": [
+        "Requires a deterministic blocks_for(active) implementation to test bounds and overlap conditions.",
+        "Rotation kick behavior is treated as 'collision policy' (success only if a tested offset yields non-collision)."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_SPAWN",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_GEOMETRY",
+        "ORACLE_CORE_COLLISION"
+      ],
+      "blocks": [],
+      "notes": [
+        "Spawn footprint correctness depends on geometry; spawn collision depends on collision predicate."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_GRAVITY_AND_LOCKING",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_COLLISION",
+        "ORACLE_CORE_SPAWN"
+      ],
+      "blocks": [],
+      "notes": [
+        "Downward move attempt uses collision predicate.",
+        "Locking triggers spawn pipeline in the same tick ordering defined by GAME_STATE."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_LINE_CLEAR",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_GRAVITY_AND_LOCKING"
+      ],
+      "blocks": [],
+      "notes": [
+        "Line clear occurs after lock materialization; tests assume locked blocks are already on the board."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_SCORING",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_LINE_CLEAR"
+      ],
+      "blocks": [],
+      "notes": [
+        "Score and level progression depend on the cleared-line count k produced during lock resolution."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_RNG_7BAG",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_SPAWN"
+      ],
+      "blocks": [],
+      "notes": [
+        "RNG is observed via active/next piece sequences; requires deterministic draw pipeline.",
+        "Does not require line clearing/scoring to be complete, but does require spawn/next behavior to exist and be stable."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_GAME_OVER",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_SPAWN",
+        "ORACLE_CORE_GRAVITY_AND_LOCKING",
+        "ORACLE_CORE_LINE_CLEAR"
+      ],
+      "blocks": [],
+      "notes": [
+        "Spawn-collision game over depends on spawn + collision.",
+        "Top-row-occupied game over is evaluated after lock and after line clear resolution per GAME_STATE."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_INVARIANTS",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_GEOMETRY",
+        "ORACLE_CORE_COLLISION",
+        "ORACLE_CORE_SPAWN",
+        "ORACLE_CORE_GRAVITY_AND_LOCKING",
+        "ORACLE_CORE_LINE_CLEAR",
+        "ORACLE_CORE_SCORING",
+        "ORACLE_CORE_RNG_7BAG",
+        "ORACLE_CORE_GAME_OVER"
+      ],
+      "blocks": [],
+      "notes": [
+        "This oracle is explicitly cumulative: it asserts that all implemented mechanics preserve global invariants after every step.",
+        "If a dependent oracle is not implemented yet, this oracle must be treated as 'not applicable' for that partial system."
+      ]
+    },
+    {
+      "oracle_id": "ORACLE_CORE_HOLD",
+      "status": "active",
+      "depends_on": [
+        "ORACLE_CORE_SPAWN",
+        "ORACLE_CORE_RNG_7BAG"
+      ],
+      "blocks": [],
+      "conditions": {
+        "only_if": [
+          {
+            "key": "enable_hold",
+            "equals": true
+          }
+        ]
+      },
+      "notes": [
+        "Hold is optional; if disabled, this oracle is not applicable and must not block gates 1–6 unless a gate explicitly enables hold.",
+        "Hold correctness depends on deterministic swap + next piece handling, which requires spawn and RNG sequencing."
+      ]
+    }
+  ],
   "traceability": [
     {
       "oracle_id": "ORACLE_CORE_COLLISION",
       "validates": [
-        { "doc_id": "GAME_RULES", "section": "§2.1" },
-        { "doc_id": "GAME_RULES", "section": "§2.2" },
-        { "doc_id": "GAME_RULES", "section": "§6.3" },
-        { "doc_id": "GAME_RULES", "section": "§4.2" },
-        { "doc_id": "GAME_STATE", "section": "§2" },
-        { "doc_id": "GAME_STATE", "section": "§6.1" },
-        { "doc_id": "GAME_STATE", "section": "§6.2" },
-        { "doc_id": "GAME_STATE", "section": "§6.3" },
-        { "doc_id": "INPUT_MODEL", "section": "§3.3" },
-        { "doc_id": "ERROR_HANDLING", "section": "§2.1" },
-        { "doc_id": "ERROR_HANDLING", "section": "§4.2" },
-        { "doc_id": "CORE_API", "section": "§5.3" },
-        { "doc_id": "CORE_API", "section": "§7.1" }
+        {
+          "doc_id": "GAME_RULES",
+          "section": "2.1"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "2.2"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "6.3"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "4.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.1"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.3"
+        },
+        {
+          "doc_id": "INPUT_MODEL",
+          "section": "3.3"
+        },
+        {
+          "doc_id": "ERROR_HANDLING",
+          "section": "2.1"
+        },
+        {
+          "doc_id": "ERROR_HANDLING",
+          "section": "4.2"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "5.3"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "7.1"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_SPAWN",
       "validates": [
-        { "doc_id": "GAME_RULES", "section": "§5.1" },
-        { "doc_id": "GAME_RULES", "section": "§5.2" },
-        { "doc_id": "GAME_STATE", "section": "§6.7" },
-        { "doc_id": "GAME_STATE", "section": "§5.2" },
-        { "doc_id": "CORE_API", "section": "§5.1" },
-        { "doc_id": "CORE_API", "section": "§4.1" },
-        { "doc_id": "ERROR_HANDLING", "section": "§4.1" }
+        {
+          "doc_id": "GAME_RULES",
+          "section": "5.1"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "5.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.7"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "5.2"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "5.1"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "4.1"
+        },
+        {
+          "doc_id": "ERROR_HANDLING",
+          "section": "4.1"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_GEOMETRY",
       "validates": [
-        { "doc_id": "SHAPES_AND_ROTATIONS", "section": "§2.1" },
-        { "doc_id": "SHAPES_AND_ROTATIONS", "section": "§2.2" },
-        { "doc_id": "SHAPES_AND_ROTATIONS", "section": "§3.*" },
-        { "doc_id": "SHAPES_AND_ROTATIONS", "section": "§4" },
-        { "doc_id": "GAME_RULES", "section": "§3.2" },
-        { "doc_id": "GAME_STATE", "section": "§3.3" },
-        { "doc_id": "CORE_API", "section": "§5.3" }
+        {
+          "doc_id": "SHAPES_AND_ROTATIONS",
+          "section": "2.1"
+        },
+        {
+          "doc_id": "SHAPES_AND_ROTATIONS",
+          "section": "2.2"
+        },
+        {
+          "doc_id": "SHAPES_AND_ROTATIONS",
+          "section": "3.*"
+        },
+        {
+          "doc_id": "SHAPES_AND_ROTATIONS",
+          "section": "4"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "3.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "3.3"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "5.3"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_GRAVITY_AND_LOCKING",
       "validates": [
-        { "doc_id": "GAME_RULES", "section": "§6.1" },
-        { "doc_id": "GAME_RULES", "section": "§7.1" },
-        { "doc_id": "GAME_RULES", "section": "§7.2" },
-        { "doc_id": "GAME_RULES", "section": "§9.3" },
-        { "doc_id": "GAME_STATE", "section": "§4.2" },
-        { "doc_id": "GAME_STATE", "section": "§5.2" },
-        { "doc_id": "GAME_STATE", "section": "§6.4" },
-        { "doc_id": "INPUT_MODEL", "section": "§4" },
-        { "doc_id": "CORE_API", "section": "§5.4" }
+        {
+          "doc_id": "GAME_RULES",
+          "section": "6.1"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "7.1"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "7.2"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "9.3"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "4.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "5.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.4"
+        },
+        {
+          "doc_id": "INPUT_MODEL",
+          "section": "4"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "5.4"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_LINE_CLEAR",
       "validates": [
-        { "doc_id": "GAME_RULES", "section": "§8.1" },
-        { "doc_id": "GAME_RULES", "section": "§8.2" },
-        { "doc_id": "GAME_STATE", "section": "§6.5" },
-        { "doc_id": "ERROR_HANDLING", "section": "§4.1" }
+        {
+          "doc_id": "GAME_RULES",
+          "section": "8.1"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "8.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.5"
+        },
+        {
+          "doc_id": "ERROR_HANDLING",
+          "section": "4.1"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_SCORING",
       "validates": [
-        { "doc_id": "GAME_RULES", "section": "§9.1" },
-        { "doc_id": "GAME_RULES", "section": "§9.2" },
-        { "doc_id": "GAME_STATE", "section": "§6.6" },
-        { "doc_id": "ERROR_HANDLING", "section": "§4.1" }
+        {
+          "doc_id": "GAME_RULES",
+          "section": "9.1"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "9.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.6"
+        },
+        {
+          "doc_id": "ERROR_HANDLING",
+          "section": "4.1"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_RNG_7BAG",
       "validates": [
-        { "doc_id": "GAME_RULES", "section": "§10.1" },
-        { "doc_id": "GAME_RULES", "section": "§10.2" },
-        { "doc_id": "GAME_STATE", "section": "§3.5" },
-        { "doc_id": "CORE_API", "section": "§3.2" },
-        { "doc_id": "CORE_API", "section": "§5.1" },
-        { "doc_id": "CORE_API", "section": "§9" }
+        {
+          "doc_id": "GAME_RULES",
+          "section": "10.1"
+        },
+        {
+          "doc_id": "GAME_RULES",
+          "section": "10.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "3.5"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "3.2"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "5.1"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "9"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_GAME_OVER",
       "validates": [
-        { "doc_id": "GAME_RULES", "section": "§11" },
-        { "doc_id": "GAME_STATE", "section": "§5.2" },
-        { "doc_id": "GAME_STATE", "section": "§6.7" },
-        { "doc_id": "ERROR_HANDLING", "section": "§4.2" },
-        { "doc_id": "CORE_API", "section": "§5.2" }
+        {
+          "doc_id": "GAME_RULES",
+          "section": "11"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "5.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.7"
+        },
+        {
+          "doc_id": "ERROR_HANDLING",
+          "section": "4.2"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "5.2"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_INVARIANTS",
       "validates": [
-        { "doc_id": "GAME_STATE", "section": "§8" },
-        { "doc_id": "ERROR_HANDLING", "section": "§4.1" },
-        { "doc_id": "ERROR_HANDLING", "section": "§4.2" },
-        { "doc_id": "CORE_API", "section": "§4.2" },
-        { "doc_id": "CORE_API", "section": "§7.1" }
+        {
+          "doc_id": "GAME_STATE",
+          "section": "8"
+        },
+        {
+          "doc_id": "ERROR_HANDLING",
+          "section": "4.1"
+        },
+        {
+          "doc_id": "ERROR_HANDLING",
+          "section": "4.2"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "4.2"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "7.1"
+        }
       ]
     },
     {
       "oracle_id": "ORACLE_CORE_HOLD",
       "validates": [
-        { "doc_id": "GAME_RULES", "section": "§12.2" },
-        { "doc_id": "GAME_STATE", "section": "§3.7" },
-        { "doc_id": "GAME_STATE", "section": "§6.8" },
-        { "doc_id": "INPUT_MODEL", "section": "§6" },
-        { "doc_id": "CORE_API", "section": "§3.2" },
-        { "doc_id": "CORE_API", "section": "§4.1" }
+        {
+          "doc_id": "GAME_RULES",
+          "section": "12.2"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "3.7"
+        },
+        {
+          "doc_id": "GAME_STATE",
+          "section": "6.8"
+        },
+        {
+          "doc_id": "INPUT_MODEL",
+          "section": "6"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "3.2"
+        },
+        {
+          "doc_id": "CORE_API",
+          "section": "4.1"
+        }
       ],
       "conditions": {
-        "only_if": [{ "key": "enable_hold", "equals": true }]
+        "only_if": [
+          {
+            "key": "enable_hold",
+            "equals": true
+          }
+        ]
       }
     }
   ]
