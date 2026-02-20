@@ -98,9 +98,13 @@ If any single required modular oracle fails, the composite core oracle fails.
 
 **Conditional obligations** (e.g. hold) apply only under the conditions declared in `CORE_ORACLE_INDEX`.
 
-## 5 Dependencies and recommended verification order
+## 5. Dependencies and recommended verification order
 
-This section defines **engineering dependencies** between oracle concerns. It does not change the normative rules of gameplay; it defines what must exist in the implementation to make specific oracle suites executable and meaningful.
+This section defines **engineering dependencies** between oracle concerns. It does not change the normative rules of gameplay; it defines what must exist in the implementation to make specific oracle suites executable and meaningful. The dependency graph defined here is **normative for workflow semantics** and is **mirrored in machine-readable form** in:
+
+- `CORE_ORACLE_INDEX.json`
+
+The JSON artifact is the authoritative machine-checkable representation of this dependency graph. This Markdown section is the human-readable counterpart. If any dependency rule defined here changes, the corresponding JSON structure in `CORE_ORACLE_INDEX.json` MUST be updated in the same revision. Divergence between the two artifacts constitutes a documentation defect.
 
 ### Dependency model
 
