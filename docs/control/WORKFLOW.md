@@ -19,6 +19,8 @@ references:
   - TEST_PLAN
   - TESTING_CONVENTIONS
   - IMPLEMENTATION_REPORTS
+  - ORACLE_CORE
+  - CORE_ORACLE_INDEX
 ---
 
 # WORKFLOW
@@ -66,9 +68,9 @@ Filesystem guessing is prohibited.
 
 Read:
 
-* `PHASES.md`
-* `ACCEPTANCE_GATES.md`
-* `IMPLEMENTATION_REPORTS.md`
+* `@PHASES`
+* `@ACCEPTANCE_GATES`
+* `@IMPLEMENTATION_REPORTS`
 
 Determine:
 
@@ -94,20 +96,27 @@ The selected gate determines:
 
 * Applicable specs
 * Applicable oracles
-* Required test suites (via `TEST_PLAN.md`)
+* Required test suites (via `@TEST_PLAN`)
 * Allowed feature surface
 
 ---
 
 # 4. Specification Closure
 
+## 4. Specification and Oracle Closure
+
 Before writing code:
 
-1. Identify all normative specs relevant to the selected gate.
-2. Identify all oracles that validate those specs.
-3. Compute reference closure using DOC_ID references.
+1. Identify all normative **spec documents** relevant to the selected gate.
+2. Identify all **oracle documents** required for that gate.
+3. For the core components, load `@CORE_ORACLE_INDEX` and resolve:
+    * Required oracle subset for the gate.
+    * Any conditional applicability (e.g., hold enabled).
+    * Oracle dependency graph.
+   The oracle dependency graph defined in `@ORACLE_CORE` and mirrored in `CORE_ORACLE_INDEX.json` MUST be respected during implementation.
+4. Compute reference closure using DOC_ID references.
 
-If ambiguity or conflict is detected:
+If ambiguity, missing authority, or conflict is detected:
 
 * Stop.
 * Escalate.
@@ -123,18 +132,20 @@ For the selected gate:
 
 * Implement only what is required by the specs.
 * Respect architectural boundaries.
+* Respect oracle dependency order when working on core.
+* Do not implement behavior for oracles not required by the current gate.
 * No undocumented features.
 * No anticipatory extensions.
 
 ### 5.2 Oracle Translation
 
 * Ensure each relevant oracle has pytest translation.
-* Follow `TESTING_CONVENTIONS.md`.
+* Follow `@TESTING_CONVENTIONS`.
 * Maintain CASE_ID traceability.
 
 ### 5.3 Suite Execution
 
-Run only suites required for this gate (`TEST_PLAN.md`).
+Run only suites required for this gate (`@TEST_PLAN`).
 
 If failure:
 
@@ -161,7 +172,7 @@ A gate is considered satisfied only if:
 
 Then:
 
-* Append to `IMPLEMENTATION_REPORTS.md`.
+* Append to `@IMPLEMENTATION_REPORTS`.
 * Record:
     * Gate number
     * Suites executed
@@ -188,7 +199,7 @@ Escalation must precede implementation change.
 
 # 8. Phase Restrictions
 
-All workflow steps are constrained by `PHASES.md`.
+All workflow steps are constrained by `@PHASES`.
 
 If a gate requires behavior forbidden in the current phase:
 
@@ -212,7 +223,20 @@ Reverse order is forbidden.
 
 ---
 
-# 10. Determinism Enforcement
+# 10. Oracle Dependency Enforcement
+
+For gates that involve core oracles:
+
+* The dependency graph defined in `ORACLE_CORE` and mirrored in `CORE_ORACLE_INDEX.json` defines the required prerequisite order.
+* Implementation and verification must not violate that order.
+* Tooling MAY validate dependency compliance via the JSON artifact.
+* Divergence between the Markdown and JSON dependency definitions constitutes a documentation defect.
+
+The dependency graph is a workflow constraint, not a gameplay rule.
+
+---
+
+# 11. Determinism Enforcement
 
 All development and validation:
 
@@ -225,7 +249,7 @@ Determinism failure invalidates gate completion.
 
 ---
 
-# 11. Human vs Agent Responsibilities
+# 12. Human vs Agent Responsibilities
 
 ### Agent
 
@@ -244,7 +268,7 @@ Determinism failure invalidates gate completion.
 
 ---
 
-# 12. Repository evolution state machine
+# 13. Repository evolution state machine
 
 This is a *governance* state machine: it models the allowed progression of work and the hard stop conditions that force escalation.
 
@@ -265,27 +289,27 @@ This is a *governance* state machine: it models the allowed progression of work 
 stateDiagram-v2
   [*] --> DISCOVERY
 
-  DISCOVERY --> ESCALATE: missing docs / ambiguous current state\nor inventory unavailable
-  DISCOVERY --> PLAN_GATE_WORK: phase+gate resolved\nand inventory ready
+  DISCOVERY --> ESCALATE: missing docs / ambiguous current state <br> or inventory unavailable
+  DISCOVERY --> PLAN_GATE_WORK: phase+gate resolved <br> and inventory ready
 
-  PLAN_GATE_WORK --> ESCALATE: target gate unclear\nor references conflict
-  PLAN_GATE_WORK --> IMPLEMENT: target gate fixed\nand spec/oracle closure computed
+  PLAN_GATE_WORK --> ESCALATE: target gate unclear <br> or references conflict
+  PLAN_GATE_WORK --> IMPLEMENT: target gate fixed <br> and spec/oracle closure computed
 
-  IMPLEMENT --> ESCALATE: spec ambiguity\nor forbidden-by-phase work required
-  IMPLEMENT --> TRANSLATE_ORACLES: code changes complete\nfor this iteration
+  IMPLEMENT --> ESCALATE: spec ambiguity <br> or forbidden-by-phase work required
+  IMPLEMENT --> TRANSLATE_ORACLES: code changes complete <br> for this iteration
 
-  TRANSLATE_ORACLES --> ESCALATE: oracle cannot be translated\nwithout changing norms
+  TRANSLATE_ORACLES --> ESCALATE: oracle cannot be translated <br> without changing norms
   TRANSLATE_ORACLES --> RUN_SUITES: tests exist + traceable
 
   RUN_SUITES --> IMPLEMENT: failures classified as implementation defects
   RUN_SUITES --> TRANSLATE_ORACLES: failures classified as test encoding defects
-  RUN_SUITES --> ESCALATE: failures indicate spec/oracle conflict\nor missing normative definition
+  RUN_SUITES --> ESCALATE: failures indicate spec/oracle conflict <br> or missing normative definition
   RUN_SUITES --> REPORT: required suites pass
 
-  REPORT --> ADVANCE_GATE: report appended\nand gate completion asserted
-  ADVANCE_GATE --> DISCOVERY: next iteration (new target gate)
+  REPORT --> ADVANCE_GATE: report appended <br> and gate completion asserted
+  ADVANCE_GATE --> DISCOVERY: next iteration <br> (new target gate)
 
-  ESCALATE --> DISCOVERY: human resolves + updates docs\nthen restart discovery
+  ESCALATE --> DISCOVERY: human resolves + updates docs <br> then restart discovery
 ```
 
 **Normative interpretation**:
@@ -296,7 +320,7 @@ stateDiagram-v2
 
 ---
 
-# Agent gate-loop pseudocode
+# 14. Agent gate-loop pseudocode
 
 This is the “single-gate evolution loop” expressed as deterministic procedure. It is intentionally explicit about where an agent must stop.
 
@@ -345,6 +369,20 @@ procedure EVOLVE_REPO_ONE_GATE(target_gate=None):
       ESCALATE("Current phase forbids attempting this gate")
 
   closure = COMPUTE_NORMATIVE_CLOSURE(inventory, gate_def)
+  
+  oracle_subset = RESOLVE_REQUIRED_ORACLES(inventory, target_gate)
+
+  if ORACLE_DOMAIN(oracle_subset) == "core":
+      dependency_graph = LOAD_CORE_ORACLE_DEPENDENCY_GRAPH(inventory)
+          # Derived from CORE_ORACLE_INDEX.json
+          # Human-readable mirror: ORACLE_CORE §5
+      if DEPENDENCY_VIOLATION(oracle_subset, dependency_graph):
+          ESCALATE("Core oracle dependency violation detected")
+      ordered_oracles = TOPOLOGICAL_SORT(oracle_subset, dependency_graph)
+  else:
+      ordered_oracles = oracle_subset
+          # No dependency graph defined for this domain
+
   if closure contains conflicts:
       ESCALATE("Normative conflict detected in closure; cannot proceed without resolution")
 
@@ -354,6 +392,13 @@ procedure EVOLVE_REPO_ONE_GATE(target_gate=None):
 
   # 2) IMPLEMENTATION LOOP (bounded and iterative)
   loop:
+      for oracle in ordered_oracles:  
+          IMPLEMENT_BEHAVIOR_FOR(oracle)  
+            # Constrained by spec closure  
+          ENSURE_PYTEST_TRANSLATION(oracle)  
+            # Must respect TESTING_CONVENTIONS.md  
+            # Must map to CASE_ID where required
+
       APPLY_MINIMAL_CODE_CHANGES(closure, target_gate)
       APPLY_MINIMAL_TEST_CHANGES(closure, target_gate)
         # Tests must be traceable to oracles (CASE_ID discipline) if oracles require it.
