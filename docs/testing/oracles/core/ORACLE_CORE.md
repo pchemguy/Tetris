@@ -8,7 +8,7 @@ status: active
 authority: normative
 gate_applies_to: 1-6
 phase_applies_to: all
-description: Composite normative oracle defining mandatory correctness tests for the deterministic core simulation.
+description: Composite normative oracle aggregating mandatory correctness obligations for the deterministic core simulation.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 references:
   - GAME_RULES
@@ -32,55 +32,38 @@ references:
 
 # ORACLE_CORE
 
-**Tetris Core – Composite Mandatory Test Oracle (Normative)**
-
----
+**Tetris Core — Composite Mandatory Test Oracle (Normative)**
 
 ## 1. Purpose
 
-This document defines the **complete mandatory automated test obligations** for the deterministic core simulation.
+`ORACLE_CORE` defines the **composite proof obligation** for the pure deterministic core.
 
 It is binding for Acceptance Gates **1–6**.
 
-An implementation of the core is considered correct only if:
+An implementation is considered correct for Gates 1–6 only if:
 
-1. All applicable modular core oracle documents pass, and  
-2. All cross-cutting invariants defined here hold.
+1. Every **required modular core oracle** passes, and
+2. All **cross-cutting invariants** required by the core are continuously enforced, and
+3. The core is **deterministic** under the determinism definition in this document.
 
-This document serves as the **composite umbrella oracle**.
+This document does **not** replace modular oracles. It aggregates them into a single gate-level acceptance rule.
 
-It does not replace modular oracles; rather, it aggregates them.
+## 2. Scope boundary
 
----
+This oracle applies exclusively to the pure core (`scope: core:core`) as defined by:
 
-## 2. Scope
+- `GAME_RULES`
+- `GAME_STATE`
+- `INPUT_MODEL`
+- `ERROR_HANDLING`
+- `SHAPES_AND_ROTATIONS`
+- `CORE_API`
 
-This oracle applies exclusively to:
+This oracle is intentionally **not applicable** to any shell concerns (rendering, runtime orchestration, CLI, replay, persistence). Those are governed by shell-level testing documents.
 
-- The pure deterministic core (`core:core`)
-- As defined by:
-  - `GAME_RULES`
-  - `GAME_STATE`
-  - `INPUT_MODEL`
-  - `ERROR_HANDLING`
-  - `SHAPES_AND_ROTATIONS`
-  - `CORE_API`
+## 3. Modular decomposition
 
-It explicitly excludes:
-
-- Rendering
-- Runtime orchestration
-- CLI
-- Replay loading/execution
-- Shell integration
-
-Those concerns are governed by shell-level testing documents.
-
----
-
-## 3. Oracle decomposition model
-
-The core oracle is decomposed into modular documents:
+The core’s proof obligations are decomposed into focused oracle documents:
 
 | Concern                     | Oracle Document                      |
 | --------------------------- | ------------------------------------ |
@@ -95,166 +78,166 @@ The core oracle is decomposed into modular documents:
 | Hold mechanics              | `ORACLE_CORE_HOLD.md`                |
 | Global invariants           | `ORACLE_CORE_INVARIANTS.md`          |
 
-Each modular oracle defines its own precise obligations.
+Each modular oracle defines its own concrete test obligations.
 
-This document defines the **minimum composite gate obligations**.
+Traceability (oracle → spec clauses) and any conditional applicability are defined in:
 
-Traceability between oracles and spec clauses is defined in `CORE_ORACLE_INDEX.md`.
-
----
+- `CORE_ORACLE_INDEX.md`
+- `CORE_ORACLE_INDEX.json` (machine-readable)
+- `CORE_ORACLE_INDEX.schema.json` (validation)
 
 ## 4. Composite acceptance rule (Gates 1–6)
 
-The core passes its acceptance gate only if:
+For Gates 1–6, the core is accepted only if:
 
-- All required modular oracles pass.
-- No invariant violation occurs.
-- Determinism holds across seeded runs.
-- No undefined behavior is introduced.
-- No behavior outside `GAME_RULES` is implemented.
+- Every oracle listed as **required** by `CORE_ORACLE_INDEX` passes, and
+- Determinism holds as defined in §5, and
+- Global invariants hold as defined in §6.
 
-Failure in any single modular oracle constitutes core failure.
+If any single required modular oracle fails, the composite core oracle fails.
 
----
+**Conditional obligations** (e.g. hold) apply only under the conditions declared in `CORE_ORACLE_INDEX`.
 
-## 5. Determinism requirement
+## 5 Dependencies and recommended verification order
+
+This section defines **engineering dependencies** between oracle concerns. It does not change the normative rules of gameplay; it defines what must exist in the implementation to make specific oracle suites executable and meaningful.
+
+### Dependency model
+
+Each modular oracle falls into one of two categories:
+
+- **Foundational**: establishes primitives used by multiple other oracles.
+- **Derived**: assumes foundational behavior exists and composes it.
+
+A derived oracle may be executed before its prerequisites only if the missing prerequisites are stubbed in a way that still preserves determinism and does not introduce undefined behavior. In practice, prerequisites should be implemented first.
+
+### Minimal dependency graph (normative for workflow)
+
+The following dependency constraints apply:
+
+- `ORACLE_CORE_GEOMETRY` is foundational for:
+    - `ORACLE_CORE_COLLISION` (collision checks require block sets),
+    - `ORACLE_CORE_SPAWN` (spawn validity requires geometry),
+    - all movement/rotation behavior validated through collision.
+- `ORACLE_CORE_COLLISION` is foundational for:
+    - `ORACLE_CORE_GRAVITY_AND_LOCKING` (gravity step attempts and lock trigger),
+    - `ORACLE_CORE_LINE_CLEAR` (lock must materialize blocks correctly),
+    - `ORACLE_CORE_GAME_OVER` (spawn collision and blocked movement semantics).
+- `ORACLE_CORE_SPAWN` is foundational for:
+    - `ORACLE_CORE_RNG_7BAG` (spawn consumes piece generation),
+    - `ORACLE_CORE_GAME_OVER` (spawn collision is a game-over condition),
+    - most end-to-end tick evolution tests.
+- `ORACLE_CORE_GRAVITY_AND_LOCKING` is foundational for:
+    - `ORACLE_CORE_LINE_CLEAR` (line clear occurs after lock),
+    - `ORACLE_CORE_SCORING` (scoring depends on cleared line count),
+    - `ORACLE_CORE_GAME_OVER` (top-row occupancy checks occur after lock/clear).
+- `ORACLE_CORE_LINE_CLEAR` is foundational for:
+    - `ORACLE_CORE_SCORING` (score delta depends on k cleared lines),
+    - `ORACLE_CORE_GAME_OVER` (post-clear top-row rule where applicable).
+- `ORACLE_CORE_RNG_7BAG` is foundational for:
+    - any oracle that asserts determinism of piece sequences across multiple spawns.
+- `ORACLE_CORE_INVARIANTS` is cross-cutting:
+    - it may be executed at any time,
+    - but it becomes maximally informative only once the above behaviors exist.
+- `ORACLE_CORE_HOLD` is conditional:
+    - it applies only when hold is enabled (per `CORE_ORACLE_INDEX` conditions),
+    - it depends on `ORACLE_CORE_SPAWN` and `ORACLE_CORE_RNG_7BAG` (because hold interacts with next/active piece sequencing).
+
+### Recommended shortest-feedback implementation order (non-normative)
+
+This is a recommended sequence that minimizes false failures and maximizes early signal. It is guidance only; compliance is determined solely by oracle pass/fail.
+
+1. `ORACLE_CORE_GEOMETRY`
+2. `ORACLE_CORE_COLLISION`
+3. `ORACLE_CORE_SPAWN`
+4. `ORACLE_CORE_GRAVITY_AND_LOCKING`
+5. `ORACLE_CORE_LINE_CLEAR`
+6. `ORACLE_CORE_SCORING`
+7. `ORACLE_CORE_RNG_7BAG`
+8. `ORACLE_CORE_GAME_OVER`
+9. `ORACLE_CORE_INVARIANTS`
+10. `ORACLE_CORE_HOLD` (only if enabled)
+
+If work is scoped to a specific gate, follow the gate’s required oracle subset from `CORE_ORACLE_INDEX` and preserve prerequisite order within that subset.
+
+## 6. Determinism requirement
 
 Given:
 
-- identical initial `CoreConfig`
-- identical seed
-- identical ordered input sequences
+- identical initial `CoreConfig`,
+- identical seed material,
+- identical ordered per-tick input sequences,
 
-The following must be identical across runs:
+the core must produce identical results across runs.
 
-- piece sequence
-- board states at every tick
-- score progression
-- level progression
-- line clear behavior
-- emitted events (if implemented)
-- game over timing
+At minimum, the following must be identical across runs:
 
-Any divergence constitutes failure.
+- piece sequence,
+- board and state evolution at each tick,
+- score / level / lines cleared progression,
+- game-over timing.
 
----
+If the core emits events (`StepResult.events`), event sequences must also be deterministic.
 
-## 6. Minimum MVP test obligations
+Any divergence is a correctness failure.
 
-At minimum, the following oracle categories must pass for MVP:
+## 7. Composite meta-oracle: invariants (cross-cutting)
 
-- Collision enforcement
-- Spawn correctness
-- Movement rejection rules
-- Rotation correctness
-- Gravity interval behavior
-- Immediate locking (no delay)
-- Single and multi-line clear
-- Score increments per rule
-- Level increments per rule
-- 7-bag completeness
-- Determinism with seed
-- Spawn-based game over
-- Post-step invariants
+After every successful `step()` call, the core must satisfy the invariants enforced by:
 
-Hold-related obligations apply only if hold is enabled.
+- `ORACLE_CORE_INVARIANTS.md`
 
----
+At minimum, this includes (non-exhaustive summary):
 
-## 7. Meta-oracle (cross-cutting invariants)
+- board shape and cell domain constraints,
+- active-piece validity when not game over,
+- non-negative score / line counters and level >= 1,
+- tick-count progression semantics,
+- RNG/bag validity,
+- `next_piece` definedness.
 
-After every successful `step()` call:
+**Important**: the normative, complete invariant list is defined in `ORACLE_CORE_INVARIANTS.md`. This section exists only to assert that invariants are part of the composite acceptance rule.
 
-- Board dimensions are exactly 20×10.
-- Board cells contain only 0/1.
-- Active piece (if not game over) occupies exactly 4 in-bounds cells.
-- No overlap exists between active piece and board.
-- Score ≥ 0.
-- Level ≥ 1.
-- `tick_count` increments exactly by 1 (unless game-over short-circuit).
-- RNG state contains only valid tetrominoes.
-- `next_piece` is always defined.
+## 8. Rejection vs error policy (composite binding)
 
-Invariant violations are errors (not rejections).
+Rejection vs error semantics are defined by:
 
----
+- `ERROR_HANDLING`
+- and validated through the relevant modular oracles.
 
-## 8. Rejection vs error semantics
+This document asserts the composite requirement:
 
-The following are mandatory:
+- A core implementation that “passes tests” but violates `ERROR_HANDLING` is non-compliant, and fails this composite oracle.
 
-- Collision-based move/rotation failure → reject (no mutation beyond allowed counters).
-- Unknown input event → error.
-- Multiple HARD_DROP in one tick → error.
-- Invalid state → error.
-- Repeated HOLD in same tick → reject after first (unless strict override).
+## 9. Minimum obligations for Gate completion
 
-These semantics are binding and enforced by modular oracles.
+Gates 1–6 require, at minimum, coverage of these categories:
 
----
+- collision and rejection behavior,
+- spawn correctness,
+- geometry and rotation correctness,
+- gravity interval behavior and locking,
+- single- and multi-line clearing,
+- scoring and level progression,
+- 7-bag correctness and seed determinism,
+- game-over conditions,
+- cross-cutting invariants.
 
-## 9. Prohibited implementations
+Hold obligations apply only if enabled, per `CORE_ORACLE_INDEX`.
 
-The following must not be implemented:
+## 10. Relationship to specifications and modular oracles
 
-- T-spins
-- Lock delay
-- Floor kicks
-- Combo scoring
-- Ghost pieces
-- Timing-dependent logic
-- Non-deterministic RNG
-- Procedural rotation inference
+- Specifications (`GAME_RULES`, `GAME_STATE`, etc.) define *what the core must do*.
+- Modular oracles define *what must be proven by tests* for each concern.
+- `CORE_ORACLE_INDEX` defines *traceability* and (optionally) an explicit implementation / verification sequence.
+- `ORACLE_CORE` defines *how the modular oracles combine* into a single acceptance decision for Gates 1–6.
 
-If present, core fails validation.
+## 11. Agent enforcement rule
 
----
-
-## 10. Relationship to modular oracles
-
-This document does not duplicate detailed test cases.
-
-Each modular oracle defines:
-
-- exact testable behaviors,
-- rejection semantics,
-- invariants specific to its concern.
-
-`ORACLE_CORE` defines:
-
-- acceptance aggregation,
-- cross-cutting invariants,
-- determinism requirements,
-- MVP gate minimum.
-
----
-
-## 11. Enforcement rule for agents
-
-Agents must treat:
-
-- `GAME_RULES` as behavioral law,
-- `GAME_STATE` as transition law,
-- `CORE_API` as API law,
-- `ERROR_HANDLING` as strictness law,
-- Modular oracles as proof obligations.
-
-If ambiguity is detected:
+If an ambiguity, omission, or conflict is detected in authoritative documents:
 
 - Stop.
 - Escalate.
 - Do not guess.
 
----
-
-## 12. Summary
-
-`ORACLE_CORE` is the composite correctness contract for the pure deterministic core.
-
-It aggregates modular core oracles into a single gate decision mechanism.
-
-Passing unit tests is insufficient unless those tests trace back to the modular oracles and are validated by `CORE_ORACLE_INDEX`.
-
-Core correctness is therefore:
-
-**spec-complete, invariant-safe, deterministic, and modularly verified.**
+`ORACLE_CORE` is an acceptance aggregator. It does not authorize inventing behavior.
