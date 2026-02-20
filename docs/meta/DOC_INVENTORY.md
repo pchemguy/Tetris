@@ -34,17 +34,20 @@ This spec does **not** define graph rendering, which is out of scope for this do
 
 ---
 
-## 2. Canonical artifact
+## 2. Canonical artifact and script generator
 
-Tooling MUST be able to produce:
+Tooling MUST be able to produce the documentation inventory and validate it against its schema, as defined in the table below. A reference implementation of the generator script is included in this repository.
 
-- **`docs/meta/DOC_INVENTORY.json`**
+| Artifact         | Relative Path                                 |
+| ---------------- | --------------------------------------------- |
+| Inventory file   | `docs/meta/DOC_INVENTORY.json`                |
+| Schema           | `docs/meta/DOC_INVENTORY.schema.json`         |
+| Generator script | `docs/meta/scripts/generate_doc_inventory.py` |
 
-Filename is **normative**. Directory is conventional.
-
-`DOC_INVENTORY.json` MUST be valid JSON and MUST conform to:
-
-- `DOC_INVENTORY.schema.json` (schema file collocated under `docs/meta/` by convention)
+* The inventory filename (`DOC_INVENTORY.json`) and schema filename (`DOC_INVENTORY.schema.json`) are **normative**.
+* The generator script is a **reference implementation**; its filename and directory are conventional.
+* Any alternative implementation MUST produce output conforming to `DOC_INVENTORY.schema.json` and MUST satisfy the determinism rules defined in §5.
+* The inventory artifact (`DOC_INVENTORY.json`) remains the authoritative discovery surface.
 
 ---
 
