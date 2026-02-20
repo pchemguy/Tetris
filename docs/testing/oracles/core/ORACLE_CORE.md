@@ -147,7 +147,7 @@ The following dependency constraints apply:
     - it applies only when hold is enabled (per `CORE_ORACLE_INDEX` conditions),
     - it depends on `ORACLE_CORE_SPAWN` and `ORACLE_CORE_RNG_7BAG` (because hold interacts with next/active piece sequencing).
 
-### Recommended shortest-feedback implementation order (non-normative)
+### Implementation order (non-normative)
 
 This is a recommended sequence that minimizes false failures and maximizes early signal. It is guidance only; compliance is determined solely by oracle pass/fail.
 
