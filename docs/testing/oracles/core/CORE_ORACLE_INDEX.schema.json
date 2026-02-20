@@ -17,15 +17,19 @@
   ],
   "properties": {
     "$schema": { "type": "string" },
+
     "schema_version": {
       "type": "string",
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
     },
+
     "index_id": { "$ref": "#/$defs/doc_id" },
+
     "project_id": {
       "type": "string",
       "pattern": "^[A-Z][0-9A-Z_]*$"
     },
+
     "generated_from": {
       "type": "object",
       "additionalProperties": false,
@@ -35,6 +39,7 @@
         "name": { "type": "string", "pattern": "^[A-Z][0-9A-Z_]*\\.md$" }
       }
     },
+
     "applies_to": {
       "type": "object",
       "additionalProperties": false,
@@ -45,33 +50,60 @@
         "scope": { "$ref": "#/$defs/doc_scope_token" }
       }
     },
+
     "spec_documents": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
       "items": { "$ref": "#/$defs/doc_id" }
     },
+
     "oracle_documents": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
       "items": { "$ref": "#/$defs/doc_id" }
     },
+
+    "oracle_dependency_policy": { "$ref": "#/$defs/oracle_dependency_policy" },
+
+    "recommended_implementation_sequence": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/doc_id" }
+    },
+
+    "sequence_rationale": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/sequence_rationale_entry" }
+    },
+
+    "oracle_metadata": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/oracle_metadata_entry" }
+    },
+
     "traceability": {
       "type": "array",
       "minItems": 1,
       "items": { "$ref": "#/$defs/oracle_entry" }
     }
   },
+
   "$defs": {
     "doc_id": {
       "type": "string",
       "pattern": "^[A-Z][0-9A-Z_]*$"
     },
+
     "range_token": {
       "type": "string",
       "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"
     },
+
     "doc_scope_token": {
       "type": "string",
       "enum": [
@@ -91,18 +123,17 @@
         "testing:testing"
       ]
     },
+
     "section_ref": {
       "type": "object",
       "additionalProperties": false,
       "required": ["doc_id", "section"],
       "properties": {
         "doc_id": { "$ref": "#/$defs/doc_id" },
-        "section": {
-          "type": "string",
-          "minLength": 1
-        }
+        "section": { "type": "string", "minLength": 1 }
       }
     },
+
     "condition": {
       "type": "object",
       "additionalProperties": false,
@@ -112,6 +143,7 @@
         "equals": { "type": ["string", "number", "boolean", "null"] }
       }
     },
+
     "conditions": {
       "type": "object",
       "additionalProperties": false,
@@ -124,6 +156,7 @@
         }
       }
     },
+
     "oracle_entry": {
       "type": "object",
       "additionalProperties": false,
@@ -136,6 +169,74 @@
           "items": { "$ref": "#/$defs/section_ref" }
         },
         "conditions": { "$ref": "#/$defs/conditions" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "oracle_id": { "const": "ORACLE_CORE_HOLD" } },
+            "required": ["oracle_id"]
+          },
+          "then": { "required": ["conditions"] }
+        }
+      ]
+    },
+
+    "oracle_dependency_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["meaning", "rule", "default"],
+      "properties": {
+        "meaning": { "type": "string", "minLength": 1 },
+        "rule": { "type": "string", "minLength": 1 },
+        "default": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["requires_all_depends_on", "allows_waive"],
+          "properties": {
+            "requires_all_depends_on": { "type": "boolean" },
+            "allows_waive": { "type": "boolean" }
+          }
+        }
+      }
+    },
+
+    "sequence_rationale_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step", "oracle_id", "why_first"],
+      "properties": {
+        "step": { "type": "integer", "minimum": 1 },
+        "oracle_id": { "$ref": "#/$defs/doc_id" },
+        "why_first": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "oracle_metadata_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracle_id", "status", "depends_on", "blocks", "notes"],
+      "properties": {
+        "oracle_id": { "$ref": "#/$defs/doc_id" },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "active", "deprecated"]
+        },
+        "depends_on": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/doc_id" }
+        },
+        "blocks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/doc_id" }
+        },
+        "conditions": { "$ref": "#/$defs/conditions" },
+        "notes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
       },
       "allOf": [
         {
