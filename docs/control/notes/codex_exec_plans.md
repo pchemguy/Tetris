@@ -1,3 +1,9 @@
+---
+urls:
+  - https://developers.openai.com/cookbook/articles/codex_exec_plans/
+  - https://github.com/openai/openai-cookbook/blob/main/articles/codex_exec_plans.md
+---
+
 # Using PLANS.md for multi-hour problem solving
 
 Codex and the `gpt-5.2-codex` model (recommended) can be used to implement complex tasks that take significant time to research, design, and implement. The approach described here is one way to prompt the model to implement these tasks and to steer it towards successful completion of a project.
