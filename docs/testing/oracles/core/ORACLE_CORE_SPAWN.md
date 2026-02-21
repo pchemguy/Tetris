@@ -2,18 +2,11 @@
 doc_id: ORACLE_CORE_SPAWN
 name: ORACLE_CORE_SPAWN.md
 title: Core Spawn Test Oracles
-kind: testing
-scope: core:core
 status: active
 authority: normative
-gate_applies_to: 1-6
-phase_applies_to: all
 description: Mandatory test oracles for piece spawning semantics in the deterministic core.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - GAME_RULES
-  - GAME_STATE
-  - CORE_API
+references: [GAME_RULES, GAME_STATE, CORE_API]
 ---
 
 # ORACLE_CORE_SPAWN

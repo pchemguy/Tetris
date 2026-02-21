@@ -2,12 +2,8 @@
 doc_id: L3_BEHAVIOR
 name: L3_BEHAVIOR.md
 title: L3 — Behavioral Specifications (Component Contracts)
-kind: spec
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Defines all normative behavioral specifications for core and shell components.
 references:
   - GAME_STATE
@@ -41,7 +37,7 @@ references:
 | Input Model        | `INPUT_MODEL.md`          | Input representation and tick ordering           |
 | Error Handling     | `ERROR_HANDLING.md`       | Rejection vs error policy; invariant enforcement |
 | Shapes & Rotations | `SHAPES_AND_ROTATIONS.md` | Exact tetromino geometry and rotations           |
-| Core API           | `CORE_API.md`             | Python-level public API contract                 |
+
 
 ---
 
@@ -55,13 +51,24 @@ references:
 | Rendering Specification          | `RENDERING_SPEC.md` | ASCII renderer contract and output format                      |
 | CLI Specification                | `CLI_SPEC.md`       | Command-line interface and entrypoint behavior                 |
 | Replay Specification             | `REPLAY_SPEC.md`    | Deterministic replay and evaluation format                     |
-| Renderer interface specification | `RENDERER_API.md`   | Renderer API and its strict purity guarantees                  |
-| Runtime interface specification  | `RUNTIME_API.md`    | Runtime API and its role as the execution-time orchestrator    |
-| Configuration API                | `CONFIG_API.md`     | Typed configuration model used to parameterize the application |
+
 
 ---
 
-### Shell API specifications
+### API specifications
+
+**Directory**: `docs/specs/api/`
+
+| Title                            | Filename          | Function / Role                                                |
+| -------------------------------- | ----------------- | -------------------------------------------------------------- |
+| Core API                         | `CORE_API.md`     | Python-level public API contract                               |
+| Renderer interface specification | `RENDERER_API.md` | Renderer API and its strict purity guarantees                  |
+| Runtime interface specification  | `RUNTIME_API.md`  | Runtime API and its role as the execution-time orchestrator    |
+| Configuration API                | `CONFIG_API.md`   | Typed configuration model used to parameterize the application |
+
+---
+
+### IO API specifications
 
 **Directory**: `docs/specs/io/`
 

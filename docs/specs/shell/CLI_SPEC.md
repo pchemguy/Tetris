@@ -2,16 +2,11 @@
 doc_id: CLI_SPEC
 name: CLI_SPEC.md
 title: CLI Specification
-kind: spec
-scope: shell:cli
 status: active
 authority: normative
-gate_applies_to: 12
-phase_applies_to: 2-5
 description: Defines command-line interface commands, flags, entrypoints, and exit semantics.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - RUNTIME_SPEC
+references: [RUNTIME_SPEC]
 ---
 
 # CLI SPEC

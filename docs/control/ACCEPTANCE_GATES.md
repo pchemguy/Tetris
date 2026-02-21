@@ -2,12 +2,8 @@
 doc_id: ACCEPTANCE_GATES
 name: ACCEPTANCE_GATES.md
 title: Milestone Acceptance Gates
-kind: control
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Milestone-based acceptance criteria and progression rules.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---

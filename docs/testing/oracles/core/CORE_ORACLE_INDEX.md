@@ -2,12 +2,8 @@
 doc_id: CORE_ORACLE_INDEX
 name: CORE_ORACLE_INDEX.md
 title: Core Oracle Index
-kind: meta
-scope: core:core
 status: active
 authority: normative
-gate_applies_to: 1-6
-phase_applies_to: all
 description: Machine-checkable traceability map from core test oracles to the exact spec sections they validate.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 references:

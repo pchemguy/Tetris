@@ -2,17 +2,9 @@
 doc_id: EXEC_PLAN_TEMPLATE
 name: EXEC_PLAN_TEMPLATE.md
 title: Execution Plan — {Short Action-Oriented Description}
-kind: control
-scope: global
 status: draft
 authority: non_normative
-phase_applies_to: "{phase}"
-gate_applies_to: "{gate}"
-references:
-  - WORKFLOW
-  - TEST_PLAN
-  - ACCEPTANCE_GATES
-  - PHASES
+references: [WORKFLOW, TEST_PLAN, ACCEPTANCE_GATES, PHASES]
 ---
 
 # Execution Plan — {Short Description}

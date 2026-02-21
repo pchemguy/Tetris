@@ -2,17 +2,12 @@
 doc_id: TESTING_CONVENTIONS
 name: TESTING_CONVENTIONS.md
 title: Testing Conventions
-kind: testing
-scope: global
 status: active
 authority: normative
-phase_applies_to: all
-gate_applies_to: all
 urls:
   - https://chatgpt.com/c/698975ae-3688-8397-92a7-8c7fbe698b2e
   - https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - TEST_STRATEGY
+references: [TEST_STRATEGY]
 ---
 
 # TESTING_CONVENTIONS

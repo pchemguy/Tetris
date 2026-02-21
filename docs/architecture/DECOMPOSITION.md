@@ -2,16 +2,11 @@
 doc_id: DECOMPOSITION
 name: DECOMPOSITION.md
 title: System Decomposition and Component Responsibilities
-kind: architecture
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Explicit component decomposition and responsibility boundaries.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - ARCHITECTURE
+references: [ARCHITECTURE]
 ---
 
 # DECOMPOSITION

@@ -2,16 +2,11 @@
 doc_id: CORE_API
 name: CORE_API.md
 title: Core API
-kind: api
-scope: core:core
 status: active
 authority: normative
-gate_applies_to: 1-6
-phase_applies_to: all
 description: Public Python API contract for interacting with the deterministic core.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - GAME_STATE
+references: [GAME_STATE]
 ---
 
 # CORE API

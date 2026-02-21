@@ -2,17 +2,11 @@
 doc_id: DOC_INVENTORY
 name: DOC_INVENTORY.md
 title: Machine-Readable Documentation Inventory Specification
-kind: meta
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Defines the canonical machine-readable documentation inventory format (DOC_INVENTORY.json) used for discovery, validation inputs, and downstream tooling.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - DOC_SCHEMA
-  - DOCUMENTATION_SYSTEM
+references: [DOC_SCHEMA, DOCUMENTATION_SYSTEM]
 ---
 
 # Machine-Readable Documentation Inventory Specification (Normative)

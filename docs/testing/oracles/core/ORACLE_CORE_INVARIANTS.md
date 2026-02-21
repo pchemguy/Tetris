@@ -2,18 +2,11 @@
 doc_id: ORACLE_CORE_INVARIANTS
 name: ORACLE_CORE_INVARIANTS.md
 title: Core State Invariant Test Oracles
-kind: testing
-scope: core:core
 status: active
 authority: normative
-gate_applies_to: 1-6
-phase_applies_to: all
 description: Mandatory cross-cutting state invariants that must hold after every successful step.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - GAME_STATE
-  - ERROR_HANDLING
-  - CORE_API
+references: [GAME_STATE, ERROR_HANDLING, CORE_API]
 ---
 
 # ORACLE_CORE_INVARIANTS

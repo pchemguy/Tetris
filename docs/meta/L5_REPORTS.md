@@ -2,15 +2,10 @@
 doc_id: L5_REPORTS
 name: L5_REPORTS.md
 title: L5 — Execution State (Reports)
-kind: report
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Defines execution state artifacts, including append-only implementation reports and evaluation logs.
-references:
-  - IMPLEMENTATION_REPORTS
+references: [IMPLEMENTATION_REPORTS]
 ---
 
 # L5 — Execution State

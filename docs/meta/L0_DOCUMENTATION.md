@@ -2,12 +2,8 @@
 doc_id: L0_DOCUMENTATION
 name: L0_DOCUMENTATION.md
 title: L0 — Documentation Infrastructure (Meta-layer)
-kind: meta
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Defines the documentation infrastructure, metadata rules, graph model, inventory, and cross-layer validation policy.
 references:
   - DOCUMENTATION_SYSTEM

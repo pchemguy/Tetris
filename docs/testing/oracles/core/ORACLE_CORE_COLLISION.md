@@ -2,12 +2,8 @@
 doc_id: ORACLE_CORE_COLLISION
 name: ORACLE_CORE_COLLISION.md
 title: Core Collision and Rejection Test Oracles
-kind: testing
-scope: core:core
 status: active
 authority: normative
-gate_applies_to: 1-6
-phase_applies_to: all
 description: Mandatory test oracles for core collision rules, bounds/overlap checks, and rejection non-mutation semantics for movement and rotation attempts.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 references:

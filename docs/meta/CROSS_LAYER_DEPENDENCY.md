@@ -2,18 +2,11 @@
 doc_id: CROSS_LAYER_DEPENDENCY
 name: CROSS_LAYER_DEPENDENCY.md
 title: Cross-Layer YAML Reference Dependency Policy
-kind: meta
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Diagnostic-only policy for validating cross-layer semantic dependencies declared via YAML references.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-supersedes:
-  - YAML_REFERENCE_POLICY
-references:
-  - DOCUMENTATION_SYSTEM
+references: [DOCUMENTATION_SYSTEM]
 ---
 
 # Cross-Layer YAML Reference Dependency Policy (Normative)

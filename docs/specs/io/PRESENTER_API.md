@@ -2,16 +2,11 @@
 doc_id: PRESENTER_API
 name: PRESENTER_API.md
 title: Presenter API
-kind: api
-scope: shell:presenter
 status: active
 authority: normative
-gate_applies_to: 10-12
-phase_applies_to: 2-5
 description: Defines presenter interface and output responsibility boundaries.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - RENDERING_SPEC
+references: [RENDERING_SPEC]
 ---
 
 # Terminal Presenter API

@@ -2,17 +2,10 @@
 doc_id: L2_STRUCTURE
 name: L2_STRUCTURE.md
 title: L2 — System Structure (Global Contracts)
-kind: architecture
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Defines system architecture, decomposition, and component registry as authoritative structural contracts.
-references:
-  - ARCHITECTURE
-  - DECOMPOSITION
-  - COMPONENT_REGISTRY
+references: [ARCHITECTURE, DECOMPOSITION, COMPONENT_REGISTRY]
 ---
 
 # L2 — System Structure

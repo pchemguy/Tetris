@@ -2,12 +2,8 @@
 doc_id: L4_TESTING
 name: L4_TESTING.md
 title: L4 — Test Oracles (Proof Obligations)
-kind: testing
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Defines mandatory correctness proofs and component-specific test oracles mapped to acceptance gates.
 references:
   - ORACLE_CORE

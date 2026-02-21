@@ -2,19 +2,11 @@
 doc_id: DOC_GRAPH_SPEC
 name: DOC_GRAPH_SPEC.md
 title: Documentation Graph Visualization Specification
-kind: meta
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Defines how to extract and render a documentation dependency graph from DOC_SCHEMA YAML metadata and @DOC_ID references.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - DOC_SCHEMA
-  - DOC_INVENTORY
-  - CROSS_LAYER_DEPENDENCY
-  - DOCUMENTATION_SYSTEM
+references: [DOC_SCHEMA, DOC_INVENTORY, CROSS_LAYER_DEPENDENCY, DOCUMENTATION_SYSTEM]
 ---
 
 # Documentation Graph Visualization Specification (Normative)

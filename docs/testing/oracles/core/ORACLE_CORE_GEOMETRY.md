@@ -2,18 +2,11 @@
 doc_id: ORACLE_CORE_GEOMETRY
 name: ORACLE_CORE_GEOMETRY.md
 title: Core Geometry and Rotation Test Oracles
-kind: testing
-scope: core:core
 status: active
 authority: normative
-gate_applies_to: 1-6
-phase_applies_to: all
 description: Mandatory test oracles for tetromino geometry enumeration and rotation-state correctness.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - SHAPES_AND_ROTATIONS
-  - GAME_STATE
-  - CORE_API
+references: [SHAPES_AND_ROTATIONS, GAME_STATE, CORE_API]
 ---
 
 # ORACLE_CORE_GEOMETRY

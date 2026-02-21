@@ -2,12 +2,8 @@
 doc_id: CONFIG_API
 name: CONFIG_API.md
 title: Configuration API
-kind: api
-scope: shell:persistence
 status: active
 authority: normative
-gate_applies_to: 12-13
-phase_applies_to: 2-5
 description: Defines typed configuration model used to parameterize runtime and CLI behavior.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---

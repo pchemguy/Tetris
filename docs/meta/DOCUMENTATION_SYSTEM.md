@@ -2,12 +2,8 @@
 doc_id: DOCUMENTATION_SYSTEM
 name: DOCUMENTATION_SYSTEM.md
 title: Documentation Infrastructure System
-kind: meta
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Defines the structure, authority rules, and roles of the repository's documentation infrastructure.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---

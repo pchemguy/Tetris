@@ -2,20 +2,11 @@
 doc_id: ORACLE_CORE_HOLD
 name: ORACLE_CORE_HOLD.md
 title: Core Oracle – Hold
-kind: testing
-scope: core:core
 status: active
 authority: normative
-gate_applies_to: 1-6
-phase_applies_to: all
 description: Mandatory automated test oracles for hold semantics in the deterministic core (when hold is enabled).
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references:
-  - GAME_RULES
-  - GAME_STATE
-  - INPUT_MODEL
-  - ERROR_HANDLING
-  - CORE_API
+references: [GAME_RULES, GAME_STATE, INPUT_MODEL, ERROR_HANDLING, CORE_API]
 ---
 
 # ORACLE_CORE_HOLD

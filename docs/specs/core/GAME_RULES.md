@@ -2,12 +2,8 @@
 doc_id: GAME_RULES
 name: GAME_RULES.md
 title: Game Rules
-kind: spec
-scope: core:core
 status: active
 authority: normative
-gate_applies_to: 1-6
-phase_applies_to: all
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 description: Behavioral specification defining gameplay rules, scoring, gravity, and progression semantics.
 ---
