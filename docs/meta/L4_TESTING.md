@@ -4,7 +4,7 @@ name: L4_TESTING.md
 title: L4 — Test Oracles (Proof Obligations)
 status: active
 authority: normative
-description: Defines mandatory correctness proofs and component-specific test oracles mapped to acceptance gates.
+description: Defines normative proof obligations and the role of test oracles in validating L3 contracts.
 references:
   - ORACLE_CORE
   - ORACLE_SHELL_RENDERING
@@ -14,154 +14,106 @@ references:
   - ORACLE_SHELL_CONFIG
 ---
 
-# L4 — Testing
+# L4 — Test Oracles (Proof Obligations)
 
-## Document Index
+L4 defines **what must be proven** for an implementation to be considered correct.
 
-#### Core test oracle
+L3 defines behavioral contracts.  
+L4 defines the **proof obligations** that demonstrate those contracts are satisfied.
+
+Tests that are not grounded in L4 oracles do not constitute authoritative proof.
+
+---
+
+## Document index
+
+### Core test oracle
 
 **Directory**: `docs/testing/oracles/core/`
 
-| Title                                | Filename         | Function / Role                                                       |
-| ------------------------------------ | ---------------- | --------------------------------------------------------------------- |
-| Composite Mandatory Core Test Oracle | `ORACLE_CORE.md` | Describes ORACLE_CORE decomposition and lists associated oracle files |
+| Title                         | Filename         | Role |
+| ----------------------------- | ---------------- | ---- |
+| Composite Core Test Oracle    | `ORACLE_CORE.md` | Defines mandatory core proof obligations and references decomposed oracle documents. |
 
 ---
 
-#### Shell-level test oracles
+### Shell-level test oracles
 
 **Directory**: `docs/testing/oracles/shell/`
 
-| Title                 | Filename                    | Function / Role                                     |
-| --------------------- | --------------------------- | --------------------------------------------------- |
-| Rendering Test Oracle | `ORACLE_SHELL_RENDERING.md` | Mandatory snapshot tests for ASCII rendering        |
-| Runtime Test Oracle   | `ORACLE_SHELL_RUNTIME.md`   | Deterministic execution tests for scripted runtime  |
-| CLI Test Oracle       | `ORACLE_SHELL_CLI.md`       | Mandatory behavioral tests for CLI commands         |
-| Replay Test Oracle    | `ORACLE_SHELL_REPLAY.md`    | Deterministic replay validation and execution tests |
-| Config Test Oracle    | `ORACLE_SHELL_CONFIG.md`    | Mandatory automated configuration handling tests    |
+| Title                 | Filename                    | Role |
+| --------------------- | --------------------------- | ---- |
+| Rendering Test Oracle | `ORACLE_SHELL_RENDERING.md` | Proof obligations for ASCII rendering behavior. |
+| Runtime Test Oracle   | `ORACLE_SHELL_RUNTIME.md`   | Proof obligations for deterministic runtime orchestration. |
+| CLI Test Oracle       | `ORACLE_SHELL_CLI.md`       | Proof obligations for CLI behavior and exit semantics. |
+| Replay Test Oracle    | `ORACLE_SHELL_REPLAY.md`    | Proof obligations for replay validation and deterministic execution. |
+| Config Test Oracle    | `ORACLE_SHELL_CONFIG.md`    | Proof obligations for configuration handling and boundary enforcement. |
 
 ---
 
-## Detailed description
+## What an oracle is
 
-Test oracle documents define **what must be proven** for an implementation to be considered correct. They answer questions such as:
+A test oracle document is a **normative specification of required proofs**.
 
-* Which behaviors must be tested?
-* What scenarios are mandatory?
-* What level of determinism is required?
-* What constitutes sufficient coverage for acceptance?
+It defines:
 
-Test oracles are **normative**: passing ad-hoc or convenience tests is insufficient if oracle-mandated tests are missing. Each test oracle applies to:
+- mandatory test categories,
+- required invariants,
+- minimum acceptable test sets,
+- determinism requirements,
+- rejection vs error expectations.
 
-* a specific component, and
-* a specific acceptance gate (or small range of gates).
-
----
-
-###  Core Test Oracle
-
-####  `CORE_TEST_ORACLE.md` — Mandatory tests
-
-**Role**  
-Defines **what must be proven** for correctness.
-
-**Contents**
-
-- Explicit test oracles mapped to rules
-- Required vs optional tests
-- Minimum acceptable test set for MVP
-
-**Usage**
-
-- This document is the arbiter of correctness.
-- Passing ad-hoc tests is insufficient if oracles are missing.
-- Agents should generate tests directly traceable to this document.
-- Applies exclusively to Acceptance Gates 1–6.
+Oracles do not describe implementation.
+They describe **what must be demonstrated**.
 
 ---
 
-###  Shell Test Oracles
+## Relationship to other layers
 
-####  `RENDERING_TEST_ORACLE.md` — Renderer correctness
+- L3 defines behavior.
+- L4 defines proof of that behavior.
+- L1 defines which proofs are required for each gate.
+- L2 constrains what tests are allowed to depend on (architectural boundaries).
 
-**Role**  
-Defines the **mandatory automated tests** that the ASCII renderer must satisfy.
+An implementation is correct only if:
 
-**Contents**
-
-* Deterministic output requirements
-* Exact board layout and border rules
-* Cell symbol constraints
-* Metadata line presence and ordering
-* Game-over rendering behavior
-* Snapshot (golden) test requirements
-
-**Usage**
-
-* Enforces strict compliance with `RENDERING_SPEC.md`.
-* Enables byte-for-byte snapshot testing.
-* Prevents rendering logic from drifting or becoming environment-dependent.
-* Applies exclusively to **Acceptance Gate 10**.
+1. It conforms to L3 contracts, and  
+2. It satisfies all required L4 oracles applicable to the current gate.
 
 ---
 
-####  `RUNTIME_TEST_ORACLE.md` — Scripted runtime correctness
+## Determinism requirement
 
-**Role**  
-Defines the **mandatory tests** for the scripted (virtual-time) runtime.
+All oracle-mandated tests must be:
 
-**Contents**
+- deterministic,
+- reproducible,
+- independent of wall-clock time,
+- independent of environment state unless explicitly specified.
 
-* One-tick-per-step execution guarantees
-* Deterministic input application
-* Rendering cadence requirements
-* Early termination on game over
-* Error propagation rules
-
-**Usage**
-
-* Ensures the runtime is suitable for deterministic evaluation and CI.
-* Prevents re-implementation of core logic in the runtime layer.
-* Applies exclusively to **Acceptance Gate 11**.
+Determinism violations invalidate proof.
 
 ---
 
-####  `CLI_TEST_ORACLE.md` — CLI behavior and robustness
+## Prohibitions
 
-**Role**  
-Defines **mandatory behavioral tests** for the command-line interface.
+The following are forbidden:
 
-**Contents**
+- Implementing behavior to satisfy tests that is not defined in L3.
+- Weakening oracle requirements without prior specification change.
+- Encoding behavior only in tests without updating L3.
+- Using snapshot or golden tests outside explicitly authorized oracle domains.
+- Introducing architectural coupling (L2 violations) within test code.
 
-* Command availability (`run`, `script`, `replay`)
-* Exit code semantics
-* Error propagation requirements
-* Prohibitions on silent failure or logic leakage
-
-**Usage**
-
-* Keeps the CLI thin, declarative, and auditable.
-* Ensures consistent behavior for humans and automation.
-* Applies exclusively to **Acceptance Gate 12**.
+Tests must not become a secondary source of truth.
 
 ---
 
-####  `REPLAY_TEST_ORACLE.md` — Deterministic replay correctness
+## Gate applicability
 
-**Role**  
-Defines **mandatory tests** for replay loading, validation, and execution.
+Which oracle documents apply to which acceptance gates is defined exclusively in:
 
-**Contents**
+- `ACCEPTANCE_GATES.md`
+- `TEST_PLAN.md`
 
-* Replay file schema validation
-* Strict input validation
-* Deterministic tick-by-tick execution
-* Final state determinism guarantees
-
-**Usage**
-
-* Enables exact reproduction of runs for debugging and agent evaluation.
-* Prevents permissive or auto-correcting replay behavior.
-* Applies exclusively to **Acceptance Gate 13**.
-
----
+L4 defines proof obligations; L1 defines when those proofs are required.

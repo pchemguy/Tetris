@@ -1,115 +1,120 @@
 ---
 doc_id: L2_STRUCTURE
 name: L2_STRUCTURE.md
-title: L2 — System Structure (Global Contracts)
+title: L2 - System Structure (Global Contracts)
 status: active
 authority: normative
-description: Defines system architecture, decomposition, and component registry as authoritative structural contracts.
+description: Defines the structural contracts of the system - architecture, decomposition, and component registry.
 references: [ARCHITECTURE, DECOMPOSITION, COMPONENT_REGISTRY]
 ---
 
 # L2 — System Structure
 
-## Document Index
+This layer defines the **structural reality of the system**.
+
+Structural documents answer:
+
+- What components exist?
+- What boundaries separate them?
+- What dependencies are permitted?
+- What architectural pattern governs the system?
+
+These contracts constrain the implementation independently of behavioral details (L3), testing strategy (L4), or development order (L1).
+
+---
+
+## Document index
 
 **Directory**: `docs/architecture/`
 
-| Title                               | Filename                         | Function / Role                                                                |
-| ----------------------------------- | -------------------------------- | ------------------------------------------------------------------------------ |
-| System Architecture                 | `ARCHITECTURE.md`                | High-level system architecture and design decisions (Functional Core / Shell). |
-| System Decomposition                | `DECOMPOSITION.md`               | Explicit component decomposition and responsibility boundaries.                |
-| Component Registry (Normative)      | `COMPONENT_REGISTRY.md`          | Human-readable explanation of registered components and layer model.           |
-| Component Registry (Machine Schema) | `COMPONENT_REGISTRY.schema.json` | JSON Schema validating `COMPONENT_REGISTRY.json`.                              |
-| Component Registry (Instance)       | `COMPONENT_REGISTRY.json`        | Canonical list of components, layers, and dependency policy.                   |
-
-## Detailed description
-
-Documents in this class define the **structural reality of the system**. They constrain *what the system is*, independent of behavior, tests, or development order. This class also consists of two distinct documents with **different levels of abstraction and authority**:
-
-### Architecture (`ARCHITECTURE.md`) — *Conceptual design intent*
-
-**Role**  
-Defines the **big-picture architecture** of the application.
-
-**Contents**
-
-* Chosen architectural pattern (functional core / imperative shell)
-* High-level component interaction diagram
-* Technology and design options considered
-* Explicit architectural decisions and non-goals
-
-**Usage**
-
-* Provides context for all non-core development.
-* Prevents ad hoc architectural drift.
-* Agents must align all new components with this document before implementation.
-* Humans should treat this as the place to record architectural intent and rationale.
-
-The architecture document defines the **high-level design model** of the system. It answers questions such as:
-
-* *What architectural pattern is used?*
-* *Why is the system structured this way?*
-* *What design principles are non-negotiable?*
-* *What alternatives were considered and rejected?*
-
-Architecture constrains:
-
-* **design intent**,
-* **allowed architectural styles**,
-* **non-goals and explicit exclusions**.
-
-It provides *rationale* and *direction*, not a module map.
+| Title                         | Filename                         | Role                                                                 |
+| ----------------------------- | -------------------------------- | -------------------------------------------------------------------- |
+| System Architecture           | `ARCHITECTURE.md`                | Defines architectural pattern and non-negotiable design principles.  |
+| System Decomposition          | `DECOMPOSITION.md`               | Defines concrete component boundaries and allowed dependencies.      |
+| Component Registry (Human)    | `COMPONENT_REGISTRY.md`          | Human-readable explanation of registered components and layers.      |
+| Component Registry (Schema)   | `COMPONENT_REGISTRY.schema.json` | JSON Schema validating the registry instance.                        |
+| Component Registry (Instance) | `COMPONENT_REGISTRY.json`        | Canonical machine-readable list of components and structural policy. |
 
 ---
 
-### Decomposition (`DECOMPOSITION.md`) — *Concrete component boundaries*
+## Authority of structural contracts
 
-**Role**  
-Defines the **authoritative component breakdown** of the system.
+Documents in L2 are **normative structural contracts**.
 
-**Contents**
+They constrain:
 
-* List of system components (core, runtime, renderer, input, CLI, etc.)
-* Responsibility boundaries for each component
-* Explicit non-responsibilities
-* Allowed interfaces between components
-* Delivery staging guidance
+- component existence and classification,
+- dependency direction,
+- responsibility boundaries,
+- architectural pattern selection.
 
-**Usage**
-
-* Serves as the *bridge* between architecture and task execution.
-* Forms the basis for role-based agent skills.
-* Prevents responsibility leakage (e.g. logic in renderer, IO in core).
-* Humans should consult this before adding any new module or package.
-
-The decomposition document defines the **authoritative breakdown of the system into components**. It answers questions such as:
-
-* *What components exist concretely?*
-* *What is each component responsible for?*
-* *What must a component not do?*
-* *What interfaces are allowed between components?*
-
-Decomposition constrains:
-
-* **component responsibilities**,
-* **module boundaries**,
-* **allowed dependencies**.
-
-It is the **operational boundary document** used to evaluate responsibility leakage.
+Structural violations are defects even if behavior appears correct.
 
 ---
 
-### Relationship between architecture and decomposition
+## Architecture vs decomposition
 
-* **Architecture** defines *why the system is shaped the way it is*.
-* **Decomposition** defines *how that shape is realized in components*.
+The system distinguishes between two levels of structural authority:
 
-Architecture without decomposition is aspirational. Decomposition without architecture is arbitrary. Together, these documents ensure that:
+### Architecture — conceptual model
 
-* structural decisions are intentional,
-* responsibility boundaries are explicit,
-* implementation cannot silently drift.
+`ARCHITECTURE.md` defines the governing architectural pattern and high-level principles (e.g., functional core / imperative shell).
 
-All implementation must conform to **both**.
+It answers:
+
+- Why is the system structured this way?
+- What design principles are non-negotiable?
+- What architectural styles are explicitly rejected?
+
+Architecture constrains **design intent**.
 
 ---
+
+### Decomposition — concrete boundaries
+
+`DECOMPOSITION.md` defines the authoritative breakdown of the system into components and the dependency rules between them.
+
+It answers:
+
+- What components exist concretely?
+- What is each responsible for?
+- What must each not do?
+- What dependencies are allowed?
+
+Decomposition constrains **module boundaries and responsibility allocation**.
+
+---
+
+## Component registry
+
+`COMPONENT_REGISTRY.json` is the canonical machine-readable declaration of components and their structural classification.
+
+It exists to make structural contracts:
+
+- machine-checkable,
+- auditable,
+- enforceable by tooling.
+
+If the registry and decomposition diverge, the registry is invalid.
+
+---
+
+## Relationship to other layers
+
+- L2 constrains **L3 (behavior)**: behavioral contracts must respect structural boundaries.
+- L2 constrains **L4 (testing)**: tests must not violate architectural separation.
+- L2 constrains **implementation**: code layout and dependencies must align with decomposition.
+- L1 (governance) may stage delivery, but may not redefine structure.
+
+---
+
+## Change rule
+
+Structural changes require:
+
+1. updating `ARCHITECTURE.md` and/or `DECOMPOSITION.md`,
+2. updating `COMPONENT_REGISTRY.json` if components change,
+3. validating dependency rules,
+4. then updating behavior and tests as necessary.
+
+Implementation must never introduce structural change without prior structural authority.
