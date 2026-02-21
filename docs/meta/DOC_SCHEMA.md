@@ -14,11 +14,10 @@ references:
 
 ## 1. Purpose
 
-This document defines the **normative metadata system** used in the YAML front matter of Markdown documents in this repository. It exists to make the documentation system **machine-checkable** and to support:
+This document defines the **normative metadata system** used in the YAML front matter of Markdown documents in this repository. It exists to make documentation **machine-checkable** and to support:
 
 - deterministic document discovery,
-- explicit authority classification (normative vs non-normative),
-- explicit applicability (phase/gate),
+- explicit authority classification (`normative` vs `non_normative`),
 - automated validation of cross-document dependencies,
 - detection of duplicates, drift, and misclassification.
 
@@ -26,31 +25,28 @@ The authoritative machine schema is **`DOC_SCHEMA.json`**.
 
 ---
 
-## 2. Applicability and authority
+## 2. Participation and authority
 
-### 2.1 Normative documents under `docs/` must include metadata
+### 2.1 Participating documents under `docs/`
 
-All Markdown documents intended to participate in the repository’s documentation system **must** include a YAML front matter block that validates against
-`DOC_SCHEMA.json`. Root documents are allowed to participate, but the minimum expectation is:
+All Markdown documents intended to participate in the repository’s documentation system MUST include a YAML front matter block that validates against `DOC_SCHEMA.json`. Root-level documents are allowed to participate, but the minimum expectation is:
 
-- all normative documents under `docs/` include metadata,
-- any doc listed in the `AGENTS.md` index includes metadata,
-- any doc, which can be backtracked to `AGENTS.md` via `references`, includes metadata.
+- all **normative** documents under `docs/` include metadata,
+- any document explicitly named in `AGENTS.md` includes metadata,
+- any document reachable from `AGENTS.md` by following YAML `references` includes metadata.
 
-### 2.2 Non-normative documents under `docs/`
+### 2.2 Authority constraints by location
+
+Some directories are defined as **non-normative zones** by policy, regardless of content.
+
+Any Markdown document located under:
 
 - `docs/archive/`
-- any path that includes a directory component matching case-insensitively one of (full directory name must match)
-    - "idea"
-    - "ideas"
-    - "archive"
-    - "archives"
-    - "draft"
-    - "drafts"
-    - "note"
-    - "notes"
+- any directory whose name matches (case-insensitive, exact directory component match):
+    - `idea`, `ideas`, `archive`, `archives`, `draft`, `drafts`, `note`, `notes`
 
-Docs within these directories have **zero authority**.
+MUST be treated as **non-normative** regardless of metadata.  
+Rationale: location is a deliberate governance signal; “ideas/drafts/archives” must not acquire authority accidentally.
 
 ---
 
@@ -78,14 +74,14 @@ Additionally, it MAY include the following optional keys:
 
 - `references`
 - `description`
-- {`url` | `urls`}
+- `{url | urls}`
 
 Notes:
 
 - Keys are case-sensitive and MUST match exactly.
 - Required YAML lists MUST be populated even when empty (`[]`).
-- YAML `null` MUST be explicit where allowed (`null`).
-- Optional empty YAML keys should omitted.
+- Required keys only: YAML `null` MUST be explicit where allowed (`null`).
+- Optional keys: MUST be omitted when empty.
 
 ---
 
@@ -122,6 +118,8 @@ Non-examples:
 - `RUNTIME-SPEC` (hyphen)
 - `TETRIS.RUNTIME.SPEC` (dots)
 
+Any violation of these rules  is a **hard failure** (Gate 0).
+
 ### 4.2 Identity rules
 
 - `doc_id` is the **authoritative identity**; paths and filenames are not.
@@ -132,11 +130,12 @@ Non-examples:
 
 ### 4.3 YAML references
 
-Any `doc_id` within the `references` field must point to an existing normative document.
+Any `doc_id` within the `references` field MUST point to an existing participating document.
 
-### 4.3 Uniqueness
+Policy:
 
-If two files declare the same `doc_id`, it is a **hard failure** (Gate 0).
+- For `authority: normative` documents, all `references` targets MUST exist and MUST NOT be “missing from inventory”.
+- Referencing `non_normative` documents is permitted, but should be considered suspicious and may be flagged diagnostically (non-blocking unless a stricter policy document requires it).
 
 ---
 
@@ -179,7 +178,7 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
 
 - `name`
     - The expected filename.
-    - This is not authoritative identity; it supports review and auditing.
+    - Not authoritative identity; supports review and auditing.
 - `title`
     - Human-readable title.
 - `status`
@@ -190,7 +189,6 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
     - Short human-readable summary (1–3 sentences recommended).
 - `url` / `urls`
     - Optional external reference(s).
-    - Most docs should use `url` (single link).
     - `urls` exists only when multiple links are necessary.
     - A doc MUST NOT include both `url` and `urls` keys simultaneously.
 - `references`
@@ -201,12 +199,12 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
 
 ## 7. Validation expectations (Gate 0 auditable)
 
-An agent (or CI) must treat the following as a Gate 0 failure:
+An agent (or CI) MUST treat the following as a Gate 0 failure:
 
-- A required document is missing YAML front matter.
-- YAML fails validation against `DOC_SCHEMA.json`.
-- Duplicate `doc_id` exists.
-- `references` points to a `doc_id` that does not exist in YAML inventory.
+- a required participating document is missing YAML front matter,
+- YAML fails validation against `DOC_SCHEMA.json`,
+- duplicate `doc_id` exists,
+- `references` points to a `doc_id` that does not exist in the YAML inventory,
 - `url` and `urls` are both populated (or both provided non-empty).
 
 ---
@@ -224,18 +222,18 @@ description: Defines execution modes and per-tick orchestration rules outside th
 url: https://someurl.com
 references: [DECOMPOSITION, CORE_API, INPUT_MODEL]
 ---
-````
+```
 
 ---
 
 ## 9. Relationship to machine schemas
 
-* `DOC_SCHEMA.md` is the **human-readable normative policy**.
-* `DOC_SCHEMA.json` is the **machine-checkable schema**.
+- `DOC_SCHEMA.md` is the **human-readable normative policy**.
+- `DOC_SCHEMA.json` is the **machine-checkable schema**.
 
 If there is a conflict:
 
-1. machine schemas must be updated to match this document, or
-2. this document must be updated intentionally.
+1. machine schemas MUST be updated to match this document, or
+2. this document MUST be updated intentionally.
 
 Silent divergence is forbidden.
