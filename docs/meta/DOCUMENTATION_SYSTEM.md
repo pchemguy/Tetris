@@ -16,17 +16,17 @@ Documentation is an essential first-class subsystem of any technical project, no
 
 ## 1. Layer Model
 
-The documentation base is organized into conceptual layers, from **L0 (highest level)** to **L5 (lowest level)**. Layer assignment for individual documents is derived  according to the mapping table below from the `kind` field (`DOC_SCHEMA.md`) or, equivalently, from the document's path.
+The documentation base is organized into conceptual layers, from **L0 (highest level)** to **L5 (lowest level)**. Layer assignment for individual documents is derived  according to the mapping table below from the document's path.
 
-| Layer | Responsibility                         | Top Layer Directory  | Main Entry            | `kind`         |
-| ----- | -------------------------------------- | -------------------- | --------------------- | -------------- |
-| L0    | Documentation infrastructure           | `docs/meta/`         | `L0_DOCUMENTATION.md` | `meta`         |
-| L1    | Governance (process control)           | `docs/control/`      | `L1_GOVERNANCE.md`    | `control`      |
-| L2    | System structure (global contracts)    | `docs/architecture/` | `L2_STRUCTURE.md`     | `architecture` |
-| L3    | Behavioral specs (component contracts) | `docs/specs/`        | `L3_BEHAVIOR.md`      | `spec`, `api`  |
-| L4    | Testing (proof obligations)            | `docs/testing/`      | `L4_TESTING.md`       | `testing`      |
-| L5    | Execution state (reports)              | `docs/reports/`      | `L5_REPORTS.md`       | `report`       |
-| OUT   | Collection of ideas                    | `docs/ideas/`        | –                     | `idea`         |
+| Layer | Responsibility                         | Top Layer Directory  | Main Entry            |
+| ----- | -------------------------------------- | -------------------- | --------------------- |
+| L0    | Documentation infrastructure           | `docs/meta/`         | `L0_DOCUMENTATION.md` |
+| L1    | Governance (process control)           | `docs/control/`      | `L1_GOVERNANCE.md`    |
+| L2    | System structure (global contracts)    | `docs/architecture/` | `L2_STRUCTURE.md`     |
+| L3    | Behavioral specs (component contracts) | `docs/specs/`        | `L3_BEHAVIOR.md`      |
+| L4    | Testing (proof obligations)            | `docs/testing/`      | `L4_TESTING.md`       |
+| L5    | Execution state (reports)              | `docs/reports/`      | `L5_REPORTS.md`       |
+| OUT   | Collection of ideas, drafts, etc.      | `docs/archive/`      | –                     |
 
 These layers form a semantic model that separates concerns so that:
 
@@ -302,4 +302,3 @@ File location and indexing are out of scope for `DOC_SCHEMA.md`, just as metadat
 - Uppercase A–Z, digits, underscore.
 - Unique across repository.
 - Regex: `^[A-Z][A-Z0-9_]+$`
-
