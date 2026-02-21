@@ -105,12 +105,7 @@ Before writing code:
 
 1. Identify all normative **spec documents** relevant to the selected gate.
 2. Identify all **oracle documents** required for that gate.
-3. For the core components, load `@CORE_ORACLE_INDEX` and resolve:
-    * Required oracle subset for the gate.
-    * Any conditional applicability (e.g., hold enabled).
-    * Oracle dependency graph.
-   The oracle dependency graph defined in `@ORACLE_CORE` and mirrored in `CORE_ORACLE_INDEX.json` MUST be respected during implementation.
-4. Compute reference closure using DOC_ID references.
+3. Compute reference closure using DOC_ID references.
 
 If ambiguity, missing authority, or conflict is detected:
 
@@ -219,20 +214,7 @@ Reverse order is forbidden.
 
 ---
 
-# 10. Oracle Dependency Enforcement
-
-For gates that involve core oracles:
-
-* The dependency graph defined in `ORACLE_CORE` and mirrored in `CORE_ORACLE_INDEX.json` defines the required prerequisite order.
-* Implementation and verification must not violate that order.
-* Tooling MAY validate dependency compliance via the JSON artifact.
-* Divergence between the Markdown and JSON dependency definitions constitutes a documentation defect.
-
-The dependency graph is a workflow constraint, not a gameplay rule.
-
----
-
-# 11. Determinism Enforcement
+# 10. Determinism Enforcement
 
 All development and validation:
 
@@ -245,7 +227,7 @@ Determinism failure invalidates gate completion.
 
 ---
 
-# 12. Human vs Agent Responsibilities
+# 11. Human vs Agent Responsibilities
 
 ### Agent
 
@@ -264,7 +246,7 @@ Determinism failure invalidates gate completion.
 
 ---
 
-# 13. Repository evolution state machine
+# 12. Repository evolution state machine
 
 This is a *governance* state machine: it models the allowed progression of work and the hard stop conditions that force escalation.
 
@@ -316,7 +298,7 @@ stateDiagram-v2
 
 ---
 
-# 14. Agent gate-loop pseudocode
+# 13. Agent gate-loop pseudocode
 
 This is the “single-gate evolution loop” expressed as deterministic procedure. It is intentionally explicit about where an agent must stop.
 
@@ -365,22 +347,10 @@ procedure EVOLVE_REPO_ONE_GATE(target_gate=None):
       ESCALATE("Current phase forbids attempting this gate")
 
   closure = COMPUTE_NORMATIVE_CLOSURE(inventory, gate_def)
-  
-  oracle_subset = RESOLVE_REQUIRED_ORACLES(inventory, target_gate)
-
-  if ORACLE_DOMAIN(oracle_subset) == "core":
-      dependency_graph = LOAD_CORE_ORACLE_DEPENDENCY_GRAPH(inventory)
-          # Derived from CORE_ORACLE_INDEX.json
-          # Human-readable mirror: ORACLE_CORE §5
-      if DEPENDENCY_VIOLATION(oracle_subset, dependency_graph):
-          ESCALATE("Core oracle dependency violation detected")
-      ordered_oracles = TOPOLOGICAL_SORT(oracle_subset, dependency_graph)
-  else:
-      ordered_oracles = oracle_subset
-          # No dependency graph defined for this domain
-
   if closure contains conflicts:
       ESCALATE("Normative conflict detected in closure; cannot proceed without resolution")
+
+  oracle_subset = RESOLVE_REQUIRED_ORACLES(inventory, target_gate)
 
   required_suites = RESOLVE_REQUIRED_SUITES_FOR_GATE(inventory, target_gate)
   if required_suites is empty:

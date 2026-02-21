@@ -95,7 +95,7 @@ All code changes must remain within architectural boundaries defined in L2.
 
 # 5. Execution Narrative
 
-Describe the implementation sequence in prose. Note that if core oracles are in scope, the narrative must follow the topologically-sorted oracle order (dependency-respecting) following core-oracle dependency model and implementation order defined in `@ORACLE_CORE` / `CORE_ORACLE_INDEX.json`.
+Describe the implementation sequence in prose. 
 
 This must:
 
