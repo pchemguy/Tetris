@@ -1,8 +1,14 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Documentation Metadata Schema",
   "filename": "DOC_SCHEMA.json",
   "type": "object",
+
+  "required": ["doc_id", "name", "title", "status", "authority"],
+
+  "not": {"required": ["url", "urls"]},
+  
+  "additionalProperties": false,
 
   "definitions": {
 
@@ -13,139 +19,32 @@
     "url_type": {
       "type": "string",
       "format": "uri"
-    },
-
-    "doc_scope_enum": {
-      "type": "string",
-      "enum": [
-        "global",
-        "core",
-        "shell",
-        "testing",
-
-        "core:core",
-
-        "shell:renderer",
-        "shell:presenter",
-        "shell:input_driver",
-        "shell:input_controller",
-        "shell:runtime",
-        "shell:cli",
-        "shell:persistence",
-        "shell:telemetry",
-
-        "testing:testing"
-      ]
     }
   },
 
-  "required": [
-    "doc_id",
-    "name",
-    "title",
-    "kind",
-    "scope",
-    "status",
-    "authority",
-    "gate_applies_to",
-    "phase_applies_to"
-  ],
-
-  "not": {
-    "required": ["url", "urls"]
-  },
-  
   "properties": {
 
-    "doc_id": {
-      "$ref": "#/definitions/doc_id_type"
-    },
-
-    "name": {
-      "type": "string",
-      "minLength": 1,
-      "pattern": "^[A-Za-z0-9_.-]+\\.[A-Za-z0-9_.-]+$"
-    },
-
+    "doc_id": {"$ref": "#/definitions/doc_id_type"},
+    "name": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+\\.[A-Za-z0-9_.-]+$"},
     "title": { "type": "string", "minLength": 1 },
-
     "description": {"type": "string"},
+    "status": {"type": "string", "enum": ["draft", "active", "deprecated"]},
+    "authority": {"type": "string", "enum": ["normative", "non_normative"]},
 
-    "kind": {
-      "type": "string",
-      "enum": [
-        "meta",
-        "control",
-        "architecture",
-        "spec",
-        "testing",
-        "api",
-        "report",
-        "idea"
-      ]
-    },
+    "url": {"$ref": "#/definitions/url_type"},
 
-    "scope": {"$ref": "#/definitions/doc_scope_enum"},
-
-    "status": {
-      "type": "string",
-      "enum": ["draft", "active", "deprecated"]
-    },
-
-    "authority": {
-      "type": "string",
-      "enum": ["normative", "non_normative"]
-    },
-
-    "gate_applies_to": {
-      "oneOf": [
-        {"type": "string", "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"},
-        {"type": "number"}
-      ]
-    },
-
-    "phase_applies_to": {
-      "oneOf": [
-        {"type": "string", "pattern": "^(all|none|[0-9]+(-[0-9]+)?)$"},
-        {"type": "number"}
-      ]
-    },
-
-    "supersedes": {
+    "urls": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/doc_id_type"
-      }
-    },
-
-    "superseded_by": {
-      "oneOf": [
-        { "$ref": "#/definitions/doc_id_type" },
-        { "type": "null" }
-      ]
+      "items": {"$ref": "#/definitions/url_type"}
     },
 
     "references": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/doc_id_type"
-      }
-    },
-
-    "url": { "$ref": "#/definitions/url_type" },
-
-    "urls": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": { "$ref": "#/definitions/url_type" }
+      "items": {"$ref": "#/definitions/doc_id_type"}
     }
-
-  },
-
-  "additionalProperties": false
+  }
 }
