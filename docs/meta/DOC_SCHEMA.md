@@ -211,7 +211,7 @@ An agent (or CI) must treat the following as a Gate 0 failure:
 
 ---
 
-## 9. Minimal compliant header example
+## 8. Minimal compliant header example
 
 ```yaml
 ---
@@ -228,7 +228,7 @@ references: [DECOMPOSITION, CORE_API, INPUT_MODEL]
 
 ---
 
-## 10. Relationship to machine schemas
+## 9. Relationship to machine schemas
 
 * `DOC_SCHEMA.md` is the **human-readable normative policy**.
 * `DOC_SCHEMA.json` is the **machine-checkable schema**.
