@@ -2,12 +2,8 @@
 doc_id: DOC_SCHEMA
 name: DOC_SCHEMA.md
 title: Documentation Metadata Schema
-kind: meta
-scope: global
 status: active
 authority: normative
-gate_applies_to: all
-phase_applies_to: all
 description: Normative schema for YAML metadata embedded in repository Markdown documents.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 references:
@@ -32,7 +28,7 @@ The authoritative machine schema is **`DOC_SCHEMA.json`**.
 
 ## 2. Applicability and authority
 
-### 2.1 Which documents must include metadata
+### 2.1 Normative documents under `docs/` must include metadata
 
 All Markdown documents intended to participate in the repository’s documentation system **must** include a YAML front matter block that validates against
 `DOC_SCHEMA.json`. Root documents are allowed to participate, but the minimum expectation is:
@@ -41,19 +37,20 @@ All Markdown documents intended to participate in the repository’s documentati
 - any doc listed in the `AGENTS.md` index includes metadata,
 - any doc, which can be backtracked to `AGENTS.md` via `references`, includes metadata.
 
-### 2.2 Special case: `docs/ideas/`
+### 2.2 Non-normative documents under `docs/`
 
-`docs/ideas/` is **non-normative**.
+- `docs/archive/`
+- any path that includes a directory component matching case-insensitively one of (full directory name must match)
+    - "idea"
+    - "ideas"
+    - "archive"
+    - "archives"
+    - "draft"
+    - "drafts"
+    - "note"
+    - "notes"
 
-- Idea docs may omit YAML metadata entirely, **or**
-- may include metadata with:
-  - `kind: idea`
-  - `authority: non_normative`
-  - `status: draft`
-  - `gate_applies_to: none`
-  - `phase_applies_to: none`
-
-Idea docs have **zero authority** unless a normative document explicitly promotes their content.
+Docs within these directories have **zero authority**.
 
 ---
 
@@ -74,17 +71,11 @@ Every participating document MUST include the following keys:
 - `doc_id`
 - `name`
 - `title`
-- `kind`
-- `scope`
 - `status`
 - `authority`
-- `gate_applies_to`
-- `phase_applies_to`
 
 Additionally, it MAY include the following optional keys:
 
-- `supersedes`
-- `superseded_by`
 - `references`
 - `description`
 - {`url` | `urls`}
@@ -137,18 +128,11 @@ Non-examples:
 - Once a document is `status: active`, its `doc_id` MUST NOT change.
 - If a new identity is required:
     - create a new document with a new `doc_id`,
-    - update `supersedes` / `superseded_by`,
     - mark the old document `deprecated` if appropriate.
 
 ### 4.3 YAML references
 
-Document YAML frontmatter may include DOC_ID references in 
-
-- `supersedes`
-- `superseded_by`
-- `references`
-
-Because `supersedes` does not encode dependencies, these references may, in principle, include non-existing DOC_IDs. `superseded_by` and `references` do encode dependencies, so associated references must be valid. 
+Any `doc_id` within the `references` field must point to an existing normative document.
 
 ### 4.3 Uniqueness
 
@@ -198,19 +182,10 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
     - This is not authoritative identity; it supports review and auditing.
 - `title`
     - Human-readable title.
-- `kind`
-    - Classification of document role:
-        - `meta`, `control`, `architecture`, `spec`, `testing`, `api`, `report`, `idea`.
-- `scope`
-    - An explicit scope token enumerated in `DOC_SCHEMA.json`.
-    - Scope tokens correspond to architectural component identities and global classifications declared in `COMPONENT_REGISTRY.json`
 - `status`
     - `draft`, `active`, `deprecated`.
 - `authority`
     - `normative` or `non_normative`.
-- `gate_applies_to` / `phase_applies_to`
-    - Applicability for scheduling and review:
-        - `all`, `none`, `N`, `N-M`.
 - `description`
     - Short human-readable summary (1–3 sentences recommended).
 - `url` / `urls`
@@ -218,48 +193,13 @@ Tooling should interpret these as references to `DOC_ID` and validate accordingl
     - Most docs should use `url` (single link).
     - `urls` exists only when multiple links are necessary.
     - A doc MUST NOT include both `url` and `urls` keys simultaneously.
-- `supersedes`
-    - Array of DOC_IDs that this document supersedes. May be empty.
-- `superseded_by`
-    - DOC_ID that supersedes this one, or `null`.
 - `references`
     - Array of DOC_IDs this document depends on (normative dependency list).
     - This is the **authoritative dependency graph** (not filenames).
 
-| `kind`         | Notes                                                              |
-| -------------- | ------------------------------------------------------------------ |
-| `meta`         | Documentation infrastructure (schemas/graph spec/etc.)             |
-| `control`      | Governance (phases, gates, process constraints)                    |
-| `architecture` | System structure (architecture, decomposition, registry)           |
-| `spec`         | Behavioral contracts (core/shell specs)                            |
-| `api`          | Public adapter/API contracts; still behavioral, not infrastructure |
-| `testing`      | Proof obligations / test oracle definitions                        |
-| `report`       | Execution state                                                    |
-| `idea`         | Development ideas                                                  |
-
 ---
 
-## 7. Component scope enumeration policy
-
-### 7.1 Registry-driven scope
-
-Valid `scope` values are defined by the component registry:
-
-- `COMPONENT_REGISTRY.json` provides `doc_scope_enum`.
-- `DOC_SCHEMA.json` hardcodes a copy of the `doc_scope_enum` declared in `COMPONENT_REGISTRY.json`.
-
-### 7.2 Tooling policy
-
-Tooling MUST treat the registry as source-of-truth and enforce:
-
-- Every `scope` in YAML must be an element of `DOC_SCHEMA.json` enum.
-- `DOC_SCHEMA.json` enum must match `COMPONENT_REGISTRY.json` `doc_scope_enum`.
-
-If these disagree, the repository is inconsistent and must be treated as Gate 0 failure until reconciled.
-
----
-
-## 8. Validation expectations (Gate 0 auditable)
+## 7. Validation expectations (Gate 0 auditable)
 
 An agent (or CI) must treat the following as a Gate 0 failure:
 
@@ -267,9 +207,7 @@ An agent (or CI) must treat the following as a Gate 0 failure:
 - YAML fails validation against `DOC_SCHEMA.json`.
 - Duplicate `doc_id` exists.
 - `references` points to a `doc_id` that does not exist in YAML inventory.
-- A doc claims `authority: normative` but resides under `docs/ideas/`.
 - `url` and `urls` are both populated (or both provided non-empty).
-- `scope` is not in the hardcoded `scope` enum in `DOC_SCHEMA.json`.
 
 ---
 
@@ -280,16 +218,10 @@ An agent (or CI) must treat the following as a Gate 0 failure:
 doc_id: RUNTIME_SPEC
 name: RUNTIME_SPEC.md
 title: Runtime Loop and Execution Modes
-kind: spec
-scope: shell:runtime
 status: active
 authority: normative
-gate_applies_to: 11
-phase_applies_to: 2
 description: Defines execution modes and per-tick orchestration rules outside the core.
 url: https://someurl.com
-supersedes: [OLD_DOC_ID]
-superseded_by: NEW_DOC_ID
 references: [DECOMPOSITION, CORE_API, INPUT_MODEL]
 ---
 ````
@@ -300,7 +232,6 @@ references: [DECOMPOSITION, CORE_API, INPUT_MODEL]
 
 * `DOC_SCHEMA.md` is the **human-readable normative policy**.
 * `DOC_SCHEMA.json` is the **machine-checkable schema**.
-* `COMPONENT_REGISTRY.json` is the **authoritative component/scope registry** that feeds the `scope` enum.
 
 If there is a conflict:
 
