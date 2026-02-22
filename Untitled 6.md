@@ -195,6 +195,7 @@ Includes:
 * Optional mechanics implemented inside Core
 * Strictness and invariant enforcement extensions
 * Additional deterministic features that preserve baseline semantics
+* Advanced optional features that may require extending baseline semantics
 
 This domain modifies the Core but must not alter the baseline simulation contract. It is structurally part of Core, but developmentally separated for governance reasons.
 
@@ -215,7 +216,8 @@ Variants must:
 * not modify baseline semantics,
 * remain replaceable at the composition root.
 
-Variants extend the Shell and must not weaken guarantees established by SHELL_BASELINE.
+Variants extend the Shell and must not weaken guarantees established by SHELL_BASELINE.  
+For example, baseline shell might render the board using classic ACSII characters, while a variant shell might use solid filled rectangles (in such a case, background and foreground colors are set the same and specific characters used become irrelevant).
 
 ---
 
