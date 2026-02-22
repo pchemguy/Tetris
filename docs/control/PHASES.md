@@ -20,7 +20,7 @@ This document defines the **allowed architectural scope** of the repository at e
 
 Phases:
 
-- constrain which **domains** may be modified or introduced,
+- constrain which development domains may be modified or introduced,
 - prevent premature expansion into later subsystems,
 - define repository maturity boundaries.
 

@@ -27,51 +27,15 @@ An agent may not advance to a later gate unless **all criteria** of the current 
 
 ## 2. Organization model
 
-This repository uses the following structural hierarchy:
+## 2.1 Governance hierarchy
 
-- **Domain**: high-level architectural scope grouping.
-- **Family**: an ordered set of gates with a shared objective and acceptance character.
-- **Gate**: the smallest testable incremental milestone.
+This repository uses the following structural hierarchy: **Gates → Gate Families → Domains**. While gates define the smallest testable incremental milestones, defining the smallest work scope, an ordered set of gates with a shared objective forms a family. Gate families are aligned with architectural `@DECOMPOSITION`, enabling scalable definition of development workflow and ensuring that development process systematically implements project design. Development domains 
+defined in `@DECOMPOSITION` provide the highest organizational level, grouping architecturally close gate families. Domains define scope of development `@PHASES`.
 
-### 2.1 Domains
+## 2.2 Oracle policy for gates
 
-Domains are defined here so `PHASES.md` can reference them without redefining meanings.
+- A gate MAY require multiple test oracles.
+- Exactly **one** oracle is the **primary oracle** for that gate (covers the newly introduced or expanded behavior).
+- Any additional oracles listed by the gate MUST be **regression proofs** that were already introduced by earlier gates (re-run because the new change may affect them).
+- Gates MUST NOT introduce "use-once" oracles. Oracles are reusable and remain valid as the system grows.
 
-Domains are **scope categories**, not a separate axis of correctness.
-
-Recognized domains:
-
-- `DOC_INFRA`
-- `CORE`
-- `SHELL_BASELINE`
-- `CORE_EXTENSIONS`
-- `VARIANTS`
-- `BENCHMARK`
-
-### 2.2 Families
-
-Families are **navigational and governance partitions** over the single ordered gate
-sequence.
-
-Families:
-
-- provide a stable table-of-contents,
-- separate core vs shell vs integration milestones,
-- keep the document scalable (avoid flat numbering drift).
-
-### 2.3 Oracle policy for gates (normative)
-
-A gate:
-
-- defines a **target delta** (“what becomes true after this gate”), and
-- names the **oracle(s)** that must pass to accept it.
-
-Oracle policy:
-
-- A gate MAY require multiple oracles.
-- Exactly **one** oracle is the **primary oracle** for that gate (covers the newly
-  introduced or expanded behavior).
-- Any additional oracles listed by the gate MUST be **regression proofs** that were
-  already introduced by earlier gates (re-run because the new change may affect them).
-- Gates MUST NOT introduce “use-once” oracles. Oracles are reusable and remain valid as
-  the system grows.
