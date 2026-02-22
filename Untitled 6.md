@@ -160,7 +160,7 @@ This domain governs:
 * deterministic rules
 * public simulation API
 
-It is the authoritative behavioral domain. The core includes minimalistic feature set necessary to define semantics of classic Tetris. Any semantic extensions or optional features should be included elsewhere (to be developed at later stages).
+It is the authoritative behavioral domain. The core includes minimalistic feature set necessary to define semantics of classic Tetris. Any semantic extensions or optional features should be included elsewhere (to be developed at later stages). At the same time, whenever possible, provisions should be made for backward compatible extensible APIs (such as explicit use of `*args` and `**kwargs` in signatures, using dictionaries where appropriate, and so on).
 
 ---
 
