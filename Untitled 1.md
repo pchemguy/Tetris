@@ -33,6 +33,23 @@
 | SHELL_VARIANTS  | G4, G5           |
 | BENCHMARK       | G5               |
 
+
+```json
+{
+  "domains": {
+    "DOC_INFRA"       : ["G0", "G5"],
+    "CORE"            : ["G1", "G2", "G3"],
+    "SHELL_BASELINE"  : ["G4", "G5"],
+    "CORE_EXTENSIONS" : ["G3", "G5"],
+    "SHELL_VARIANTS"  : ["G4", "G5"],
+    "BENCHMARK"       : ["G5"]
+  }
+}
+```
+
+
+
+
 G0 — Governance & Compliance
 G1 — Core Structural Readiness
 G2 — Core Behavioral Completion
