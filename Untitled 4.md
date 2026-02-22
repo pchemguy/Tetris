@@ -1,22 +1,17 @@
 ## 1. Purpose and acceptance semantics
 
-This document defines **explicit acceptance gates** for the Tetris reference project.
-
-Acceptance gates are **ordered, testable milestones** used to evolve the repository from
-one well-defined state to the next.
+This document defines **acceptance gates** for this project. Acceptance gates are **ordered, testable milestones** used to evolve the repository from one well-defined state to the next.
 
 Acceptance gates:
 
-- constrain agent scope,
+- constrain development/agent scope,
 - prevent premature feature creep,
-- provide objective “done / not done” criteria,
-- enable automated or human-in-the-loop evaluation of agent behavior.
+- provide objective "done / not done" criteria,
 
 A gate is considered **passed** only when:
 
 1. All **mandatory scope** for that gate is implemented, and
-2. All **mandatory proofs** (tests) required by the gate pass, as defined by the gate’s
-   associated **oracle(s)**.
+2. All **mandatory proofs** (tests) required by the gate pass, as defined by the gate’s associated **test oracle(s)**.
 
 Gate rules:
 
@@ -24,22 +19,17 @@ Gate rules:
 - **minimal-scope**: each gate advances the system by the smallest practical step,
 - **testable**: a gate’s scope must be verifiable,
 - **strict**: failing any criterion fails the gate; “almost correct” does not pass,
-- **non-speculative**: behavior not explicitly required is not credited; behavior explicitly
-  prohibited fails the gate.
+- **non-speculative**: behavior not explicitly required is not credited; behavior explicitly prohibited fails the gate.
 
-An agent may not advance to a later gate unless **all criteria** of the current gate are
-satisfied.
-
-Phases constrain **what is allowed to be modified**. Gates constrain **what must be built
-and proven**.
+An agent may not advance to a later gate unless **all criteria** of the current gate are satisfied.
 
 ---
 
-## 2. Gate organization model
+## 2. Organization model
 
 This repository uses the following structural hierarchy:
 
-- **Domain**: high-level architectural scope grouping (used primarily by `PHASES.md`).
+- **Domain**: high-level architectural scope grouping.
 - **Family**: an ordered set of gates with a shared objective and acceptance character.
 - **Gate**: the smallest testable incremental milestone.
 
