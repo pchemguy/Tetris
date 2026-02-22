@@ -197,7 +197,7 @@ Includes:
 * Additional deterministic features that preserve baseline semantics
 * Advanced optional features that may require extending baseline semantics
 
-This domain modifies the Core but must not alter the baseline simulation contract, unless such a change is explicitly required according to associated specification. It is structurally part of Core, but developmentally separated for governance reasons.
+This domain modifies the Core but must not alter the baseline simulation contract, unless such a change is explicitly required according to associated specification. It is structurally part of Core, but any optional / advanced / extra features must be developed separately after baseline functionality is established. An example of a feature that will require amending baseline semantics is the use of colored tetrominoes.
 
 ---
 
