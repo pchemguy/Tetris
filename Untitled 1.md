@@ -24,14 +24,14 @@
 | G5.1 | Core MVP Acceptance (G0-G2)               |
 | G5.2 | Full System Acceptance (G0-G4)            |
 
-| Domain         | Typical Families |
-| -------------- | ---------------- |
-| DOC_INFRA      | G0, G5           |
-| CORE           | G1, G2, G3       |
-| SHELL_BASELINE | G4, G5           |
-| EXTENSIONS     | G3, G5           |
-| VARIANTS       | G4, G5           |
-| BENCHMARK      | G5               |
+| Domain          | Typical Families |
+| --------------- | ---------------- |
+| DOC_INFRA       | G0, G5           |
+| CORE            | G1, G2, G3       |
+| SHELL_BASELINE  | G4, G5           |
+| CORE_EXTENSIONS | G3, G5           |
+| SHELL_VARIANTS  | G4, G5           |
+| BENCHMARK       | G5               |
 
 G0 — Governance & Compliance
 G1 — Core Structural Readiness
