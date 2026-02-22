@@ -379,18 +379,13 @@ The only allowed cross-component interfaces are:
 - Input driver must not return `InputEvent`; it returns only raw input signals.
 - Input controller must not perform OS I/O; it maps raw inputs to `InputEvent`s.
 
-No component may “reach across” boundaries by importing internal helpers from another
-component unless explicitly designated as public API.
+No component may “reach across” boundaries by importing internal helpers from another component unless explicitly designated as public API.
 
-Here’s a **normative “Forbidden imports” table** you can drop into `docs/DECOMPOSITION.md` (best placed at the end of **§4 Interfaces between components** or as a new **§4.1 Import rules**).
+At the same time, APIs should be designed with controlled forward extensibility in mind. Where appropriate, this may include explicit support for keyword-based extensibility (e.g., `**kwargs` with documented validation), structured configuration objects instead of positional parameters, and signature patterns that allow additive evolution without breaking existing callers. Extensibility must remain explicit, documented, and validated; it must not weaken type guarantees or obscure contract clarity.
 
-It’s written to be **auditable** (reviewers can grep imports) and **agent-friendly** (simple rules, no loopholes).
+### 4.1 Forbidden imports (normative)
 
----
-
-## 4.1 Forbidden imports (normative)
-
-### 4.1.1 Component-to-component import constraints
+#### 4.1.1 Component-to-component import constraints
 
 **Rule**: A component must not import modules that belong to another component **except** via explicitly listed allowed interfaces. Violations are **responsibility leakage** and fail Gate 0.
 
@@ -412,7 +407,7 @@ It’s written to be **auditable** (reviewers can grep imports) and **agent-frie
 
 ---
 
-### 4.1.2 Allowed imports (positive list, minimal)
+#### 4.1.2 Allowed imports (positive list, minimal)
 
 To avoid ambiguity, the following cross-component imports are explicitly allowed:
 
@@ -434,7 +429,7 @@ Any import not covered above is forbidden unless this document is updated first.
 
 ---
 
-### 4.1.3 Internal vs public API boundary (normative)
+#### 4.1.3 Internal vs public API boundary (normative)
 
 When importing across components:
 
