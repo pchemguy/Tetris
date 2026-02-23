@@ -94,7 +94,7 @@ G5 — Integration & System-Level Guarantees
 * Gate 12 — CLI
 * Gate 13 — Replay
 
-### G5 — Final Acceptance (MVP / Full System)
+### G5 — Integration & System-Level Guarantees (MVP / Full System)
 
 * G5.1 — Core MVP Acceptance (requires G0–G2)
 * G5.2 — Full System Acceptance (requires G0–G4)
