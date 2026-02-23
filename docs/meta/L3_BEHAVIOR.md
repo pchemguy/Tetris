@@ -45,13 +45,21 @@ This index is the canonical navigation entry point for L3. It is intentionally d
 
 **Directory**: `docs/specs/core/`
 
-| Title              | Filename                  | Role |
-| ------------------ | ------------------------- | ---- |
-| Game Rules         | `GAME_RULES.md`           | Normative gameplay semantics (“what the game does”). |
-| Game State Model   | `GAME_STATE.md`           | Deterministic state machine and tick/step semantics. |
-| Input Model        | `INPUT_MODEL.md`          | Per-tick input representation and ordering rules. |
+| Title              | Filename                  | Role                                                        |
+| ------------------ | ------------------------- | ----------------------------------------------------------- |
+| Game Rules         | `GAME_RULES.md`           | Normative gameplay semantics (“what the game does”).        |
+| Game State Model   | `GAME_STATE.md`           | Deterministic state machine and tick/step semantics.        |
+| Input Model        | `INPUT_MODEL.md`          | Per-tick input representation and ordering rules.           |
 | Error Handling     | `ERROR_HANDLING.md`       | Error vs rejection semantics; invariant enforcement policy. |
-| Shapes & Rotations | `SHAPES_AND_ROTATIONS.md` | Canonical tetromino geometry and rotation enumeration. |
+| Shapes & Rotations | `SHAPES_AND_ROTATIONS.md` | Canonical tetromino geometry and rotation enumeration.      |
+
+### Core API specifications
+
+**Directory**: `docs/specs/core/`
+
+| Title             | Filename          | Role                                                   |
+| ----------------- | ----------------- | ------------------------------------------------------ |
+| Core API          | `CORE_API.md`     | Public Python API contract for the deterministic core. |
 
 ### Shell contracts
 
@@ -64,16 +72,15 @@ This index is the canonical navigation entry point for L3. It is intentionally d
 | CLI Specification       | `CLI_SPEC.md`       | Command-line surface and entrypoint behavior. |
 | Replay Specification    | `REPLAY_SPEC.md`    | Deterministic replay format and validation rules. |
 
-### API specifications
+### Shell API specifications
 
-**Directory**: `docs/specs/api/`
+**Directory**: `docs/specs/shell/`
 
-| Title                            | Filename          | Role |
-| -------------------------------- | ----------------- | ---- |
-| Core API                         | `CORE_API.md`     | Public Python API contract for the deterministic core. |
-| Renderer API                     | `RENDERER_API.md` | Renderer interface and purity guarantees. |
-| Runtime API                      | `RUNTIME_API.md`  | Runtime interface and orchestration boundaries. |
-| Configuration API                | `CONFIG_API.md`   | Typed configuration model for composition and wiring. |
+| Title             | Filename          | Role                                                   |
+| ----------------- | ----------------- | ------------------------------------------------------ |
+| Renderer API      | `RENDERER_API.md` | Renderer interface and purity guarantees.              |
+| Runtime API       | `RUNTIME_API.md`  | Runtime interface and orchestration boundaries.        |
+| Configuration API | `CONFIG_API.md`   | Typed configuration model for composition and wiring.  |
 
 ### IO API specifications
 

@@ -41,9 +41,7 @@ This ensures:
 
 ---
 
-## 3. Primary architectural pattern
-
-### 3.1 Pattern: Functional Core, Imperative Shell
+## 3. Primary architectural pattern - Functional Core, Imperative Shell
 
 - Core is referentially transparent at the API level:
     - `step()` is deterministic and returns a new state.
