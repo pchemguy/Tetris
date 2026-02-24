@@ -1,9 +1,7 @@
 ---
-doc_id: ACCEPTANCE_GATES
-name: ACCEPTANCE_GATES.md
 title: Milestone Acceptance Gates
 status: draft
-authority: normative
+authority: non-normative
 description: Milestone-based acceptance criteria and progression rules.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
@@ -80,99 +78,6 @@ The following rules apply:
 No gate may rely on undefined or implicit proof criteria. All acceptance conditions must be traceable to explicit oracle documents.
 
 ---
-
-## 3. Gates
-
-### G0 — Governance & Compliance
-
-```yaml
-family_id: G0
-title: Governance & Compliance
-prerequisite_families: []          # Unconditional root family
-family_scope: Repository governance and specification compliance.
-permitted_write_paths:
-  - docs/reports/
-prohibited_write_paths:
-  - tetris/                        # No implementation allowed in G0
-```
-
-#### Normative semantics
-
-* G0 is **unconditional and always in force**.
-* G0 does not introduce implementation behavior.
-* G0 defines repository invariants and governance constraints that apply to **all families and gates**.
-* G0 is implicitly required before any other gate execution.
-* G0 is never declared as an explicit dependency.
-
----
-
-#### G0.1 — Repository & Contract Compliance
-
-```yaml
-gate_id: G0.1
-title: Repository & Contract Compliance
-scope_specs: []
-implementation_oracle: null
-regression_oracles: []
-```
-
-##### Purpose
-
-Establish structural and governance invariants required for all subsequent development.
-
----
-
-##### Mandatory criteria
-
-Structural layout:
-
-* Source code MUST reside under `tetris/src/tetris/`.
-* Tests MUST reside under `tetris/tests/`.
-* No source files may exist outside the package path.
-* Package structure must reflect component boundaries defined in `@DECOMPOSITION`.
-
-Specification awareness:
-
-* All normative L3 specifications relevant to the target gate MUST be identified via `scope_specs`.
-* The active gate (`GX.Y`) MUST be explicitly stated before any modification.
-* The implementation oracle for the active gate MUST be identified from gate metadata.
-* No source file may be created or modified unless explicitly permitted by the active gate's family scope.
-
-Boundary enforcement:
-
-- Root documentation artifact - `@DOCUMENTATION_SYSTEM`
-* Component responsibilities MUST conform to `@DECOMPOSITION`.
-* Architectural intent defined in `@ARCHITECTURE` MUST be respected.
-* No cross-component import violations are allowed (see interface constraints section).
-
----
-
-##### Prohibited behavior
-
-* Implementing behavior not defined in a referenced L3 specification.
-* Inferring or guessing unspecified rules instead of stopping and escalating.
-* Introducing implementation code while executing G0.
-* Writing to paths outside `permitted_write_paths`.
-* Creating or modifying modules outside the scope of the active family/gate.
-* Violating declared component boundaries.
-* Importing across components in violation of interface rules.
-* Introducing shell components while working in a core-only family.
-* Introducing optional/extension semantics without explicit gate authority.
-
----
-
-##### Scope of enforcement
-
-* The constraints in G0.1 apply to **all families and gates**.
-* A violation of G0.1 at any stage constitutes immediate failure of the active gate.
-* G0.1 is not re-run as a formal regression gate; it is continuously enforced.
-
----
-
-
-
-
-
 
 ## 3. Gate 0 — Repository & contract compliance
 

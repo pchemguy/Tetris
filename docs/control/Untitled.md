@@ -8,6 +8,8 @@ family_id: G0
 title: Governance & Compliance
 prerequisite_families: []
 family_scope: Repository layout and documentation discovery.
+permitted_write_paths: [docs/reports/]
+prohibited_write_paths: [tetris/]
 ```
 
 ### G0.1 Repository & Contract Compliance
@@ -19,8 +21,18 @@ scope_specs: [DOCUMENTATION_SYSTEM]
 implementation_oracle: null
 regression_oracles: []
 mandatory_criteria:
-  - 
-* `prohibited`: bullets (optional but often useful)
+  - Source code placed under `tetris/src/tetris/`
+  - Tests placed under `tetris/tests/`
+  - No source files outside the package path.
+  - Agent must identify which test oracle(s) apply to the current target gate from gate metadata.
+  - All normative docs are discovered and referenced.
+prohibited:
+  - Implementing behavior not specified in docs.
+  - Guessing missing rules instead of stopping and escalating.
+  - Violating component boundaries (logic leakage across core/runtime/input/render/CLI).
+  - Implementing features without the corresponding spec (L3 artifact) being present and acknowledged.
+  - Creating/modifying source modules out of scope for the current family/gate.
+scope: `mandatory_criteria` and `prohibited` applies to all families/gates
 ```
 ~~~
 
