@@ -143,5 +143,6 @@ That’s fine, but write it down:
 If you want, I can draft that paragraph in the same style as your current doc.
 
 ---
+---
 
-If you paste your current `ACCEPTANCE_GATES.md` (or even just the headings), I can apply these rules and rewrite the skeleton (families + gate blocks) without changing your substantive criteria yet—just restructured authority, references as `@DOC_ID`, and the oracle policy you just locked in.
+
