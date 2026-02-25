@@ -266,7 +266,32 @@ Create the Core module and define the public API surface exactly as specified, w
 Import surface:
 
 * `import tetris.core` succeeds.
-* All public symbols required by `@CORE_API` exist and are importable exactly as specified (names, enum members, dataclass names, and public function names).
+* All public symbols required by `@CORE_API` exist and are importable **from `tetris.core`** exactly as specified
+  (names, enum members, dataclass names, and public function names).
+
+Package-level API surface:
+
+* `import tetris` succeeds.
+* The following Core API symbols are importable **from the package root** (`tetris`) via explicit re-exports:
+    * Types:
+          * `CoreConfig`
+          * `GameState`
+          * `StepResult`
+          * `InputEvent`
+          * `TetrominoType`
+          * `Rotation`
+    * Functions:
+          * `new_game`
+          * `step`
+
+Export discipline:
+
+* Package-root exports MUST be **direct re-exports** of the corresponding `tetris.core` symbols.
+    - No wrappers.
+    - No aliases under different names.
+    - No alternate implementations.
+* `tetris/__init__.py` MUST define `__all__` and it MUST exactly match the exported symbol set listed above.
+* Importing `tetris` MUST NOT import or initialize any shell components or optional subsystems.
 
 Type and structural readiness:
 
@@ -281,7 +306,7 @@ Signature compliance:
 Strictness (structural only):
 
 * Structural errors required by `@ERROR_HANDLING` for this stage MUST NOT be silently suppressed.
-  (What is “in scope” for structural error handling at G1 is defined by `@ORACLE_CORE_API_TYPES`.)
+  (What is “in scope” for structural error handling is defined by `@ORACLE_CORE_API_TYPES`.)
 
 #### Allowed behavior
 
