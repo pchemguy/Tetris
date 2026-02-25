@@ -184,7 +184,7 @@ No file may be created or modified unless permitted by:
 ```yaml
 family_id: G1
 title: Core Structural Readiness
-prerequisite_families: []      # G0 is implicit and unconditional
+prerequisite_families: []
 family_scope: Establish an importable Core package and baseline public API surface.
 permitted_write_paths:
   - tetris/src/tetris/
@@ -206,7 +206,6 @@ G1:
 * introduces no shell components.
 
 G1 defines structure only.
-Behavior begins in G2.
 
 ---
 
@@ -216,8 +215,8 @@ Behavior begins in G2.
 gate_id: G1.1
 title: Package Skeleton
 scope_specs:
-  - "@CORE_API"
-implementation_oracle: null
+  - CORE_API
+implementation_oracle: ORACLE_CORE_SKELETON
 regression_oracles: []
 ```
 
@@ -232,7 +231,6 @@ Create the importable package namespace from an empty source tree.
 #### Start State
 
 * `tetris/src/tetris/` MAY be empty or may not exist.
-* No Core modules exist.
 
 ---
 
@@ -247,77 +245,71 @@ Create the importable package namespace from an empty source tree.
 
 ---
 
-#### Prohibited
-
-* Introducing `tetris.runtime`
-* Introducing `tetris.rendering`
-* Introducing `tetris.cli`
-* Introducing persistence, telemetry, or input modules
-* Implementing gameplay mechanics
-
----
-
 ### G1.2 — Core API Skeleton & Types
 
 ```yaml
 gate_id: G1.2
 title: Core API Skeleton & Types
-scope_specs:
-  - "@CORE_API"
-  - "@GAME_STATE"
-  - "@ERROR_HANDLING"
-implementation_oracle: null
-regression_oracles: []
-prerequisites:
-  - G1.1
+scope_specs: [CORE_API, GAME_STATE, ERROR_HANDLING]
+implementation_oracle: ORACLE_CORE_API_TYPES
+regression_oracles: [ORACLE_CORE_SKELETON]
 ```
 
 ---
 
 #### Purpose
 
-Create the Core module and define the public API surface exactly as specified.
+Create the Core module and define the public API surface exactly as specified, without introducing gameplay semantics.
 
----
+#### Mandatory postconditions
 
-#### Mandatory Postconditions
+Import surface:
 
 * `import tetris.core` succeeds.
-* All public symbols required by `@CORE_API` exist and are importable exactly as specified.
-* All required enums and dataclasses defined by `@GAME_STATE` exist.
-* `new_game(config)` exists and returns a structurally valid `GameState`.
-* `step(state, inputs, config)` exists and returns `StepResult`.
-* Both functions MUST conform to the signatures defined in `@CORE_API`.
+* All public symbols required by `@CORE_API` exist and are importable exactly as specified (names, enum members, dataclass names, and public function names).
 
----
+Type and structural readiness:
 
-#### Allowed Behavior
+* The required enums and dataclasses defined by `@CORE_API` exist with the required fields.
+* `new_game(config)` exists and returns a structurally valid `GameState` (field presence and basic structural invariants only).
+* `step(state, inputs, config)` exists and returns a `StepResult` with `state: GameState` and `events: tuple[...]`.
+
+Signature compliance:
+
+* `new_game` and `step` MUST conform to the signatures defined in `@CORE_API`.
+
+Strictness (structural only):
+
+* Structural errors required by `@ERROR_HANDLING` for this stage MUST NOT be silently suppressed.
+  (What is “in scope” for structural error handling at G1 is defined by `@ORACLE_CORE_API_TYPES`.)
+
+#### Allowed behavior
 
 `step(...)` MAY:
 
-* increment `tick_count` (if defined),
-* return an unchanged state (except permitted structural fields),
-* ignore inputs.
-
-`step(...)` MUST NOT:
-
-* implement movement,
-* implement rotation,
-* implement gravity,
-* implement collision,
-* implement locking,
-* implement line clearing,
-* implement scoring,
-* implement RNG,
-* implement game over.
-
----
+* ignore inputs,
+* return a semantically unchanged state **because gameplay semantics are not implemented yet**,
+* update only fields that are explicitly permitted by the stub policy in `@ORACLE_CORE_API_TYPES`
+  (if any counters are permitted at this stage, the oracle must state that allowance explicitly).
 
 #### Prohibited
 
-* Partial implementation of gameplay mechanics.
-* Silent suppression of structural errors required by `@ERROR_HANDLING`.
-* Introduction of shell components.
+`step(...)` MUST NOT implement any gameplay semantics, including:
+
+* movement
+* rotation
+* gravity
+* collision
+* locking
+* line clearing
+* scoring
+* RNG / 7-bag
+* game-over transitions
+
+Also prohibited:
+
+* introducing any shell components
+* implementing “half behavior” (e.g., move works but collision doesn’t)
 
 ---
 
@@ -327,6 +319,8 @@ G1 is complete when:
 
 * G1.1 passes,
 * G1.2 passes,
-* No prohibited behavior exists,
+* and no prohibited behavior exists.
+
+G1.R means: run the full G1 family test suite (all tests introduced for G1.1–G1.2).
 
 ---
