@@ -15,7 +15,7 @@ references: [GAME_RULES]
 
 ## 1. Purpose
 
-This document defines the **authoritative core state model** and **step contract** for the Tetris implementation governed by [docs/GAME_RULES.md](GAME_RULES.md).
+This document defines the **authoritative core state model** and **step contract** for the Tetris implementation governed by [GAME_RULES.md](GAME_RULES.md).
 
 The goal is to make the game core:
 

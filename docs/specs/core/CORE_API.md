@@ -6,7 +6,7 @@ status: active
 authority: normative
 description: Public Python API contract for interacting with the deterministic core.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references: [GAME_STATE]
+references: [GAME_STATE, INPUT_MODEL, ERROR_HANDLING, SHAPES_AND_ROTATIONS]
 ---
 
 # CORE API
@@ -23,8 +23,6 @@ The core must be:
 - UI-agnostic,
 - test-friendly,
 - strict about invariant violations.
-
-This API is binding for agentic implementation and for the test suite described in `docs/CORE_TEST_ORACLE.md`.
 
 If behavior is not defined here, it must not be invented.
 
@@ -179,8 +177,8 @@ Advances the simulation by one tick.
 
 Must follow:
 
-- `docs/GAME_STATE.md` §5.2
-- `docs/INPUT_MODEL.md` §4
+- `GAME_STATE.md` §5.2
+- `INPUT_MODEL.md` §4
 
 #### Input validation
 
@@ -205,7 +203,7 @@ Returns the **4 absolute board coordinates** occupied by the active piece.
 
 Rules:
 
-- Must use the enumerations in `docs/SHAPES_AND_ROTATIONS.md`.
+- Must use the enumerations in `SHAPES_AND_ROTATIONS.md`.
 - Returns exactly 4 unique `(x, y)` pairs.
 - Ordering:
     - ordering is not semantically important, but must be deterministic.
@@ -247,7 +245,7 @@ If events are implemented, define a lightweight event record:
 - `type: str`
 - `data: dict[str, object]` (JSON-serializable)
 
-Event types should match suggestions in [docs/GAME_STATE.md](GAME_STATE.md) §7.
+Event types should match suggestions in [GAME_STATE.md](GAME_STATE.md) §7.
 
 Events are recommended for tests and diagnostics, but not required for MVP.
 
@@ -270,7 +268,7 @@ If events are not implemented, `events` must be an empty tuple.
 
 If `config.strict_state` is true:
 
-- `new_game()` and `step()` must validate invariants (see [docs/ERROR_HANDLING.md](ERROR_HANDLING.md))
+- `new_game()` and `step()` must validate invariants (see [ERROR_HANDLING.md](ERROR_HANDLING.md))
 - violations raise `ValueError` (preferred) or a custom `CoreInvariantError`
 
 If strict_state is false:

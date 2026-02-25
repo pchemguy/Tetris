@@ -45,7 +45,7 @@ Replay files are JSON.
     ["HARD_DROP"]
   ]
 }
-````
+```
 
 ---
 

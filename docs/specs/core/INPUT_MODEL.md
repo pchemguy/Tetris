@@ -21,7 +21,7 @@ This document defines the authoritative model for:
 - how they are applied within a tick,
 - what is explicitly NOT modeled (e.g., key repeat timing).
 
-It complements [docs/GAME_STATE.md](GAME_STATE.md) and is binding.
+It complements [GAME_STATE.md](GAME_STATE.md) and is binding.
 
 If a rule is missing or ambiguous, the agent must not guess.
 
@@ -101,7 +101,7 @@ The ordering within one `step(state, inputs)` call is:
 
 1. If `is_game_over`: return unchanged state, no events.
 2. Apply all `inputs` **in order**.
-3. Apply gravity according to `docs/GAME_STATE.md` §4.2.
+3. Apply gravity according to `GAME_STATE.md` §4.2.
 4. If a lock occurs:
     - resolve line clears,
     - update score/level,

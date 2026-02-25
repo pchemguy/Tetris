@@ -6,7 +6,7 @@ status: active
 authority: normative
 description: Defines rejection vs error semantics and invariant enforcement policy.
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
-references: [GAME_STATE]
+references: [GAME_STATE, INPUT_MODEL]
 ---
 
 # ERROR HANDLING
@@ -71,7 +71,7 @@ If the core receives an input event not in the allowed set:
 
 ### 3.2 Multiple hard drops in a tick
 
-Per [docs/INPUT_MODEL.md](INPUT_MODEL.md), multiple `HARD_DROP` events in the same tick are invalid input.
+Per [INPUT_MODEL.md](INPUT_MODEL.md), multiple `HARD_DROP` events in the same tick are invalid input.
 
 Handling rule:
 
