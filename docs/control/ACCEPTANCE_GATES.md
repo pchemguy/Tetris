@@ -94,8 +94,6 @@ prohibited_write_paths:
   - tetris/                        # No implementation allowed in G0
 ```
 
-### Normative Role of G0
-
 G0 establishes **repository-wide invariants** that apply to all subsequent families and gates.
 
 G0:
@@ -183,15 +181,42 @@ No file may be created or modified unless permitted by:
 
 ## G1 — Core Structural Readiness
 
-### G1.1 — Core Skeleton & Types
+```yaml
+family_id: G1
+title: Core Structural Readiness
+prerequisite_families: []      # G0 is implicit and unconditional
+family_scope: Establish an importable Core package and baseline public API surface.
+permitted_write_paths:
+  - tetris/src/tetris/
+  - tetris/tests/
+prohibited_write_paths:
+  - docs/
+```
+
+---
+
+G1 is the first implementation family.
+
+G1:
+
+* begins from an empty implementation tree,
+* establishes the Python package structure,
+* establishes the public Core API surface,
+* introduces no gameplay behavior,
+* introduces no shell components.
+
+G1 defines structure only.
+Behavior begins in G2.
+
+---
+
+### G1.1 — Package Skeleton
 
 ```yaml
 gate_id: G1.1
-family_id: G1
-title: Core Skeleton & Types
+title: Package Skeleton
 scope_specs:
-  - CORE_API
-  - GAME_STATE
+  - "@CORE_API"
 implementation_oracle: null
 regression_oracles: []
 ```
@@ -200,76 +225,108 @@ regression_oracles: []
 
 #### Purpose
 
-Establish the structural Core API and state model without implementing behavioral semantics.
-
-This gate defines the **public shape of the Core**, not its full behavior.
+Create the importable package namespace from an empty source tree.
 
 ---
 
-#### Mandatory criteria
+#### Start State
 
-File structure:
+* `tetris/src/tetris/` MAY be empty or may not exist.
+* No Core modules exist.
 
-* `tetris/src/tetris/core.py` MUST exist.
-* The module MUST define the public API described in `@CORE_API`.
+---
 
-Public types:
+#### Mandatory Postconditions
 
-All public types defined in `@CORE_API` MUST exist, including:
+* Directory `tetris/src/tetris/` exists.
+* File `tetris/src/tetris/__init__.py` exists.
+* The package is importable:
+    * `import tetris` succeeds when installed in editable mode.
+* No shell modules exist.
+* No gameplay logic exists.
 
-* Enumerations
-* Dataclasses
-* Configuration object(s)
-* Public API types (`GameState`, `StepResult`, etc.)
+---
 
-API surface:
+#### Prohibited
 
-* `new_game(config)` MUST exist.
-* `step(state, inputs, config)` MUST exist.
+* Introducing `tetris.runtime`
+* Introducing `tetris.rendering`
+* Introducing `tetris.cli`
+* Introducing persistence, telemetry, or input modules
+* Implementing gameplay mechanics
+
+---
+
+### G1.2 — Core API Skeleton & Types
+
+```yaml
+gate_id: G1.2
+title: Core API Skeleton & Types
+scope_specs:
+  - "@CORE_API"
+  - "@GAME_STATE"
+  - "@ERROR_HANDLING"
+implementation_oracle: null
+regression_oracles: []
+prerequisites:
+  - G1.1
+```
+
+---
+
+#### Purpose
+
+Create the Core module and define the public API surface exactly as specified.
+
+---
+
+#### Mandatory Postconditions
+
+* `import tetris.core` succeeds.
+* All public symbols required by `@CORE_API` exist and are importable exactly as specified.
+* All required enums and dataclasses defined by `@GAME_STATE` exist.
+* `new_game(config)` exists and returns a structurally valid `GameState`.
+* `step(state, inputs, config)` exists and returns `StepResult`.
 * Both functions MUST conform to the signatures defined in `@CORE_API`.
 
-Structural validity:
+---
 
-* `new_game()` MUST return a structurally valid `GameState`.
-* `step()` MUST return a `StepResult` instance.
-* Returned objects MUST satisfy type-level invariants described in `@GAME_STATE`.
+#### Allowed Behavior
+
+`step(...)` MAY:
+
+* increment `tick_count` (if defined),
+* return an unchanged state (except permitted structural fields),
+* ignore inputs.
+
+`step(...)` MUST NOT:
+
+* implement movement,
+* implement rotation,
+* implement gravity,
+* implement collision,
+* implement locking,
+* implement line clearing,
+* implement scoring,
+* implement RNG,
+* implement game over.
 
 ---
 
-#### Allowed behavior
+#### Prohibited
 
-At this stage, behavioral semantics are intentionally incomplete.
-
-`step()` MAY:
-
-* increment `tick_count`,
-* return an unchanged state,
-* emit no events,
-* bypass gravity, collision, scoring, or input handling.
-
-No gameplay correctness is required yet.
+* Partial implementation of gameplay mechanics.
+* Silent suppression of structural errors required by `@ERROR_HANDLING`.
+* Introduction of shell components.
 
 ---
 
-#### Prohibited behavior
+### G1.R — Completion Boundary
 
-* Partial implementation of movement, rotation, gravity, scoring, or RNG.
-* Embedding rule logic not yet governed by a behavioral gate.
-* Silent failure instead of raising errors defined in `@CORE_API` or `@ERROR_HANDLING`.
-* Introducing shell components or cross-component imports.
-* Introducing optional or extension semantics.
+G1 is complete when:
 
----
-
-#### Gate boundary
-
-This gate is complete when:
-
-* The Core API surface is structurally stable.
-* The state model is representable.
-* The module is importable and testable.
-* No behavioral semantics beyond structural validity are implemented.
-
-Behavioral correctness is introduced only in `G2`.
+* G1.1 passes,
+* G1.2 passes,
+* No prohibited behavior exists,
 
 ---
