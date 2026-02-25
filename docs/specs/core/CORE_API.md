@@ -5,7 +5,9 @@ title: Core API
 status: active
 authority: normative
 description: Public Python API contract for interacting with the deterministic core.
-url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+urls:
+  - https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69872113-2c18-8392-8973-9f57ccc1aa41
+  - https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/699f4e86-bad4-8386-966b-2f9f603d0394
 references: [GAME_STATE, INPUT_MODEL, ERROR_HANDLING, SHAPES_AND_ROTATIONS]
 ---
 
