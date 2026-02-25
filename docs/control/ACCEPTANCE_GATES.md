@@ -266,32 +266,8 @@ Create the Core module and define the public API surface exactly as specified, w
 Import surface:
 
 * `import tetris.core` succeeds.
-* All public symbols required by `@CORE_API` exist and are importable **from `tetris.core`** exactly as specified
-  (names, enum members, dataclass names, and public function names).
-
-Package-level API surface:
-
-* `import tetris` succeeds.
-* The following Core API symbols are importable **from the package root** (`tetris`) via explicit re-exports:
-    * Types:
-          * `CoreConfig`
-          * `GameState`
-          * `StepResult`
-          * `InputEvent`
-          * `TetrominoType`
-          * `Rotation`
-    * Functions:
-          * `new_game`
-          * `step`
-
-Export discipline:
-
-* Package-root exports MUST be **direct re-exports** of the corresponding `tetris.core` symbols.
-    - No wrappers.
-    - No aliases under different names.
-    - No alternate implementations.
-* `tetris/__init__.py` MUST define `__all__` and it MUST exactly match the exported symbol set listed above.
-* Importing `tetris` MUST NOT import or initialize any shell components or optional subsystems.
+* All public symbols required by `@CORE_API` exist and are importable **from `tetris.core` and `tetris`** exactly as specified (names, enum members, dataclass names, and public function names).
+* Package-level API surface MUST conform `@CORE_API`.
 
 Type and structural readiness:
 
@@ -314,8 +290,7 @@ Strictness (structural only):
 
 * ignore inputs,
 * return a semantically unchanged state **because gameplay semantics are not implemented yet**,
-* update only fields that are explicitly permitted by the stub policy in `@ORACLE_CORE_API_TYPES`
-  (if any counters are permitted at this stage, the oracle must state that allowance explicitly).
+* update only fields that are explicitly permitted by the stub policy in `@ORACLE_CORE_API_TYPES` (if any counters are permitted at this stage, the oracle must state that allowance explicitly).
 
 #### Prohibited
 
