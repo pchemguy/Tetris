@@ -5,7 +5,7 @@ title: Test Suite Layout and Oracle Mapping Rules
 status: active
 authority: normative
 description: Defines the directory structure, ownership rules, and mapping conventions between ORACLE_* documents and automated test suites.
-references:
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b/c/69872113-2c18-8392-8973-9f57ccc1aa41
 ---
 
 # TEST_SUITE_LAYOUT
