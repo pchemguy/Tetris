@@ -115,7 +115,7 @@ gate_id: G0.1
 title: Repository & Contract Compliance
 scope_specs: []
 implementation_oracle: null
-regression_oracles: []
+regression_gates: []
 ```
 
 #### Purpose
@@ -217,7 +217,7 @@ title: Package Skeleton
 scope_specs:
   - CORE_API
 implementation_oracle: ORACLE_CORE_SKELETON
-regression_oracles: []
+regression_gates: []
 ```
 
 ---
@@ -252,7 +252,7 @@ gate_id: G1.2
 title: Core API Skeleton & Types
 scope_specs: [CORE_API, GAME_STATE, ERROR_HANDLING]
 implementation_oracle: ORACLE_CORE_API_TYPES
-regression_oracles: [ORACLE_CORE_SKELETON]
+regression_gates: [G1.1]
 ```
 
 ---
