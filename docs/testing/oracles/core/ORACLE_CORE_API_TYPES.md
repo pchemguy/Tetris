@@ -35,7 +35,7 @@ The test harness must be able to:
 * introspect exported attributes and `__all__`,
 * detect enum membership and dataclass fields,
 * call `new_game(config)` and `step(state, inputs, config)` with deterministic dummy inputs,
-* validate “structural validity” of returned objects (types and required fields),
+* validate "structural validity" of returned objects (types and required fields),
 * assert that forbidden semantic effects do not occur (e.g., board changes, movement, RNG draws) under this stage’s stub policy.
 
 ## 3. Oracle set
@@ -166,7 +166,7 @@ Assert/Then:
 
 ### ORACLE API17: Stub policy (no gameplay semantics)
 
-This oracle enforces the “structure-only” constraint.
+This oracle enforces the "structure-only" constraint.
 
 Construct/Given:
 
@@ -197,7 +197,7 @@ Counters:
 
 If counters are permitted to change, the exact allowance MUST be encoded in text and reflected in this oracle by tightening this clause to a single permitted rule.
 
-> This oracle intentionally prevents “partial implementation” (e.g., movement without collision).
+> This oracle intentionally prevents "partial implementation" (e.g., movement without collision).
 
 ## 4. Forbidden behavior
 
@@ -217,5 +217,3 @@ For compliance, the minimum required set is:
 ### Notes for implementers and test authors (non-normative)
 
 * API17 should be table-driven: iterate over representative input events and assert invariance.
-* If you later decide “tick_count MUST increment even in G1.2”, move that from an implied behavior into:
-  (a) the gate text, and (b) a tightened version of API17 with a precise assertion.

@@ -50,7 +50,7 @@ scope: `mandatory_criteria` and `prohibited` applies to all families/gates
   * implementation oracle: *(none, or a dedicated structural oracle if you want)*
   * L3 scope: `@CORE_API`, plus any state/type docs needed.
 
-**G2 — Core Behavioral Completion** *(re-numbered)*
+**G2 — Core Behavioral Completion**
 
 1. `G2.1 Spawn Semantics`
 
