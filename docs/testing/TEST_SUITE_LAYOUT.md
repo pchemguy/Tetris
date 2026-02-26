@@ -40,9 +40,29 @@ No tests may exist outside this directory.
 
 ---
 
-## 3. Oracle-to-Test Directory Mapping
+## 3. Oracle Ownership Rule
 
-### 3.1 Canonical mapping rule
+Each test oracle owns exactly one test directory.
+
+Rules:
+
+* All tests proving an oracle MUST reside in its mapped directory.
+* Tests for different oracles MUST NOT be mixed in a single directory.
+* Tests MUST NOT exist without an owning oracle document.
+* An oracle directory MUST NOT contain tests that assert behavior outside that oracle's scope.
+
+This ensures:
+
+* traceability,
+* deterministic test discovery,
+* clean regression recursion,
+* elimination of "floating tests".
+
+---
+
+## 4. Oracle-to-Test Directory Mapping
+
+### 4.1 Canonical mapping
 
 For any oracle document with:
 
@@ -63,7 +83,7 @@ Transformation rules:
 3. Preserve underscores exactly.
 4. Do not introduce additional normalization.
 
-### 3.2 Examples
+### 4.2 Examples
 
 | Oracle ID                | Test Directory                  |
 | ------------------------ | ------------------------------- |
@@ -74,43 +94,9 @@ Transformation rules:
 
 ---
 
-## 4. Oracle Ownership Rule
+## 5. Directory Structure Constraints
 
-Each oracle owns exactly one test directory.
-
-Rules:
-
-* All tests proving an oracle MUST reside in its mapped directory.
-* Tests for different oracles MUST NOT be mixed in a single directory.
-* Tests MUST NOT exist without an owning oracle document.
-* An oracle directory MUST NOT contain tests that assert behavior outside that oracle's scope.
-
-This ensures:
-
-* traceability,
-* deterministic test discovery,
-* clean regression recursion,
-* elimination of "floating tests".
-
----
-
-## 5. Oracle Execution Semantics
-
-This document defines how test suites are resolved once an oracle is selected for execution.
-
-Given an oracle ID:
-
-1. Determine its canonical test directory via §3.
-2. Execute all tests under that directory.
-3. No implicit test discovery outside mapped directories is permitted.
-
-This document does not define when or why an oracle is executed.  
-
----
-
-## 6. Directory Structure Constraints
-
-### 6.1 Allowed structure inside an oracle directory
+### 5.1 Allowed structure inside an oracle directory
 
 Within:
 
@@ -125,7 +111,7 @@ the following are allowed:
 * local fixtures,
 * static test data files.
 
-### 6.2 Forbidden structure
+### 5.2 Forbidden structure
 
 The following are prohibited:
 
@@ -140,7 +126,7 @@ tetris/tests/_shared/
 
 ---
 
-## 7. Shared Test Utilities
+## 6. Shared Test Utilities
 
 Shared utilities MUST reside under:
 
@@ -162,7 +148,7 @@ This prevents circular oracle coupling.
 
 ---
 
-## 8. Determinism Requirement
+## 7. Determinism Requirement
 
 Unless explicitly allowed by the referenced oracle document:
 
@@ -173,7 +159,7 @@ Unless explicitly allowed by the referenced oracle document:
 
 ---
 
-## 9. Compliance Conditions
+## 8. Compliance Conditions
 
 The test suite is compliant only if:
 

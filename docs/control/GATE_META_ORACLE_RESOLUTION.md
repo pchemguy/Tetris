@@ -4,7 +4,9 @@ name: GATE_META_ORACLE_RESOLUTION.md
 title: Gate Metadata, Scope Semantics, and Oracle Resolution Model
 status: active
 authority: normative
-references: [TEST_ORACLE_FORMAT_CONVENTION, TEST_SUITE_LAYOUT]
+references:
+  - TEST_ORACLE_FORMAT_CONVENTION
+  - TEST_SUITE_LAYOUT
 ---
 
 # GATE_META_ORACLE_RESOLUTION
@@ -53,7 +55,7 @@ Rules:
 
 1. `family_id` MUST be unique.
 2. Family metadata MUST NOT declare dependency information.
-3. Family prerequisites, if any, MUST be expressed only through the presence and content of `GX.0` (see §4.2).
+3. Family prerequisites, if any, MUST be expressed only through the presence and content of `GX.0` (see §5.2).
 
 ---
 
@@ -122,14 +124,29 @@ Because gates typically apply only portions of a specification:
 
 ---
 
-## 4. Execution Semantics
+## 4. Oracle-to-Test Resolution
 
-### 4.1 Running a Numbered Gate `GX.N`
+When an oracle is executed:
+
+1. Determine test directory associated with the oracle per `@TEST_SUITE_LAYOUT`.
+2. Execute all tests under:
+
+```
+tetris/tests/<derived_name>/
+```
+
+No implicit test discovery outside mapped directories is allowed.
+
+---
+
+## 5. Execution Semantics
+
+### 5.1 Running a Numbered Gate `GX.N`
 
 To execute a numbered gate:
 
 1. **Family prerequisite resolution**
-    * If `GX.0` exists, execute it first (see §4.2).
+    * If `GX.0` exists, execute it first (see §5.2).
 2. **Gate-local regression resolution**
     * **Regression gates**: For each gate `gid` listed in `regression_gates`, execute that gate first.
         * Load that gate’s metadata.
@@ -149,7 +166,7 @@ To execute a numbered gate:
 
 ---
 
-### 4.2 Family Dependency Gate `GX.0`
+### 5.2 Family Dependency Gate `GX.0`
 
 Families express cross-family dependencies exclusively via an optional gate `GX.0`.
 
@@ -172,7 +189,7 @@ Rules:
 
 ---
 
-### 4.3 Family Regression Checkpoint `GX.R`
+### 5.3 Family Regression Checkpoint `GX.R`
 
 Each implementation family MUST define a final checkpoint `GX.R`.
 
@@ -193,26 +210,9 @@ Execution semantics:
 2. If `GX.0` exists:
     * For each family dependency listed in `GX.0.prerequisite_families`, execute that family’s `.R` checkpoint recursively.
 3. Cycle detection MUST be enforced.
-    1. Each family dependency should only be executed once.
+4. Each family dependency should only be executed once.
 
 `GX.R` represents a formal family coherence checkpoint.
-
----
-
-## 5. Oracle-to-Test Resolution
-
-When an oracle is executed:
-
-1. Remove `ORACLE_` prefix.
-2. Lowercase remaining identifier.
-3. Preserve underscores.
-4. Execute all tests under:
-
-```
-tetris/tests/<derived_name>/
-```
-
-No implicit test discovery outside mapped directories is allowed.
 
 ---
 
@@ -223,52 +223,23 @@ The gate system is valid only if:
 1. All `family_id` values are unique.
 2. All `gate_id` values are unique.
 3. Every `regression_gates` entry:
-
-   * exists,
-   * belongs to the same family,
-   * has a strictly smaller numeric index.
+    * exists,
+    * belongs to the same family,
+    * has a strictly smaller numeric index.
 4. Every referenced `{dep}.R` exists.
 5. Dependency recursion is acyclic.
 6. `scope_notes` keys (if present):
-
-   * must appear in `scope_specs`,
-   * must contain only string lists.
+    * must appear in `scope_specs`,
+    * must contain only string lists.
 
 Violation invalidates the governance model.
 
 ---
 
-## 7. Architectural Separation
-
-This document enforces strict layering:
-
-* L3 specifications define behavior.
-* Oracle documents define test truth.
-* This document defines gate orchestration.
-* Test layout is defined separately.
-* Oracle documents MUST NOT reference gates.
-* Gates reference oracles; never the reverse.
-
----
-
-## 8. Interpretation Rule
+## 7. Interpretation Rule
 
 A gate represents:
 
-> A bounded slice of normative authority,
-> proven by a specific oracle test suite,
-> sequenced by explicit regression and dependency rules.
+> A bounded slice of normative authority and a scoped unit of work, proven by a specific oracle test suite, sequenced by explicit regression and dependency rules.
 
 ---
-
-End of document.
-
-```
-
----
-
-If you want, next we can:
-
-- Normalize a canonical **gate prose template** (so every gate has identical structure), or  
-- Fully rewrite your G2 family using this exact metadata model.
-```
