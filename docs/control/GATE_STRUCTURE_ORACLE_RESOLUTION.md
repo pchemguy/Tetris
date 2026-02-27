@@ -319,12 +319,14 @@ For each gate listed in `regression_gates`:
     * regression resolution,
     * implementation oracle (if non-null).
 
-##### Cycle safety
+##### No-forward-reference invariant (regression)
 
-* A gate-resolution stack MUST be maintained during regression traversal.
-* If a gate is encountered that already exists in the active resolution stack, execution MUST fail (configuration error: regression cycle).
+`regression_gates` MUST satisfy:
 
-This stack applies only to regression traversal within the same family.
+* same-family only (same `GX` prefix), and
+* strictly smaller numeric index than the referencing gate.
+
+Because forward references are forbidden, regression traversal is finite and cannot cycle.
 
 ---
 
@@ -369,9 +371,7 @@ The execution engine maintains separate internal controls:
 
 1. **Family dependency execution control**
     * Ensures `GX.0` is executed once per family per top-level invocation.
-2. **Regression cycle detection stack**
-    * Prevents infinite recursion inside same-family regression chains.
-3. **Oracle execution registry**
+2. **Oracle execution registry**
     * Ensures each oracle suite runs at most once per top-level invocation.
 
 These controls are logically distinct and MUST NOT be conflated.
@@ -392,10 +392,22 @@ prerequisite_families: [G1]
 Rules:
 
 1. `GX.0` MUST include `gate_id` and `prerequisite_families` keys only.
-2. `prerequisite_families` is the only mechanism for expressing family dependencies. `prerequisite_families` refers to family IDs only. For each family `GX` listed, the system MUST resolve and execute `GX.R`.
+2. `prerequisite_families` is the only mechanism for expressing family dependencies.
+    * It refers to **family IDs** only.
+    * For each listed family `GY`, the system MUST resolve and execute `GY.R`.
 3. Executing `GX.0` means:
     * execute each referenced `{dep}.R` in listed order.
 4. If a family has no dependencies, `GX.0` MUST NOT exist.
+
+##### No-forward-reference invariant (family prerequisites)
+
+`prerequisite_families` MUST NOT include forward references.
+
+Concretely:
+
+* If a family declares prerequisites, each prerequisite family MUST have a strictly smaller family index than the dependent family (e.g., `G3.0` may depend on `G2`, but not vice versa).
+
+Because forward references are forbidden, prerequisite expansion is finite and cannot cycle.
 
 ---
 
@@ -411,7 +423,6 @@ gate_id: GX.R
 
 `GX.R` MUST declare `gate_id` only.
 
-
 ---
 
 #### Purpose
@@ -422,7 +433,7 @@ It verifies that:
 
 * all numbered gates in the family remain passing,
 * all associated oracle suites for that family pass collectively,
-* all transitive family dependencies remain satisfied.
+* all transitive family prerequisites remain satisfied.
 
 ---
 
@@ -439,8 +450,6 @@ If this family’s `GX.R` has already been executed during the current top-level
 * It MUST NOT be executed again.
 * Execution immediately succeeds.
 
-This prevents repeated execution during recursive dependency traversal.
-
 ---
 
 #### Step 2 — Execute family’s numbered gate oracle suites
@@ -453,37 +462,28 @@ For every numbered gate in the family:
 For each numbered gate:
 
 * If that gate defines a non-null `implementation_oracle`, execute that oracle per §5.1 Step 3.
-* `GX.R` executes only implementation oracles owned by numbered gates. It does not re-execute their regression chains, as regression relationships are already validated at the time those gates passed.
+* `GX.R` executes only implementation oracles owned by numbered gates. It does not re-execute their regression chains.
 
 Oracle de-duplication rules defined in §5.1 apply globally to the entire top-level invocation.
 
-No regression traversal occurs at this stage — only the family’s own implementation oracles are executed.
-
 ---
 
-#### Step 3 — Resolve cross-family dependencies
+#### Step 3 — Resolve cross-family prerequisites
 
 If a family dependency gate `GX.0` exists:
 
 * For each family listed in `GX.0.prerequisite_families`, execute `{dep}.R` in listed order.
 
-Dependency resolution MUST be recursive.
+Dependency resolution MUST be recursive. Because forward references are forbidden (§5.2), recursion is finite.
 
 ---
 
-#### Step 4 — Cycle safety
-
-Cross-family dependency recursion MUST be cycle-safe. If during recursive `{dep}.R` execution a family is encountered that is already active in the current recursion chain, execution MUST fail (configuration error: circular family dependency). This check is distinct from same-family regression cycle detection in §5.1.
-
----
-
-#### Step 5 — Success Conditions
+#### Step 4 — Success Conditions
 
 `GX.R` passes if and only if:
 
-* All family oracle suites pass,
-* All recursively required dependency family checkpoints pass,
-* No cycle or structural violations are detected.
+* All family oracle suites pass, and
+* All recursively required prerequisite family checkpoints pass.
 
 ---
 
@@ -495,12 +495,6 @@ During a single top-level invocation:
     * Each family checkpoint executes at most once.
 2. **Oracle de-duplication**
     * Each oracle suite executes at most once globally.
-3. **Dependency recursion stack**
-    * Ensures acyclic cross-family dependency traversal.
-4. **Regression traversal stack**
-    * Applies only to numbered gates (§5.1) and is independent of family recursion.
-
-These mechanisms are independent and MUST remain logically separate.
 
 ---
 
@@ -527,8 +521,8 @@ The gate system is valid only if:
     * exists,
     * belongs to the same family,
     * has a strictly smaller numeric index.
-5. Every referenced `{dep}.R` exists.
-6. Dependency recursion is acyclic.
+5. Every `prerequisite_families` entry in `GX.0` MUST refer only to families with a strictly smaller numeric index than `GX`.
+6. Every referenced `{dep}.R` exists.
 7. `scope_notes` keys (if present):
     * must appear in `scope_specs`,
     * must contain only string lists.
