@@ -33,3 +33,11 @@ When functionality scoped by a particular test oracle file, say `ORACLE_CORE_COL
 ## Public and key private APIs
 
 - see `CORE_API.md`
+
+## DOC_ID
+
+- Doc_id closure script
+- Yaml doc_id -> path
+- Doc_id compact definition
+- Doc_id to (vpath, file_contents) script 
+- If I resolve doc_id to virtual path and contents, texts can be moved to a db.
