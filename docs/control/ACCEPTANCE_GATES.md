@@ -87,7 +87,7 @@ No gate may rely on undefined or implicit proof criteria. All acceptance conditi
 family_id: G0
 title: Governance & Compliance
 prerequisite_families: []          # Unconditional root family
-family_scope: Repository governance and specification compliance.
+family_scope: Repository invariants, specification authority boundaries, and architectural compliance.  
 permitted_write_paths:
   - docs/reports/
 prohibited_write_paths:
@@ -98,9 +98,10 @@ G0 establishes **repository-wide invariants** that apply to all subsequent famil
 
 G0:
 
-* does not introduce implementation behavior,
-* does not introduce test oracles,
-* does not participate in dependency recursion,
+* does not
+    * introduce implementation behavior,
+    * introduce test oracles,
+    * participate in dependency recursion,
 * is always in force,
 * is implicitly satisfied before any other gate may begin.
 
@@ -108,7 +109,7 @@ Violations of G0 invalidate the active gate immediately.
 
 ---
 
-### G0.1 — Repository & Contract Compliance
+## G0.1 — Repository & Contract Compliance
 
 ```yaml
 gate_id: G0.1
@@ -118,64 +119,111 @@ implementation_oracle: null
 regression_gates: []
 ```
 
-#### Purpose
+---
 
-Establish structural correctness and specification awareness before implementation work begins.
+### 1. Purpose
+
+Establish repository invariants, specification awareness, and architectural boundary enforcement that govern all subsequent families and gates.
+
+This gate introduces no implementation behavior.
+It defines global compliance constraints.
 
 ---
 
-#### Mandatory Criteria
+### 2. In-scope requirements (binding)
 
-##### Repository Structure
+The following requirements apply before and during execution of any other gate.
 
-* Source code MUST reside exclusively under `tetris/src/tetris/`.
-* Tests MUST reside under `tetris/tests/`.
-* No implementation files may exist outside the declared package root.
-* Directory layout MUST reflect component boundaries defined in `@DECOMPOSITION`.
+#### Repository structure invariants
 
----
+* All implementation source code MUST reside exclusively under `tetris/src/tetris/`.
+* All test code MUST reside exclusively under `tetris/tests/`.
+* No implementation modules may exist outside the declared package root.
+* The directory layout MUST conform to component boundaries defined in `@DECOMPOSITION`.
 
-##### Specification Awareness
+#### Family reporting invariants
 
-Before any modification:
+Every family `GX` is **implicitly** authorized to write report artifacts under:
 
-* The active family (`GX`) and gate (`GX.Y`) MUST be explicitly declared.
-* All `scope_specs` defined by the active gate MUST be identified.
-* The implementation oracle for the active gate MUST be identified from gate metadata.
-* Regression oracle obligations (if any) MUST be identified.
+`docs/reports/GX/`
 
-No file may be created or modified unless permitted by:
+- If the directory does not exist, it MUST be created before executing any numbered gate in that family.
+- This implicit write permission applies to all families and does not need to be declared in family YAML `permitted_write_paths`.
 
-* the active gate,
-* the active family's `permitted_write_paths`.
+For every executed gate `GX.N`:
 
----
+- Execution reports MUST be written under:
 
-##### Architectural Boundary Enforcement
+`docs/reports/GX/GX.N/`
+
+- This directory MUST be created if it does not exist.
+- No report artifacts may be written outside this directory.
+
+Report artifacts include (but are not limited to):
+
+- test execution summaries,
+- failure reports,
+- structured result files,
+- diagnostic logs,
+- regression outcome summaries.
+
+#### Gate awareness and scope discipline
+
+Before creating or modifying any file:
+
+* The active family (`GX`) and active gate (`GX.Y`) MUST be explicitly identified.
+* The active gate’s `scope_specs` MUST be enumerated and treated as the upper bound of normative authority.
+* The active gate’s `implementation_oracle` MUST be identified (if non-null).
+* The active gate’s `regression_gates` obligations MUST be identified and understood.
+* No file may be created or modified unless permitted by:
+    * the active gate definition,
+    * the active family’s `permitted_write_paths`, or
+    * or the implicit reporting path.
+
+#### Architectural boundary compliance
 
 * Component responsibilities MUST conform to `@DECOMPOSITION`.
 * Architectural intent defined in `@ARCHITECTURE` MUST be preserved.
-* Cross-component imports MUST obey declared interface constraints.
-* Core must remain deterministic and side-effect free.
-* Shell must not redefine core semantics.
+* Cross-component imports MUST respect declared interface constraints.
+* The Core component MUST remain deterministic and free of UI or runtime side effects.
+* Shell components MUST NOT redefine, override, or reinterpret Core semantics.
 
 ---
 
-### Prohibited Behavior
+### 3. Out-of-scope (binding)
 
-* Implementing behavior not defined in an explicitly referenced L3 specification.
-* Inferring or inventing unspecified rules.
-* Writing outside `permitted_write_paths`.
-* Creating or modifying modules outside the active family's scope.
-* Violating component boundary rules.
-* Introducing optional or extension semantics without explicit gate authority.
+* No gameplay mechanics are introduced in this gate.
+* No new specifications are defined.
+* No oracle tests are executed.
 
 ---
 
-### Continuous Enforcement
+### 4. Mandatory postconditions
 
-* G0 constraints apply to **all families and all gates**.
-* G0.1 functions as a global compliance layer.
+* Repository structure satisfies declared invariants.
+* No unauthorized files exist.
+* The active gate is explicitly declared before any modification.
+* No architectural boundary violations are present.
+* No code exists outside allowed write paths.
+
+---
+
+### 5. Prohibited behavior
+
+* Implementing behavior not grounded in explicitly referenced L3 specifications.
+* Inferring, guessing, or inventing unspecified rules.
+* Writing outside
+    * `permitted_write_paths` or
+    * `docs/reports/{FAMILY_ID}/{GATE_ID}/`.
+* Creating or modifying modules outside the active family’s scope.
+* Violating component boundaries.
+* Introducing optional, extension, or shell semantics without explicit gate authority.
+
+---
+
+### 6. Execution notes (non-normative)
+
+G0.1 functions as a continuous compliance layer. Its constraints apply transitively to all families and gates. Violation of G0.1 invalidates the currently executing gate.
 
 ---
 

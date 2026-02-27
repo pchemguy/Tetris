@@ -96,7 +96,7 @@ Rules:
 
 ### 2.3 Canonical Gate Prose Skeleton (Normative)
 
-This skeleton MUST be used for every numbered gate `GX.N`.
+This skeleton MUST be used for every numbered gate `GX.N`. Gates `GX.0` and `GX.R` are explicitly excluded.
 
 `````markdown
 ### GX.N — <Short Title>
@@ -293,24 +293,88 @@ No implicit test discovery outside mapped directories is allowed.
 
 ### 5.1 Running a Numbered Gate `GX.N`
 
-To execute a numbered gate:
+To execute a numbered gate `GX.N`, the system MUST perform the following steps in order.
 
-1. **Family prerequisite resolution**
-    * If `GX.0` exists, execute it first (see §5.2).
-2. **Gate-local regression resolution**
-    * **Regression gates**: For each gate `gid` listed in `regression_gates`, execute that gate first.
-        * Execute the referenced gate exactly as if it were invoked directly (including its own prerequisite resolution and regression resolution), maintaining a visited set to prevent cycles.
-    * **De-duplication**: If the same oracle is reached multiple times, run it once.
-    * **Cycle handling**: A visited set MUST be maintained to prevent infinite loops.
-3. **Execute implementation oracle**
-    * If `implementation_oracle` is not null:
-        * Resolve its test directory per `@TEST_SUITE_LAYOUT`.
-        * Execute all tests in that directory.
-4. **Gate passes only if:**
-    * all prerequisite executions pass,
-    * implementation oracle tests (if any) pass,
-    * the gate’s `In-scope requirements (binding)` are satisfied,
-    * no `Out-of-scope (binding)` violations exist.
+Execution is defined relative to a **single top-level invocation** (e.g., `run_gate("G2.3")`). All de-duplication rules apply within that invocation scope.
+
+---
+
+#### Step 1 — Family prerequisite resolution
+
+If a family dependency gate `GX.0` exists:
+
+* Execute `GX.0` exactly once for this family during the current top-level invocation.
+* If already executed in this invocation, it MUST NOT be re-executed.
+
+Dependency resolution semantics are defined in §5.2.
+
+---
+
+#### Step 2 — Regression resolution (same-family)
+
+For each gate listed in `regression_gates`:
+
+* Execute that gate **as if invoked directly**, including its own:
+    * family prerequisite resolution,
+    * regression resolution,
+    * implementation oracle (if non-null).
+
+##### Cycle safety
+
+* A gate-resolution stack MUST be maintained during regression traversal.
+* If a gate is encountered that already exists in the active resolution stack, execution MUST fail (configuration error: regression cycle).
+
+This stack applies only to regression traversal within the same family.
+
+---
+
+#### Step 3 — Implementation oracle execution
+
+If `implementation_oracle` is not null:
+
+* Resolve its test directory per `@TEST_SUITE_LAYOUT`.
+* Execute all tests under the mapped directory.
+
+##### Oracle de-duplication rule
+
+Within a single top-level invocation:
+
+* If the same `implementation_oracle` is reached multiple times through regression or family recursion, it MUST be executed only once.
+* Subsequent encounters of the same oracle MUST be treated as already satisfied.
+
+Oracle de-duplication is scoped to the entire top-level run, not per gate.
+
+---
+
+#### Step 4 — Gate success conditions
+
+A numbered gate `GX.N` passes if and only if:
+
+* All prerequisite executions succeed,
+* All regression gate executions succeed,
+* The implementation oracle suite (if any) passes,
+* The gate’s **In-scope requirements (binding)** are satisfied,
+* No **Out-of-scope (binding)** violations are present.
+
+The last two conditions are not automatically enforceable by this algorithm and require:
+
+* oracle coverage, and/or
+* review or meta-tests as defined by project policy.
+
+---
+
+#### Clarification of De-duplication Domains
+
+The execution engine maintains separate internal controls:
+
+1. **Family dependency execution control**
+    * Ensures `GX.0` is executed once per family per top-level invocation.
+2. **Regression cycle detection stack**
+    * Prevents infinite recursion inside same-family regression chains.
+3. **Oracle execution registry**
+    * Ensures each oracle suite runs at most once per top-level invocation.
+
+These controls are logically distinct and MUST NOT be conflated.
 
 ---
 
@@ -322,14 +386,12 @@ Families express cross-family dependencies exclusively via an optional gate `GX.
 
 ```yaml
 gate_id: G2.0
-implementation_oracle: null
-regression_gates: []
 prerequisite_families: [G1]
 ```
 
 Rules:
 
-1. `GX.0` MUST NOT reference oracles.
+1. `GX.0` MUST include `gate_id` and `prerequisite_families` keys only.
 2. `prerequisite_families` is the only mechanism for expressing family dependencies. `prerequisite_families` refers to family IDs only. For each family `GX` listed, the system MUST resolve and execute `GX.R`.
 3. Executing `GX.0` means:
     * execute each referenced `{dep}.R` in listed order.
@@ -339,28 +401,118 @@ Rules:
 
 ### 5.3 Family Regression Checkpoint `GX.R`
 
-Each implementation family MUST define a final checkpoint `GX.R`.
+Each implementation family MUST define a final checkpoint gate `GX.R`.
 
-`GX.R`:
+`GX.R` has the following required YAML structure:
 
 ```yaml
-gate_id: G2.R
-implementation_oracle: null
-regression_gates: []
+gate_id: GX.R
 ```
 
-Execution semantics:
+`GX.R` MUST declare `gate_id` only.
 
-1. Execute the full family test suite:
-    * For every numbered gate `GX.1..GX.LAST`:
-        * If that gate defines an `implementation_oracle`, execute its oracle test suite.
-    * Order MUST be ascending numeric.
-2. If `GX.0` exists:
-    * For each family dependency listed in `GX.0.prerequisite_families`, execute that family’s `.R` checkpoint recursively.
-3. Cycle detection MUST be enforced.
-4. Each family dependency should only be executed once.
 
-`GX.R` represents a formal family coherence checkpoint.
+---
+
+#### Purpose
+
+`GX.R` represents a **family coherence checkpoint**.
+
+It verifies that:
+
+* all numbered gates in the family remain passing,
+* all associated oracle suites for that family pass collectively,
+* all transitive family dependencies remain satisfied.
+
+---
+
+#### Execution Semantics
+
+Executing `GX.R` within a single top-level invocation performs the following steps.
+
+---
+
+#### Step 1 — De-duplication guard
+
+If this family’s `GX.R` has already been executed during the current top-level invocation:
+
+* It MUST NOT be executed again.
+* Execution immediately succeeds.
+
+This prevents repeated execution during recursive dependency traversal.
+
+---
+
+#### Step 2 — Execute family’s numbered gate oracle suites
+
+For every numbered gate in the family:
+
+* Enumerate gates `GX.1` through `GX.LAST`.
+* Order MUST be strictly ascending numeric by gate number.
+
+For each numbered gate:
+
+* If that gate defines a non-null `implementation_oracle`, execute that oracle per §5.1 Step 3.
+* `GX.R` executes only implementation oracles owned by numbered gates. It does not re-execute their regression chains, as regression relationships are already validated at the time those gates passed.
+
+Oracle de-duplication rules defined in §5.1 apply globally to the entire top-level invocation.
+
+No regression traversal occurs at this stage — only the family’s own implementation oracles are executed.
+
+---
+
+#### Step 3 — Resolve cross-family dependencies
+
+If a family dependency gate `GX.0` exists:
+
+* For each family listed in `GX.0.prerequisite_families`, execute `{dep}.R` in listed order.
+
+Dependency resolution MUST be recursive.
+
+---
+
+#### Step 4 — Cycle safety
+
+Cross-family dependency recursion MUST be cycle-safe. If during recursive `{dep}.R` execution a family is encountered that is already active in the current recursion chain, execution MUST fail (configuration error: circular family dependency). This check is distinct from same-family regression cycle detection in §5.1.
+
+---
+
+#### Step 5 — Success Conditions
+
+`GX.R` passes if and only if:
+
+* All family oracle suites pass,
+* All recursively required dependency family checkpoints pass,
+* No cycle or structural violations are detected.
+
+---
+
+#### Clarification of Execution Domains
+
+During a single top-level invocation:
+
+1. **Family `.R` de-duplication**
+    * Each family checkpoint executes at most once.
+2. **Oracle de-duplication**
+    * Each oracle suite executes at most once globally.
+3. **Dependency recursion stack**
+    * Ensures acyclic cross-family dependency traversal.
+4. **Regression traversal stack**
+    * Applies only to numbered gates (§5.1) and is independent of family recursion.
+
+These mechanisms are independent and MUST remain logically separate.
+
+---
+
+#### Determinism Guarantee
+
+Given:
+
+* a static registry,
+* deterministic test suites,
+* no side effects outside declared write paths,
+
+executing `GX.R` is deterministic and idempotent within a single invocation context.
 
 ---
 
@@ -370,13 +522,14 @@ The gate system is valid only if:
 
 1. All `family_id` values are unique.
 2. All `gate_id` values are unique.
-3. Every `regression_gates` entry:
+3. Numbered gates in all families form strictly increasing contiguous sequences starting at 1.
+4. Every `regression_gates` entry:
     * exists,
     * belongs to the same family,
     * has a strictly smaller numeric index.
-4. Every referenced `{dep}.R` exists.
-5. Dependency recursion is acyclic.
-6. `scope_notes` keys (if present):
+5. Every referenced `{dep}.R` exists.
+6. Dependency recursion is acyclic.
+7. `scope_notes` keys (if present):
     * must appear in `scope_specs`,
     * must contain only string lists.
 
@@ -392,25 +545,22 @@ A gate represents:
 
 ---
 
-## 8. Gate Execution Algorithm
+## 8. Gate Execution Algorithm (Non-normative)
 
-> [!WARNING]
-> 
-> This algorithm has been generated by LLM and is not yet verified.
+This section provides **reference pseudocode** that operationalizes the normative rules in §§4–6.
+If any discrepancy exists between this algorithm and the normative sections, **the normative sections control**.
 
-```
-TITLE: Gate execution algorithm
+### 8.1 Data structures (conceptual)
 
-DATA STRUCTURES
----------------
+```text
 GateMeta:
-  gate_id: str                  # e.g. "G2.3", "G2.0", "G2.R"
+  gate_id: str
   title: str
-  scope_specs: list[str]        # doc_id list (L3 upper bound)
+  scope_specs: list[str]
   scope_notes: map[str, list[str]] | null
   implementation_oracle: str | null
-  regression_gates: list[str]   # gate_id list, same-family only
-  prerequisite_families: list[str] | null   # ONLY allowed on GX.0
+  regression_gates: list[str]
+  prerequisite_families: list[str] | null   # ONLY valid on GX.0
 
 FamilyMeta:
   family_id: str
@@ -420,237 +570,234 @@ FamilyMeta:
   prohibited_write_paths: list[str]
 
 Registry:
-  gates: map[str, GateMeta]     # gate_id -> meta
-  families: map[str, FamilyMeta]
-  family_gate_numbers: map[str, list[int]]   # GX -> [1,2,3,...] (numbered only)
-  family_has_dep_gate: map[str, bool]         # GX.0 exists?
-  family_last_number: map[str, int]           # if needed (optional policy)
+  gates: map[str, GateMeta]       # gate_id -> meta
+  families: map[str, FamilyMeta]  # family_id -> meta
+```
 
+Execution state for a single top-level run:
+
+```text
 ExecutionState:
-  executed_dep_gate: set[str]   # family_id where GX.0 already executed in this run context
-  visited_gate_stack: set[str]  # for cycle detection within a single gate-resolution walk
-  executed_oracles: set[str]    # de-dup oracle execution within one top-level run
-  executed_family_r: set[str]   # de-dup family regression checkpoints within recursion
+  executed_family_dep_gate: set[str]     # family_id where GX.0 has been executed
+  executed_oracles: set[str]             # oracle doc_id de-duplication
+  active_gate_stack: set[str]            # gate_id cycle detection for regression resolution
+  executed_family_r: set[str]            # family_id de-duplication for *.R recursion
+```
 
-HELPERS
--------
-parse_family_id(gate_id):
-  # "G2.3" -> "G2", "G2.0" -> "G2", "G2.R" -> "G2"
-  return gate_id.split(".")[0]
+### 8.2 Helper functions (conceptual)
 
-parse_gate_kind(gate_id):
-  # returns ("dep", 0) for GX.0; ("r", None) for GX.R; ("n", N) for GX.N numbered
+```text
+family_of(gate_id):
+  return gate_id.split(".")[0]  # "G2.3" -> "G2"
+
+gate_kind(gate_id):
   suffix = gate_id.split(".")[1]
-  if suffix == "0": return ("dep", 0)
-  if suffix == "R": return ("r", null)
-  else: return ("n", int(suffix))
+  if suffix == "0": return "dep"
+  if suffix == "R": return "r"
+  return "n"  # numbered gate
 
-resolve_test_dir_from_oracle(oracle_doc_id):
-  # Per TEST_SUITE_LAYOUT: strip "ORACLE_", lower-case remainder, keep underscores.
-  # "ORACLE_CORE_COLLISION" -> "core_collision"
-  assert oracle_doc_id.startswith("ORACLE_")
-  return lower(oracle_doc_id[len("ORACLE_"):])
+resolve_test_dir(oracle_doc_id):
+  # governed by TEST_SUITE_LAYOUT
+  assert oracle_doc_id startswith "ORACLE_"
+  return lowercase(oracle_doc_id without leading "ORACLE_")
+```
 
-run_tests_in_dir(dir_name):
-  # Implementation-defined; must execute *only* tests under tetris/tests/<dir_name>/**.
-  # Returns pass/fail.
-  execute_pytest("tetris/tests/" + dir_name)
-  return result
+### 8.3 Static validation pass (conceptual)
 
-STATIC VALIDATION (must run before any execution)
--------------------------------------------------
-validate_registry(reg):
-  # Enforce §6 constraints minimally required for safe execution.
+This pass enforces §6 constraints before execution.
 
-  # 1) Unique ids assumed by map keys; verify no duplicates at parse time.
+```text
+validate(registry):
+  # uniqueness is assumed by map keys; must be ensured at parse time
 
-  # 2) Regression gate constraints
-  for each gate in reg.gates.values():
-    fam = parse_family_id(gate.gate_id)
-
-    # regression_gates exist, same family, smaller number
-    (kind, n) = parse_gate_kind(gate.gate_id)
-    for rg in gate.regression_gates:
-      assert rg in reg.gates
-      assert parse_family_id(rg) == fam
-
-      (rg_kind, rg_n) = parse_gate_kind(rg)
-      assert rg_kind == "n"    # regression_gates must point to numbered gates
-      assert kind == "n"       # only numbered gates have regression_gates meaningfully
-      assert rg_n < n
-
+  for each gate in registry.gates:
     # scope_notes keys subset of scope_specs
-    if gate.scope_notes != null:
-      for k in gate.scope_notes.keys():
-        assert k in gate.scope_specs
-        assert is_list_of_strings(gate.scope_notes[k])
+    if gate.scope_notes exists:
+      assert every key in gate.scope_notes is in gate.scope_specs
+      assert each value is a list of strings
 
-    # GX.0 rules
-    if kind == "dep":
-      assert gate.implementation_oracle == null
-      assert gate.regression_gates is empty
-      # prerequisite_families present and list[str]
-      assert gate.prerequisite_families is not null
-      for dep_fam in gate.prerequisite_families:
-        assert dep_fam in reg.families
-        assert (dep_fam + ".R") in reg.gates   # required by §6.4
+    # regression_gates constraints (§6.3)
+    for each rg in gate.regression_gates:
+      assert rg exists in registry.gates
+      assert family_of(rg) == family_of(gate.gate_id)
+      assert rg is a numbered gate
+      assert numeric(rg) < numeric(gate.gate_id)
 
-    # GX.R rules
-    if kind == "r":
-      assert gate.implementation_oracle == null
-      assert gate.regression_gates is empty
-      assert gate.prerequisite_families is null  # only GX.0 owns deps
+    # GX.0 constraints (§5.2)
+    if gate_kind(gate.gate_id) == "dep":
+      assert gate has no keys other than:  
+        - gate_id  
+        - prerequisite_families
+      assert gate.prerequisite_families exists and is list[str]
+      for each dep_family in gate.prerequisite_families:
+        assert dep_family exists in registry.families
+        assert (dep_family + ".R") exists in registry.gates
 
-  # 3) Acyclic family dependency graph (via GX.0 -> prerequisite_families)
-  assert family_dependency_graph_is_acyclic(reg)
+    # GX.R constraints (§5.3)
+    if gate_kind(gate.gate_id) == "r":
+      assert gate has only:  
+        - gate_id
 
-EXECUTION CORE
---------------
-execute_oracle_if_needed(oracle_doc_id, state):
+  # dependency recursion must be acyclic (§6.5)
+  assert family_dependency_graph_is_acyclic(registry)
+```
+
+### 8.4 Oracle execution (conceptual)
+
+```text
+execute_oracle(oracle_doc_id, state):
   if oracle_doc_id is null:
     return PASS
   if oracle_doc_id in state.executed_oracles:
     return PASS
-  dir_name = resolve_test_dir_from_oracle(oracle_doc_id)
-  ok = run_tests_in_dir(dir_name)
+
+  dir = resolve_test_dir(oracle_doc_id)         # TEST_SUITE_LAYOUT governs this
+  ok = run_all_tests_under("tetris/tests/" + dir)
+
   if ok:
     state.executed_oracles.add(oracle_doc_id)
   return ok
+```
 
-execute_family_dep_gate_if_present(family_id, state, reg):
-  # §5.2: execute GX.0 exactly once at start of working in family GX
-  if family_id in state.executed_dep_gate:
+### 8.5 Family dependency gate execution (GX.0)
+
+Implements §5.2.
+
+```text
+execute_family_dep_gate_if_present(family_id, registry, state):
+  if family_id in state.executed_family_dep_gate:
     return PASS
+
   dep_gate_id = family_id + ".0"
-  if dep_gate_id not in reg.gates:
-    state.executed_dep_gate.add(family_id)  # mark as done: no deps
+  if dep_gate_id not in registry.gates:
+    state.executed_family_dep_gate.add(family_id)
     return PASS
 
-  dep_gate = reg.gates[dep_gate_id]
-
-  # Derivation rule: for each dep family Gk, execute Gk.R
-  for dep_fam in dep_gate.prerequisite_families:
-    ok = execute_family_r(dep_fam, state, reg)
+  dep_gate = registry.gates[dep_gate_id]
+  # For each prerequisite family, execute its .R gate in listed order
+  for dep_family in dep_gate.prerequisite_families:
+    ok = execute_family_r(dep_family, registry, state)
     if not ok:
       return FAIL
 
-  state.executed_dep_gate.add(family_id)
+  state.executed_family_dep_gate.add(family_id)
   return PASS
+```
 
-execute_gate_numbered(gate_id, state, reg):
-  # §5.1: numbered gate execution with prerequisite resolution + regression recursion + oracle
-  assert gate_id in reg.gates
-  gate = reg.gates[gate_id]
-  (kind, n) = parse_gate_kind(gate_id)
-  assert kind == "n"
+### 8.6 Executing a numbered gate (GX.N)
 
-  fam = parse_family_id(gate_id)
+Implements §5.1.
 
-  # 1) family prerequisites
-  ok = execute_family_dep_gate_if_present(fam, state, reg)
+```text
+execute_numbered_gate(gate_id, registry, state):
+  assert gate_kind(gate_id) == "n"
+  gate = registry.gates[gate_id]
+  family_id = family_of(gate_id)
+
+  # 1) family prerequisite resolution
+  ok = execute_family_dep_gate_if_present(family_id, registry, state)
   if not ok:
     return FAIL
 
-  # 2) gate-local regression resolution (depth-first over regression_gates)
-  #    "execute referenced gate exactly as if invoked directly"
-  ok = execute_regression_chain(gate_id, state, reg)
+  # 2) regression resolution (depth-first), de-duped and cycle-safe
+  ok = execute_regression_gates_for(gate_id, registry, state)
   if not ok:
     return FAIL
 
-  # 3) execute implementation oracle
-  ok = execute_oracle_if_needed(gate.implementation_oracle, state)
+  # 3) implementation oracle for this gate
+  ok = execute_oracle(gate.implementation_oracle, state)
   if not ok:
     return FAIL
 
-  # 4) non-test mandatory criteria / scope slice compliance
-  #    NOTE: This algorithm cannot auto-validate prose requirements.
-  #    Enforce via review checklist or dedicated meta-tests if you implement them.
+  # 4) prose-defined postconditions & scope slicing are *not* automated here
+  #    (must be enforced by review or explicit tests per your policy)
+
   return PASS
+```
 
-execute_regression_chain(root_gate_id, state, reg):
-  # Depth-first evaluation of regression_gates of the *root* gate,
-  # where each referenced gate is itself executed like a numbered gate,
-  # but WITHOUT re-running family prereqs repeatedly (already de-duped by state.executed_dep_gate).
-  root = reg.gates[root_gate_id]
+Regression resolution:
 
-  for rg_id in root.regression_gates:
-    ok = execute_gate_numbered_with_cycle_guard(rg_id, state, reg)
+```text
+execute_regression_gates_for(gate_id, registry, state):
+  gate = registry.gates[gate_id]
+
+  for rg_id in gate.regression_gates:
+    ok = execute_numbered_gate_with_cycle_guard(rg_id, registry, state)
     if not ok:
       return FAIL
+
   return PASS
 
-execute_gate_numbered_with_cycle_guard(gate_id, state, reg):
-  if gate_id in state.visited_gate_stack:
-    return FAIL  # configuration error: regression cycle within family
-  state.visited_gate_stack.add(gate_id)
+execute_numbered_gate_with_cycle_guard(gate_id, registry, state):
+  if gate_id in state.active_gate_stack:
+    return FAIL  # regression cycle in configuration
+  state.active_gate_stack.add(gate_id)
 
-  ok = execute_gate_numbered(gate_id, state, reg)
+  ok = execute_numbered_gate(gate_id, registry, state)
 
-  state.visited_gate_stack.remove(gate_id)
+  state.active_gate_stack.remove(gate_id)
   return ok
+```
 
-execute_family_r(family_id, state, reg):
-  # §5.3: family coherence checkpoint
-  r_gate_id = family_id + ".R"
-  assert r_gate_id in reg.gates
+### 8.7 Executing a family regression checkpoint (GX.R)
 
+Implements §5.3.
+
+```text
+execute_family_r(family_id, registry, state):
   if family_id in state.executed_family_r:
     return PASS
   state.executed_family_r.add(family_id)
 
-  # 1) run family’s full oracle suite in ascending gate order
-  numbered_ids = all_gate_ids_for_family_numbered_sorted(family_id, reg)
-  for gid in numbered_ids:
-    gate = reg.gates[gid]
+  # 1) execute all oracle suites owned by numbered gates in this family, ascending
+  for each numbered gate GX.1..GX.LAST in ascending order:
+    gate = registry.gates[that_gate_id]
     if gate.implementation_oracle is not null:
-      ok = execute_oracle_if_needed(gate.implementation_oracle, state)
+      ok = execute_oracle(gate.implementation_oracle, state)
       if not ok:
         return FAIL
 
-  # 2) if GX.0 exists, execute dependency families’ .R recursively
+  # 2) recursively execute dependency families’ .R checkpoints (if GX.0 exists)
   dep_gate_id = family_id + ".0"
-  if dep_gate_id in reg.gates:
-    dep_gate = reg.gates[dep_gate_id]
-    for dep_fam in dep_gate.prerequisite_families:
-      ok = execute_family_r(dep_fam, state, reg)
+  if dep_gate_id in registry.gates:
+    dep_gate = registry.gates[dep_gate_id]
+    for dep_family in dep_gate.prerequisite_families:
+      ok = execute_family_r(dep_family, registry, state)
       if not ok:
         return FAIL
 
   return PASS
+```
 
-TOP-LEVEL ENTRYPOINTS
----------------------
-run_gate(gate_id, reg):
-  validate_registry(reg)
-  state = ExecutionState(
-    executed_dep_gate = empty_set(),
-    visited_gate_stack = empty_set(),
-    executed_oracles = empty_set(),
-    executed_family_r = empty_set()
-  )
+### 8.8 Top-level entrypoints (conceptual)
 
-  (kind, n) = parse_gate_kind(gate_id)
-  if kind == "n":
-    return execute_gate_numbered_with_cycle_guard(gate_id, state, reg)
-  if kind == "dep":
-    # Explicitly runnable, but normally called implicitly.
-    fam = parse_family_id(gate_id)
-    return execute_family_dep_gate_if_present(fam, state, reg)
-  if kind == "r":
-    fam = parse_family_id(gate_id)
-    return execute_family_r(fam, state, reg)
+```text
+run_gate(gate_id, registry):
+  validate(registry)
+  state = new ExecutionState()
+
+  if gate_kind(gate_id) == "n":
+    return execute_numbered_gate_with_cycle_guard(gate_id, registry, state)
+
+  if gate_kind(gate_id) == "dep":
+    return execute_family_dep_gate_if_present(family_of(gate_id), registry, state)
+
+  if gate_kind(gate_id) == "r":
+    return execute_family_r(family_of(gate_id), registry, state)
 
   return FAIL
-
-NOTES / REQUIRED BEHAVIORAL GUARANTEES (non-code)
--------------------------------------------------
-1) "De-duplication" in §5.1 is implemented by state.executed_oracles.
-2) Family dep gate GX.0 is executed once per family per run_gate(...) invocation.
-3) Regression cycles within a family fail via visited_gate_stack.
-4) Cross-family dependency cycles fail in validate_registry(reg).
-5) Scope slicing enforcement is explicitly NOT automated here; it requires:
-   - human review checklists, or
-   - meta-tests that validate required invariants implied by gate prose.
 ```
+
+---
+
+### 8.9 Normative alignment checklist (non-normative)
+
+This algorithm intentionally matches:
+
+* **§4**: oracle → test directory mapping is delegated to `@TEST_SUITE_LAYOUT`.
+* **§5.1**: regression gate execution is resolved by executing the referenced gates as if invoked directly (with de-dup + cycle safety).
+* **§5.2**: cross-family prerequisites exist only via `GX.0`, and resolve to `{dep}.R`.
+* **§5.3**: `GX.R` runs the family’s numbered-gate oracle suites and then recursively runs dependency family `.R` checkpoints.
+* **§6**: static validity constraints are enforced up front.
 
 ---
