@@ -5,8 +5,6 @@ title: Gate Metadata, Scope Semantics, and Oracle Resolution Model
 status: active
 authority: normative
 references:
-  - TEST_ORACLE_FORMAT_CONVENTION
-  - TEST_SUITE_LAYOUT
 ---
 
 # GATE_META_ORACLE_RESOLUTION
@@ -26,7 +24,6 @@ This document defines:
 * static validity constraints for the gate system.
 
 This document governs the **execution model of gates**.  
-It does not define oracle structure or test layout (see `@TEST_ORACLE_FORMAT_CONVENTION` and `@TEST_SUITE_LAYOUT`).
 
 ---
 
