@@ -1,0 +1,48 @@
+---
+description: Canonical mapping of domain-loaded terminology to semantically neutral aliases for alias-invariance enforcement.
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69a27bc9-5f60-838f-b2dc-e7a32de243ca
+---
+
+policy:
+  alias_invariance_required: true
+  mechanical_rename_must_succeed: true
+  domain_terms_must_not_define_behavior: true
+
+constraints:
+
+  - canonical_terms_must_exist_in_glossary: true
+  - all_behavioral_terms_must_be_listed: true
+  - rename_process_must_be_lossless: true
+
+validation_requirements:
+
+  - renamed_docs_must_build: true
+  - cross_references_must_resolve: true
+  - oracles_must_remain_interpretable: true
+
+terms:
+
+  - domain_term: "tetris"
+    canonical_term: "system"
+    category: system_identifier
+    behavioral_semantics_allowed: false
+
+  - domain_term: "tetromino"
+    canonical_term: "unit"
+    category: entity
+    behavioral_semantics_allowed: false
+
+  - domain_term: "line"
+    canonical_term: "full_row"
+    category: structural_condition
+    behavioral_semantics_allowed: false
+
+  - domain_term: "rotation"
+    canonical_term: "orientation"
+    category: state_attribute
+    behavioral_semantics_allowed: false
+
+  - domain_term: "bag"
+    canonical_term: "permutation_pool"
+    category: generator_mechanism
+    behavioral_semantics_allowed: false
