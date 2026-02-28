@@ -52,7 +52,7 @@ The documentation corpus MUST therefore be:
 
 ## 2. Core Objective: Alias-Invariance
 
-The project documentation set MUST fully specify behavior such that all domain-loaded identifiers (e.g., `tetris`, `tetromino`, `line`, `bag`, `rotation`) can be mechanically replaced with semantically neutral aliases (e.g., `system`, `unit`/`piece`, `full_row`, `permutation_pool`, `orientation`) without changing:
+The project documentation set MUST fully specify behavior such that all domain-loaded identifiers (e.g., `tetris`, `tetromino`, `line`, `bag`, `rotation`) can be mechanically replaced with semantically neutral aliases (e.g., `system`/`app`/`application`/`program`/`package`, `unit`/`piece`/`element`/`figure`/`shape`, `full_row`, `permutation_pool`, `orientation`) without changing:
 
 - implementability,
 - correctness,
