@@ -13,7 +13,7 @@ keywords:
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69a27bc9-5f60-838f-b2dc-e7a32de243ca
 ---
 
-# SOFTWARE DEVELOPMENT HARNESS
+# Software Development Harness
 
 ## Synopsis
 
