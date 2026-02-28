@@ -1,10 +1,10 @@
 ---
 doc_id: SOFTWARE_DEVELOPMENT_HARNESS
 name: SOFTWARE_DEVELOPMENT_HARNESS.md
-title: Generic Software Development Harness
+title: Software Development Harness Specification
 status: active
 authority: normative
-description: This document discusses the key objective of the project focused on developing a harness for agentic software development.
+description: Defines the requirements for a domain-neutral, alias-invariant documentation harness enabling implementation without reliance on implicit or cultural knowledge.
 keywords:
   - Domain-Neutral Documentation (DND)
   - Semantic Independence of Specification (SIS)
@@ -12,105 +12,253 @@ keywords:
   - Alias-Invariance of Requirements (AIR)
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69a27bc9-5f60-838f-b2dc-e7a32de243ca
 ---
-## Alias-Invariance Objective
 
-The project documentation set MUST fully specify behavior such that all domain-loaded identifiers (e.g., `tetris`, `tetromino`, `line`, `bag`, `rotation`, etc.) can be mechanically replaced with **semantically neutral aliases** (e.g., `system`, `piece`, `row`, `pool`, `orientation`) without changing the implementability, correctness, or testability of the system.
+# SOFTWARE DEVELOPMENT HARNESS
 
-This ensures that an implementation agent can rely exclusively on explicit contracts and not on prior cultural/LLM knowledge of “Tetris”.
+## Synopsis
 
-## Semantically neutral aliases
+The project documentation base MUST be alias-invariant and semantically self-contained. Domain-loaded terms are treated as arbitrary labels and may be mechanically replaced without loss of meaning. All behavior must be derived exclusively from explicit normative specification and validated by corresponding test oracles. No implementation agent may rely on cultural knowledge of the domain.
 
-A term is a **neutral alias** if it:
+## 1. Purpose
 
-* carries **no game/domain meaning** in ordinary English beyond being a label (e.g., `entity_a`, `token_7`, `actor`, `unit`, `state_delta`),
-* does not embed hints via metaphor (avoid `block`, `fall`, `stack`, `row-clear`, etc.),
+This document defines requirements for constructing a **domain-neutral software development harness**.
+
+The harness formalizes a documentation-first development paradigm in which human developers operate as specification engineers. The primary artifact of development is a rigorously structured, normative documentation corpus written in technical natural language.
+
+This documentation corpus MUST be sufficient to:
+
+- drive context construction for implementation agents,
+- enable stepwise generation of source code and test suites,
+- support iterative refinement under formal acceptance gates,
+- allow full system implementation from an empty repository.
+
+Implementation agents (human or automated) MUST be able to construct the system using **only explicit specifications**, without reliance on:
+
+- prior domain knowledge,
+- cultural familiarity,
+- historical conventions,
+- latent model semantics,
+- undocumented assumptions.
+
+The documentation corpus MUST therefore be:
+
+- self-contained,
+- behaviorally complete,
+- formally structured,
+- alias-invariant,
+- verifiable via explicit test oracles.
+
+---
+
+## 2. Core Objective: Alias-Invariance
+
+The project documentation set MUST fully specify behavior such that all domain-loaded identifiers (e.g., `tetris`, `tetromino`, `line`, `bag`, `rotation`) can be mechanically replaced with semantically neutral aliases (e.g., `system`, `unit`/`piece`, `full_row`, `permutation_pool`, `orientation`) without changing:
+
+- implementability,
+- correctness,
+- testability.
+
+An implementation agent MUST be able to rely exclusively on explicit contracts and MUST NOT require prior knowledge of the cultural concept traditionally associated with the domain terms.
+
+---
+
+## 3. Semantically Neutral Aliases - Definition
+
+A term qualifies as a **semantically neutral alias** if it:
+
+- carries no embedded game or cultural meaning beyond being an arbitrary label,
+- introduces no behavioral implications through metaphor,
+- is defined exclusively through formal specification.
 * is consistently applied across:
     * prose
     * code identifiers (public API + internal names where referenced)
     * diagrams/tables
     * test names and oracle phrasing
 
-## Acceptance criteria (make it measurable)
+Examples of acceptable neutral terms:
 
-### A. Mechanical rename invariance
+- `unit`
+- `entity_a`
+- `orientation_index`
+- `state_delta`
+- `permutation_pool`
 
-A deterministic, mechanical rename pass (search/replace) over a defined vocabulary set MUST produce a doc set that is still:
+Examples of prohibited metaphor-bearing terms in normative layers:
 
-* internally consistent (no broken cross-refs),
+- `fall`
+- `gravity`
+- `stack`
+- `clear`
+- `well`
+- `bag`
+- `hold`
+- `block`
+- `row-clear`
+
+---
+
+## 4. Acceptance Criteria
+
+### A. Mechanical Rename Invariance
+
+A deterministic mechanical rename pass over a defined vocabulary set MUST produce a documentation corpus that remains:
+
+- internally consistent,
+- cross-reference complete,
 * fully implementable (no missing semantics),
 * fully testable (oracles still executable/meaningful).
 
-### B. Zero implicit-domain dependency
+The rename operation MUST require no semantic interpretation — simple search-and-replace must suffice.
 
-No requirement may depend on “common knowledge of Tetris”. Concretely: any behavior that a reader might otherwise infer from the word “tetromino” MUST be explicitly defined elsewhere (shapes, spawn rules, rotation rules, collision rules, scoring if present, termination, etc.).
+---
 
-### C. Explicit concept grounding
+### B. Zero Implicit-Domain Dependency
 
-All behaviorally relevant nouns MUST have:
+No requirement may depend on “common knowledge” of the domain. Any behavior that might be inferred from domain terminology MUST be explicitly specified.
 
-   * a formal definition (in a glossary / terminology section),
-   * a reference to the authoritative spec section defining its operational meaning,
-   * at least one corresponding oracle or gate criterion if it affects correctness.
+This includes, but is not limited to:
 
-### D. Vocabulary quarantine (optional but strong)
+- shape definitions
+- orientation rules
+- spawning rules
+- movement rules
+- collision detection
+- row completion detection
+- scoring rules (if applicable)
+- termination conditions
+
+If a behavior cannot be derived directly from explicit specification, the documentation is non-compliant.
+
+---
+
+### C. Explicit Concept Grounding
+
+All behaviorally relevant nouns MUST:
+
+1. Have a formal definition in the normative glossary.
+2. Reference an authoritative specification section defining its operational meaning.
+3. Be linked to at least one corresponding oracle or gate if correctness-critical.
+
+No concept may exist implicitly.
+
+---
+
+### D. Vocabulary Quarantine
 
 Domain-loaded terms MUST be treated as *presentation-layer labels* only:
 
-   * they may appear in “friendly alias” sections,
-   * but normative rules MUST be written so that domain words are replaceable without loss.
+- MAY appear in informative or presentation contexts.
+- MUST NOT define or imply normative behavior.
+- MUST be replaceable without loss of meaning.
 
-## How to structure the docs to satisfy it (practical design)
+Normative specifications MUST use canonical neutral terminology.
 
-### 1. Two-layer terminology pattern
+---
 
-* **Normative layer:** uses neutral *canonical* terms (e.g., `unit`, `shape_kind`, `orientation`, `grid`, `occupied_cells`, `spawn_rule`).
-* **Informative alias map:** a non-normative table mapping:
-    * `tetromino` ↔ `unit`
-    * `tetris` ↔ `system` / `game`
-    * `line` ↔ `full_row`
-    * etc.
+## 5. Documentation Architecture Requirements
 
-This lets humans keep readability without letting semantics leak into the normative layer.
+### 5.1 Two-Layer Terminology Pattern
 
-### 2) “No-metaphor” rule for normative prose
+The documentation MUST adopt a two-layer structure:
 
-In normative sections, prohibit metaphor words that smuggle meaning:
+#### Normative Layer
 
-* “falls”, “drops”, “gravity”, “stack”, “clear”, “well”, “bag”, “hold”, etc.
+Uses canonical, semantically-neutral terms exclusively:
+- `unit`
+- `orientation`
+- `grid`
+- `occupancy_state`
+- `spawn_rule`
 
-Instead, describe only state transitions:
+#### Informative Alias Layer
 
-* “on each step, apply translation vector (0, +1) unless blocked…”
+Provides a mapping between domain-loaded and canonical terms, e.g.:
 
-### 3) Make oracles alias-proof
+* `tetromino` ↔ `unit`
+* `tetris` ↔ `system` / `game`
+* `line` ↔ `full_row`
+* etc.
 
-Oracle phrasing should reference only:
+The mapping MUST be defined in `ALIAS_MAP.yaml`. Normative rules MUST remain valid if domain terms are removed entirely.
 
-* state inputs
-* deterministic transitions
-* invariants
-* rejection semantics
-  …not domain language.
+---
 
-## A concrete “gate” you can add (fits your workflow)
+### 5.2 No-Metaphor Rule
 
-**G?.X — Alias-Invariance Check**
+Normative prose MUST describe:
 
-Mandatory criteria:
+- state transitions,
+- invariants,
+- preconditions,
+- postconditions,
+- rejection semantics.
 
-* Provide a rename map for at least: `tetris`, `tetromino` (and ideally the whole domain vocabulary list).
-* Apply rename to the normative docs (mechanically).
-* Verify:
-    * all normative cross-references still resolve,
-    * all required concepts remain defined,
-    * all test oracle statements remain interpretable and implementable.
+It MUST NOT describe behavior through metaphorical language.
 
-Evidence artifacts:
+Correct:  
+> On each step, apply translation vector (0, +1) unless blocked by occupancy or boundary constraint.
 
-* `ALIAS_MAP.md` (or YAML/JSON)
-* renamed build output under `docs/_derived/alias_invariant/`
-* a short “diff rationale” stating that only identifiers changed, not semantics.
+Incorrect:  
+> The piece falls due to gravity until it lands.
 
-## Synopsis
+---
 
-The documentation base MUST be **alias-invariant**: domain-loaded terms (e.g., “tetris”, “tetromino”) are treated as arbitrary labels and may be replaced via mechanical renaming with semantically neutral identifiers without loss of implementability or testability. Any behavior that might be inferred from those terms MUST be defined explicitly by normative specifications and validated by corresponding test oracles; no implicit reliance on cultural knowledge of the game is permitted.
+### 5.3 Oracle Alias-Proofing
+
+Test oracles MUST:
+
+- reference canonical terms only,
+- define expected state transitions precisely,
+- avoid metaphor,
+- remain valid under mechanical renaming.
+
+If renaming breaks oracle clarity, the oracle is non-compliant.
+
+---
+
+## 6. Alias-Invariance Gate
+
+### GX.Y — Alias-Invariance Check
+
+#### Objective
+
+Prove that the documentation base is semantically independent of domain terminology.
+
+#### Mandatory Criteria
+
+1. `ALIAS_MAP.yaml` exists and is normative.
+2. All canonical terms exist in `GLOSSARY_NORMATIVE.md`.
+3. Normative specifications use canonical terminology.
+4. Domain-loaded terms do not define behavior.
+5. Mechanical rename produces a consistent documentation corpus.
+6. All referenced oracles remain interpretable after renaming.
+
+#### Evidence Artifacts
+
+- `ALIAS_MAP.yaml`
+- `ALIAS_MAP.md`
+- Renamed documentation under `docs/_derived/alias_invariant/`
+- Rename validation report
+- Confirmation that all referenced oracles remain valid
+
+#### Failure Conditions
+
+The gate fails if:
+
+- Any behavior relies on implicit domain knowledge.
+- Any canonical term lacks formal definition.
+- Mechanical renaming breaks references.
+- Any oracle becomes ambiguous after renaming.
+
+---
+
+## 7. Harness-Level Guarantees
+
+If this document is satisfied:
+
+- The documentation corpus functions as a **generic behavioral specification engine**.
+- The project can serve as a reusable AI-agent training harness.
+- The system can be implemented under arbitrary naming schemes.
+- No semantic leakage from historical domain context is required.
+
+---
