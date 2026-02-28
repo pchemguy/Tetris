@@ -41,3 +41,14 @@ When functionality scoped by a particular test oracle file, say `ORACLE_CORE_COL
 - Doc_id compact definition
 - Doc_id to (vpath, file_contents) script 
 - If I resolve doc_id to virtual path and contents, texts can be moved to a db.
+
+## Context Engineering
+
+- Refactor gate 0 into context check point
+- Each agent run starts with initial context formation. Assuming no cross-run context memory, this context must provide
+    - a complete big picture (top-level key docs),
+    - a means for agent to understand current project state (what is done? what to do next?),
+    - doc closure and/or instructions how to compute it (ideally deterministically using a script).
+- With formal YAML references and cross references (per doc, per spec file, per oracle file, per oracle case), it should be possible to define a doc closure for each gate (key top-level docs plus gate specific l3-l4 docs. For example, for regression tests, agent only need the set of related tests to run and no l3/l4 docs.
+- Need a flag indicating completed gate.
+- The final documentation base needs to be fully specified to the point where at least key terms - "tetris" and "tetromino" - can be replaced with neutral aliases bearing absolutely no semantics. Known to LLM semantics of Tetris is of course helpful in collaboratively developing this project documentation, but the whole point is to develop a generic harness, which means agent(s), which should use developed docs to actually implement the project must ideally rely solely on explicit specs and no hints/semantics shall come from those semantic bearing terms.
