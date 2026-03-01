@@ -71,9 +71,9 @@ Every participating document MUST include the following keys:
 
 Additionally, it MAY include the following optional keys:
 
-- `references`
 - `description`
 - `{url | urls}`
+- `references`
 
 Notes:
 

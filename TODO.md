@@ -52,3 +52,6 @@ When functionality scoped by a particular test oracle file, say `ORACLE_CORE_COL
 - With formal YAML references and cross references (per doc, per spec file, per oracle file, per oracle case), it should be possible to define a doc closure for each gate (key top-level docs plus gate specific l3-l4 docs. For example, for regression tests, agent only need the set of related tests to run and no l3/l4 docs.
 - Need a flag indicating completed gate.
 - The final documentation base needs to be fully specified to the point where at least key terms - "tetris" and "tetromino" - can be replaced with neutral aliases bearing absolutely no semantics. Known to LLM semantics of Tetris is of course helpful in collaboratively developing this project documentation, but the whole point is to develop a generic harness, which means agent(s), which should use developed docs to actually implement the project must ideally rely solely on explicit specs and no hints/semantics shall come from those semantic bearing terms.
+
+
+Each normative markdown document carries YAML front matter defining a repository unique DOC_ID identifier (`^[A-Z][0-9A-Z_]+$`) that is used to reference documents without specifying their path.
