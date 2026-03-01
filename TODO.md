@@ -90,10 +90,13 @@ So, a basic deterministic algo for comprehensive context engineering for coding 
 - add top-level key docs, architecture/decomposition, acceptance gates (control), documentation system overview, probably also harness describing file. JSON files may or may not needed to be added to the context: if required doc closure, as well as any other pieces necessary for specific work scope defined by acceptance gate to be implemented can be produced via a script deterministically, only those artifacts may need to be added to the initial context, possibly instructing agent how to locate other artifacts, if necessary.
 - obtain the inventory of gate families and gates (probably from a JSON or YAML file from a predefined location).
 - determine next target
-    - verify that all previously started gates are completed:
+    1. verify that all previously started gates are completed:
         - list all subdirs in `docs/reports/implementation/` in ascending order
-        - for each subdir matching a `FAMILY_ID` from the inventory, list all subdirs in `docs/reports/implementation/{FAMILY_ID}/` in ascending order.
-        - for each subdir name matching `GATE_ID` from the inventory, verify that the `docs/reports/implementation/{FAMILY_ID}/{GATE_ID}/completed.flag` file exists.
-            - If not, this is an incomplete gate. Agent would need to assess whether it can be resumed without a human intervention by analyzing report files
-    - find the first `docs/reports/implementation/{FAMILY_ID}/{GATE_ID}/` not containing 
-- 
+        - for each subdir name matching `GATE_ID` from the inventory, verify that the `docs/reports/implementation/{GATE_ID}/completed.flag` file exists.
+            - If not, this is an incomplete gate and the next target. Agent would need to assess whether it can be resumed without a human intervention by analyzing report files. If possible, agent would need to go through implementation protocol steps, find which is the last implemented step and resume; otherwise, abort and escalate.
+    2. find the smallest index `GATE_ID` (`GX.Y`) without corresponding existing `docs/reports/implementation/{GATE_ID}/` - this is the next target.
+- extract from gate YAML implementation oracle and dependent gates list.
+- if current gate family defines `GX.0`, extract family dependency list and recursively identify family dependency closure.
+- construct oracle dependency closure by extracting implementation oracle from each gate dependency, as well as for all gates belonging to family dependency closure.
+- transform each oracle dependency into a test suite subdir to be executed as part of regression testing before any work is performed and after implementation suite of the current gate passes.
+- construct behavioral contract closure by extracting recursively all `DOC_ID`s corresponding to behavioral contracts from the oracle file YAML `references` key. Discard any DOC_IDs starting with `ORACLE_`, for remaining DOC_IDs consult doc inventory for path (probably under `docs/specs/`; verify `L3` prefix in documentation system description; probably mapping should be included in doc inventory) or layer (`L3`) designation.
