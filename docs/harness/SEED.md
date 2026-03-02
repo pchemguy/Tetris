@@ -1,4 +1,4 @@
-# Deterministically driven harness for driving AI coding agent.
+# A framework for deterministically driving AI coding agents
 
 Current objective is to evaluate current state of the project potential for the following objective:
 
@@ -7,6 +7,62 @@ Development of an application starting from documentation only and empty source 
 Overall development process needs to be compatible with deterministic orchestration. Like a set of algorithmic scripts determine the next step by examining the current contents of the repo, ENGINEER AGENT CONTEXT, and start an agent. (This, of course, could be also implemented as an agent skill.) Obviously, project documentation must contain explicit normative details providing a comprehensive definition of the target project and the development process.
 
 The project, documentation, and application must be structured in such a way, that at each step it would be possible to provide a focused subset of documents forming a closure of the implementation scope defined by the step, as well as any dependencies.
+
+The first task is to consider
+
+- stated objectives,
+- my early notes and reminder of key documents below
+
+and assess current project/docs design/architecture state and its amenability to the specified objective. Do I have everything in place or do I miss important pieces/solutions? How can I address any such deficiencies. If the project is in the good state already, let's start discussing and articulating the framework.
+
+## Early Notes
+
+- This project uses a hierarchical markdown documentation system (`docs/meta/DOCUMENTATION_SYSTEM.md`) to organize development documentation and development process. Each normative markdown document carries YAML front matter (described in `docs/meta/DOC_SCHEMA.md` and related `docs/meta/DOC_INVENTORY.md`) defining a repository unique `DOC_ID` identifier (`^[A-Z][0-9A-Z_]+$`) that is used to cross reference documents without specifying their path. This ID is used with `@` prefix in prose (non-YAML), such as `@DOC_SCHEMA`. Formal references are included as a `YAML` array `references` without `@`. Similar IDs are also used to label (and reference) specific document sections within embedded secondary YAML blocks where necessary.
+- Documentation system hierarchy reflects the structure of the development process. Additionally, for non-doc artifacts that may be produced and used by coding agents, conventional file-system-based structure is defined to compartmentalize artifacts and enable deterministic automated discovery.
+- With formal YAML references and cross references (per doc, per spec file, per oracle file, per oracle case), it should be possible to define a doc closure for each gate (key top-level docs plus gate specific l3-l4 docs). For example, for regression tests, agent only need the set of related tests to run and no l3/l4 docs. Tests for each oracle are placed in a conventional tests/ subdir, also enabling automated deterministic selection of specific test set.
+- Need a flag indicating completed gate.
+
+- Each agent run starts with initial context formation. Assuming no cross-run context memory, this context must provide
+    - a complete big picture (top-level key docs),
+    - a means for agent to understand current project state (what is done? what to do next?),
+    - doc closure and/or instructions how to compute it (ideally deterministically using a script).
+
+Assume agents are instructed to create tests in 
+
+
+- Tests
+  For each test oracle spec `ORACLE_ID/DOC_ID: ORACLE_<SCOPE>_<TOPIC>` a dedicated test suite should be created under
+    - `tetris/tests/<scope>_<topic>/`.
+  When a gate listing given test oracle spec file as "implementation" (there should exactly one such gate), this test suite is created/updated and executed to validate implementation correctness. When this gate is identified as dependency for a later gate (via gate or family dependency), this test suite will need to be executed according to protocol as a regression test suite; each gate may declare multiple dependent gates, and for each such dependency their respective implementation test suite is executed as a regression test suite for the dependent gate.
+- Reports
+    - `docs/reports/regression/{GATE_ID_REGRESSION_GATE}/{GATE_ID_DEPENDENT_GATE}/`
+    - `docs/reports/implementation/{GATE_ID}/` 
+
+Acceptance Gates partition development process into logical blocks, such that each gate defines implementation scope that can be implemented next, provided all defined prereqs (prior gates and gate families) are already implemented. Implementation involves 
+
+- developing source code according to gate scope and defined associated spec files
+- creating associated test suite according to test oracle spec identified as implementation test oracle by the gate
+- running regression test suites and creating reports under `docs/reports/regression/{GATE_ID_REGRESSION_GATE}/{GATE_ID_DEPENDENT_GATE}/` for each regression test suite
+- running implementation test suite and creating reports under `docs/reports/implementation/{GATE_ID}/` 
+- once all tests are passed successfully and all specs are otherwise fulfilled, a completion flag, such as `docs/reports/implementation/{GATE_ID}/completed.flag` can be created.
+
+So, a basic deterministic algo for comprehensive context engineering for coding agent might involve (e.g., via Python scripts executed by the agent or externally by orchestrating process):
+
+- add top-level key docs, architecture/decomposition, acceptance gates (control), documentation system overview, probably also harness describing file. JSON files may or may not needed to be added to the context: if required doc closure, as well as any other pieces necessary for specific work scope defined by acceptance gate to be implemented can be produced via a script deterministically, only those artifacts may need to be added to the initial context, possibly instructing agent how to locate other artifacts, if necessary.
+- obtain the inventory of gate families and gates (probably from a JSON or YAML file from a predefined location).
+- determine next target
+    1. verify that all previously started gates are completed:
+        - list all subdirs in `docs/reports/implementation/` in ascending order
+        - for each subdir name matching `GATE_ID` from the inventory, verify that the `docs/reports/implementation/{GATE_ID}/completed.flag` file exists.
+            - If not, this is an incomplete gate and the next target. Agent would need to assess whether it can be resumed without a human intervention by analyzing report files. If possible, agent would need to go through implementation protocol steps, find which is the last implemented step and resume; otherwise, abort and escalate.
+    2. find the smallest index `GATE_ID` (`GX.Y`) without corresponding existing `docs/reports/implementation/{GATE_ID}/` - this is the next target.
+- extract from gate YAML implementation oracle and dependent gates list.
+- if current gate family defines `GX.0`, extract family dependency list and recursively identify family dependency closure.
+- construct oracle dependency closure by extracting implementation oracle from each gate dependency, as well as for all gates belonging to family dependency closure.
+- transform each oracle dependency into a test suite subdir to be executed as part of regression testing before any work is performed and after implementation suite of the current gate passes.
+- construct behavioral contract closure by extracting recursively all `DOC_ID`s corresponding to behavioral contracts from the oracle file YAML `references` key. Discard any DOC_IDs starting with `ORACLE_`, for remaining DOC_IDs consult doc inventory for path (probably under `docs/specs/`; verify `L3` prefix in documentation system description; probably mapping should be included in doc inventory) or layer (`L3`) designation.
+
+## Reminder of key documents
 
 Recall, that for my Tetris project (the current project) I have developed a layered docs system with metadata, cross references, machine readable artifacts, and associated scripts (developed or planned).
 
@@ -1873,6 +1929,261 @@ An oracle document is compliant with this convention only if:
 * no identifier is reused ambiguously within the document.
 
 Failure to comply invalidates the oracle as a normative artifact.
+
+---
+~~~
+
+~~~
+
+# Software Development Harness
+
+## Synopsis
+
+The project documentation base MUST be alias-invariant and semantically self-contained. Domain-loaded terms are treated as arbitrary labels and may be mechanically replaced without loss of meaning. All behavior must be derived exclusively from explicit normative specification and validated by corresponding test oracles. No implementation agent may rely on cultural knowledge of the domain.
+
+## 1. Purpose
+
+This document defines requirements for constructing a **domain-neutral software development harness**.
+
+The harness formalizes a documentation-first development paradigm in which human developers operate as specification engineers. The primary artifact of development is a rigorously structured, normative documentation corpus written in technical natural language.
+
+This documentation corpus MUST be sufficient to:
+
+- drive context construction for implementation agents,
+- enable stepwise generation of source code and test suites,
+- support iterative refinement under formal acceptance gates,
+- allow full system implementation from an empty repository.
+
+Implementation agents (human or automated) MUST be able to construct the system using **only explicit specifications**, without reliance on:
+
+- prior domain knowledge,
+- cultural familiarity,
+- historical conventions,
+- latent model semantics,
+- undocumented assumptions.
+
+The documentation corpus MUST therefore be:
+
+- self-contained,
+- behaviorally complete,
+- formally structured,
+- alias-invariant,
+- verifiable via explicit test oracles.
+
+---
+
+## 2. Core Objective: Alias-Invariance
+
+The project documentation set MUST fully specify behavior such that all domain-loaded identifiers (e.g., `tetris`, `tetromino`, `line`, `bag`, `rotation`) can be mechanically replaced with semantically neutral aliases (e.g., `system`/`app`/`application`/`program`/`package`, `unit`/`piece`/`element`/`figure`/`shape`, `full_row`, `permutation_pool`, `orientation`) without changing:
+
+- implementability,
+- correctness,
+- testability.
+
+An implementation agent MUST be able to rely exclusively on explicit contracts and MUST NOT require prior knowledge of the cultural concept and prior art traditionally associated with the domain terms.
+
+Importantly, any domain knowledge available to AI systems can and absolutely should be used when developing project documentation interactively. The important part is to formalize any such implicit knowledge explicitly in specifications in the course of documentation development. At early stages, it might be often wise to exploit the models domain knowledge to full extent and only later worry about evolving documentation base, ensuring explicit encoding of implicit knowledge.
+
+---
+
+## 3. Semantically Neutral Aliases - Definition
+
+A term qualifies as a **semantically neutral alias** if it:
+
+- carries no embedded game or cultural meaning beyond being an arbitrary label,
+- introduces no behavioral implications through metaphor,
+- is defined exclusively through formal specification.
+* is consistently applied across:
+    * prose
+    * code identifiers (public API + internal names where referenced)
+    * diagrams/tables
+    * test names and oracle phrasing
+
+Examples of acceptable neutral terms:
+
+- `unit`
+- `entity_a`
+- `orientation_index`
+- `state_delta`
+- `permutation_pool`
+
+Examples of prohibited metaphor-bearing terms in normative layers:
+
+- `fall`
+- `gravity`
+- `stack`
+- `clear`
+- `well`
+- `bag`
+- `hold`
+- `block`
+- `row-clear`
+
+---
+
+## 4. Acceptance Criteria
+
+### A. Mechanical Rename Invariance
+
+A deterministic mechanical rename pass over a defined vocabulary set MUST produce a documentation corpus that remains:
+
+- internally consistent,
+- cross-reference complete,
+* fully implementable (no missing semantics),
+* fully testable (oracles still executable/meaningful).
+
+The rename operation MUST require no semantic interpretation — simple search-and-replace must suffice.
+
+---
+
+### B. Zero Implicit-Domain Dependency
+
+No requirement may depend on “common knowledge” of the domain. Any behavior that might be inferred from domain terminology MUST be explicitly specified.
+
+This includes, but is not limited to:
+
+- shape definitions
+- orientation rules
+- spawning rules
+- movement rules
+- collision detection
+- row completion detection
+- scoring rules (if applicable)
+- termination conditions
+
+If a behavior cannot be derived directly from explicit specification, the documentation is non-compliant.
+
+---
+
+### C. Explicit Concept Grounding
+
+All behaviorally relevant nouns MUST:
+
+1. Have a formal definition in the normative glossary.
+2. Reference an authoritative specification section defining its operational meaning.
+3. Be linked to at least one corresponding oracle or gate if correctness-critical.
+
+No concept may exist implicitly.
+
+---
+
+### D. Vocabulary Quarantine
+
+Domain-loaded terms MUST be treated as *presentation-layer labels* only:
+
+- MAY appear in informative or presentation contexts.
+- MUST NOT define or imply normative behavior.
+- MUST be replaceable without loss of meaning.
+
+Normative specifications MUST use canonical neutral terminology.
+
+---
+
+## 5. Documentation Architecture Requirements
+
+### 5.1 Two-Layer Terminology Pattern
+
+The documentation MUST adopt a two-layer structure:
+
+#### Normative Layer
+
+Uses canonical, semantically-neutral terms exclusively:
+- `unit`
+- `orientation`
+- `grid`
+- `occupancy_state`
+- `spawn_rule`
+
+#### Informative Alias Layer
+
+Provides a mapping between domain-loaded and canonical terms, e.g.:
+
+* `tetromino` ↔ `unit`
+* `tetris` ↔ `system` / `game`
+* `line` ↔ `full_row`
+* etc.
+
+The mapping MUST be defined in `ALIAS_MAP.yaml`. Normative rules MUST remain valid if domain terms are removed entirely.
+
+---
+
+### 5.2 No-Metaphor Rule
+
+Normative prose MUST describe:
+
+- state transitions,
+- invariants,
+- preconditions,
+- postconditions,
+- rejection semantics.
+
+It MUST NOT describe behavior through metaphorical language.
+
+Correct:  
+> On each step, apply translation vector (0, +1) unless blocked by occupancy or boundary constraint.
+
+Incorrect:  
+> The piece falls due to gravity until it lands.
+
+---
+
+### 5.3 Oracle Alias-Proofing
+
+Test oracles MUST:
+
+- reference canonical terms only,
+- define expected state transitions precisely,
+- avoid metaphor,
+- remain valid under mechanical renaming.
+
+If renaming breaks oracle clarity, the oracle is non-compliant.
+
+---
+
+## 6. Alias-Invariance Gate
+
+### GX.Y — Alias-Invariance Check
+
+#### Objective
+
+Prove that the documentation base is semantically independent of domain terminology.
+
+#### Mandatory Criteria
+
+1. `ALIAS_MAP.yaml` exists and is normative.
+2. All canonical terms exist in `GLOSSARY_NORMATIVE.md`.
+3. Normative specifications use canonical terminology.
+4. Domain-loaded terms do not define behavior.
+5. Mechanical rename produces a consistent documentation corpus.
+6. All referenced oracles remain interpretable after renaming.
+
+#### Evidence Artifacts
+
+- `ALIAS_MAP.yaml`
+- `ALIAS_MAP.md`
+- Renamed documentation under `docs/_derived/alias_invariant/`
+- Rename validation report
+- Confirmation that all referenced oracles remain valid
+
+#### Failure Conditions
+
+The gate fails if:
+
+- Any behavior relies on implicit domain knowledge.
+- Any canonical term lacks formal definition.
+- Mechanical renaming breaks references.
+- Any oracle becomes ambiguous after renaming.
+
+---
+
+## 7. Harness-Level Guarantees
+
+If this document is satisfied:
+
+- The documentation corpus functions as a **generic behavioral specification engine**.
+- The project can serve as a reusable AI-agent training harness.
+- The system can be implemented under arbitrary naming schemes.
+- No semantic leakage from historical domain context is required.
 
 ---
 ~~~
