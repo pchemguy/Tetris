@@ -1,7 +1,13 @@
 ---
+doc_id: TEST_ORACLE_FORMAT_CONVENTION
+name: TEST_ORACLE_FORMAT_CONVENTION.md
+title: Test Oracle Format Convention
+status: active
+authority: normative
 url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/699f3373-531c-8388-88fe-1fa9febfbc92
 ---
-# TEST_ORACLE_FORMAT_CONVENTION
+
+# Test Oracle Format Convention
 
 ## 1. Purpose
 

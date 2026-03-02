@@ -58,7 +58,9 @@ The project documentation set MUST fully specify behavior such that all domain-l
 - correctness,
 - testability.
 
-An implementation agent MUST be able to rely exclusively on explicit contracts and MUST NOT require prior knowledge of the cultural concept traditionally associated with the domain terms.
+An implementation agent MUST be able to rely exclusively on explicit contracts and MUST NOT require prior knowledge of the cultural concept and prior art traditionally associated with the domain terms.
+
+Importantly, any domain knowledge available to AI systems can and absolutely should be used when developing project documentation interactively. The important part is to formalize any such implicit knowledge explicitly in specifications in the course of documentation development. At early stages, it might be often wise to exploit the models domain knowledge to full extent and only later worry about evolving documentation base, ensuring explicit encoding of implicit knowledge.
 
 ---
 
