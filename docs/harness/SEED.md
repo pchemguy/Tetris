@@ -1,3 +1,6 @@
+---
+url: https://chatgpt.com/g/g-p-698720f783d8819182dba46c5788315b-tetris/c/69a56034-d3a0-838e-8878-343fa53eb6da
+---
 # A framework for deterministically driving AI coding agents
 
 Current objective is to evaluate current state of the project potential for the following objective:
